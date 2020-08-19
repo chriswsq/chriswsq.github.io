@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>Gridea</title>
-    <updated>2020-08-19T09:45:54.038Z</updated>
+    <updated>2020-08-19T09:57:44.809Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,102 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[ansible学习]]></title>
+        <id>https://chriswsq.github.io/post/ansible-xue-xi/</id>
+        <link href="https://chriswsq.github.io/post/ansible-xue-xi/">
+        </link>
+        <updated>2020-08-19T09:55:33.000Z</updated>
+        <summary type="html"><![CDATA[<p>ansible自动化运维工具，可以同时对多台主机进行管理，提升工作效率。在此记录工作中用到的东西</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>ansible自动化运维工具，可以同时对多台主机进行管理，提升工作效率。在此记录工作中用到的东西</p>
+<!--more-->
+<h3 id="ansible基本小知识">ansible基本小知识</h3>
+<h4 id="组件inventory">组件inventory</h4>
+<p>ansible的hosts文件是存放被管理主机的，被管理主机比较少的情况下，直接在hosts中定义即可，但是以后很定会管理多台主机，而ansible可管理的主机集合就叫做inventory。在ansible中，描述你主机的默认方法是将它们列在一个文本文件中,这个文件叫inventory文件。</p>
+<p>此时可以把不同分类的机器放在不同的inventory中，达到清晰管理的目的；</p>
+<p>配置文件：/etc/ansible/ansible.cfg</p>
+<p>配置参数：inventory = 目录</p>
+<p>相关inventory文件都放在/etc/ansible/inventory目录下</p>
+<p>配置实例：</p>
+<pre><code>[root@test-1 ~]# grep &quot;^inventory&quot;  /etc/ansible/ansible.cfg
+inventory      = /etc/ansible/inventory
+
+[root@test-1 ~]#  ls /etc/ansible/inventory/
+ca  cjq  context.xml  fiscosign  gateway_M  guangdong  peer1  peer2  peer3  webasenode  yc
+
+</code></pre>
+<p>注：inventory配置的是目录，此目录所有文件都会生效</p>
+<h4 id="ventory清单的使用规则定义主机和组">ventory（清单）的使用规则（定义主机和组）</h4>
+<pre><code># “ # ”  开头的行表示该行为注释行，即当时行的配置不生效。
+
+# Inventory（清单）可以直接为IP地址
+
+192.168.1.7
+
+#Inventory（清单）同样支持Hostname（主机名）的方式，后跟冒号加数字表示端口号，默认22号端口
+
+ntp.magede.com：22
+
+nfs.magede.com：22
+
+# 中括号内的内容表示一个分组的开始，紧随其后的主机均属于该组成员，空行后的主机亦属于该组，即web2.magedu.com这台主机也属于[webservers]组。
+
+[webservers]
+
+web1.magedu.com
+
+web[10:20].magedu.com  #[10:20] 表示10 ~ 20 之间的所有数字（包括10和20 ），即表示web10.magedu.com、web11.magedu.com.................web20.magedu.com的所有主机。
+
+
+
+web2.magedu.com[dbservers]
+
+db-a.magedu.com
+
+db-[b:f].magedu.com    # [b:f] 表示b到f之间的所有数字（包括b和f），即表示db-b.magedu.com、db-c.magedu.com..........db-f.magedu.com的所有主机。
+
+</code></pre>
+<h4 id="定义主机变量">定义主机变量</h4>
+<p>在平时工作中，通常会遇到非标准化的需求配置，如考虑到安全性问题，业务人员通常将企业内部的web服务80端口修改为其他端口号，而该功能可以直接通过修改Inventory（清单）配置来实现，在定义主机时为其添加主机变量，以便在Playbook中使用针对某一主机的个性化要求。</p>
+<p>例如：</p>
+<pre><code>[webservers]
+ 
+web1.magedu.com  http_port=808   ansible_host=11.111.111.111 ansible_ssh_port=22 name=shanghai  #自定义http_port的端口号为808、 主机ip为11.111.111.111、ssh端口为22、定义变量name为shanghai
+</code></pre>
+<h4 id="定义组变量">定义组变量</h4>
+<p>Ansible支持定义组变量，主要是针对大量机器的变量定义需求，赋予指定组内所有主机在Playbook中可用的变量，等同于逐一给该组下的所有主机赋予同一变量。<br>
+例如：</p>
+<pre><code>
+[groupservers]
+ 
+web1.magedu.com
+ 
+web2.magedu.com
+ 
+[groupservers:vars]
+ 
+ntp_server=ntp.magedu.com    #定义groupservers组中所有主机ntp_server值为ntp.magedu.com
+ 
+nfs_server=nfs.magedu.com   #定义groupservers组中的所有主机nfs_server值为nfs.magedu.com
+
+</code></pre>
+<h4 id="其他inventory清单参数列表">其他Inventory（清单）参数列表</h4>
+<p>除了支持如上的功能外，Ansible基于SSH连接Inventory（清单）中指定的远程主机时，还内置了很多其他参数，用于指定其交互方式。</p>
+<p>下面列举了部分重要参数：</p>
+<pre><code>
+ansible_ssh_host：指定连接主机ansible_ssh_port，指定SSH连接端口，默认22
+ 
+ansible_ssh_user：指定SSH连接用户
+ 
+ansible_ssh_pass：指定SSH连接密码
+ 
+ansible_sudo_pass：指定SSH连接时sudo密码
+ 
+ansible_ssh_private_key_file：指定特有私钥文件
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://chriswsq.github.io/post/hello-gridea/</id>

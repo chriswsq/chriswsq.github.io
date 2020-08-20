@@ -57,7 +57,7 @@
                         <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
                                 <article class="mdui-p-a-2 post animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
                                     <div class="post-title  mdui-m-b-1">Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress</div>
-                                    <div class="mdui-typo-body-2 mdui-m-b-2" datetime="2020-08-20 18:02:28">2020-08-20 / 2 min read</div>
+                                    <div class="mdui-typo-body-2 mdui-m-b-2" datetime="2020-08-20 18:02:28">2020-08-20 / 16 min read</div>
                                     <div class="mdui-m-b-2 mdui-typo post-neirong"><p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
 <!-- more -->
 <p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。简单来说，他可以做到：</p>
@@ -68,17 +68,393 @@
 </ul>
 <p>在系列文的上一篇文章中，我们了解了构成 Kubernetes 的四个重要元素：Pod、Node、Master、Cluster，并安装好了我们要实际动手玩 Kubernetes 前需要的套件与工具。接下来在这篇文章中，我们会透过例子来实际建立那些在 Kubernetes 中常见的元件们。</p>
 <h2 id="如何建立一个-pod">如何建立一个 Pod</h2>
-<p>在基本运作与安装中，我们下载好了我们需要的三个程式：Minikube、Virtual Box、Kubectl，接下来我们就可以来练习如何建立我们的第一个 Pod 了。</p>
-<h2 id="启动-minikube">启动 Minikube</h2>
-<p>下载完 minikube 之后，我们可以先透过</p>
-<p><code>minikube</code></p>
-<p>瞧瞧所有 minikube 的指令，然后透过</p>
-<p><code>minikube start</code></p>
-<p>就可以启动 minikube。另外再补充五个常用的指令：<br>
-列出 minikube 的状态</p>
-<p><code>minikube status</code></p>
-<p>停止 minikube 运行</p>
-<p><code>minikube stop</code></p>
+<h2 id="撰写-pod-的身分证">撰写 Pod 的身分证</h2>
+<p>还记得我们在介绍 Kubernetes 时有提到，每个 Pod 都有一个身分证，也就是属于这个 Pod 的 .yaml 档。我们透过撰写下面的这个 .yaml 档就可以建立出 Pod。</p>
+<p>kubernetes-demo.yaml</p>
+<pre><code class="language-yaml">apiVersion: v1
+ kind: Pod
+ metadata:
+   name: kubernetes-demo-pod
+   labels:
+     app: demoApp
+ spec:
+   containers:
+     - name: kubernetes-demo-container
+       image: hcwxd/kubernetes-demo
+       ports:
+         - containerPort: 3000
+</code></pre>
+<p>apiVersion</p>
+<ul>
+<li>该元件版本号</li>
+</ul>
+<p>kind</p>
+<ul>
+<li>该元件是什么属性，常见有 Pod、Node、Service、Namespace、ReplicationController 等</li>
+</ul>
+<p>metadata</p>
+<p>name</p>
+<ul>
+<li>指定该 Pod 的名称<br>
+labels</li>
+<li>指定该 Pod 的标签，这里我们暂时帮它上标签为 app: demoApp</li>
+</ul>
+<p>spec</p>
+<p>container.name</p>
+<ul>
+<li>指定运行出的 Container 的名称</li>
+</ul>
+<p>container.image</p>
+<ul>
+<li>指定 Container 要使用哪个 Image，这里会从 DockerHub 上搜寻</li>
+</ul>
+<p>container.ports</p>
+<ul>
+<li>指定该 Container 有哪些 port number 是允许外部资源存取</li>
+</ul>
+<h2 id="透过-kubectl-建立-pod">透过 kubectl 建立 Pod</h2>
+<p>有了身份证后，我们就可以透过 kubectl 指令来建立 Pod</p>
+<p><code>kubectl create -f kubernetes-demo.yaml</code></p>
+<p>看到 <code>pod/kubernetes-demo-pod created</code> 的字样就代表我们建立成功我们的第一个 Pod 了。我们可以再透过指令</p>
+<p><code>kubectl get pods</code></p>
+<p>看到我们运行中的 Pod：</p>
+<pre><code class="language-bash">NAME                  READY   STATUS    RESTARTS   AGE
+kubernetes-demo-pod   1/1     Running   0          60s
+</code></pre>
+<h2 id="连线到我们-pod-的服务资源">连线到我们 Pod 的服务资源</h2>
+<p>建立好我们的 Pod 之后，打开浏览器的 <code>localhost:3000</code> 我们会发现怎么什么都看不到。这是因为在 Pod 中所指定的 port，跟我们本机端的 port 是不相通的。因此，我们必须还要透过 <code>kubectl port-forward</code>，把我们两端的 port 做 mapping。</p>
+<p><code>kubectl port-forward kubernetes-demo-pod 3000:3000</code></p>
+<p>做好 mapping 后，再打开浏览器的 localhost:3000 ，我们就可以迎接一只可爱的小鲸鱼啰！</p>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1597918423758.png" alt="" loading="lazy"></figure>
+<h2 id="kubernetes-进阶三元件">Kubernetes 进阶三元件</h2>
+<p>了解完如何从无到有建立一个 Kubernetes Cluster 并产生一个 Pod 后，接下来我们要认识在现实应用中，我们还会搭配到哪些 Kubernetes 的进阶元件。其中最重要的三个进阶元件就是：Service、Ingress、Deployment。</p>
+<p><strong>Service</strong></p>
+<p>还记得上面提到我们在连线到一个 Pod 的服务资源时，会使用到 port-forward 的指令。但如果我们有多个 Pods 想要同时被连线时，我们就可以用到 Service 这个进阶元件。简单来说，Service 就是 Kubernetes 中用来定义「一群 Pod 要如何被连线及存取」的元件。</p>
+<p>要建立一个 Service，一样要撰写属于他的身分证。</p>
+<p>service.yaml</p>
+<pre><code class="language-yaml">apiVersion: v1
+ kind: Service
+ metadata:
+   name: my-service
+ spec:
+   selector:
+     app: demoApp
+   type: NodePort
+   ports:
+     - protocol: TCP
+       port: 3001
+       targetPort: 3000
+       nodePort: 30390
+</code></pre>
+<p>apiVersion</p>
+<ul>
+<li>该元件的版本号</li>
+</ul>
+<p>kind</p>
+<ul>
+<li>该元件是什么属性，常见有 Pod、Node、Service、Namespace、ReplicationController 等</li>
+</ul>
+<p>metadata</p>
+<ul>
+<li>name<br>
+指定该 Pod 的名称</li>
+</ul>
+<p>spec</p>
+<ul>
+<li>
+<p>selector<br>
+该 Service 的连线规则适用在哪一群 Pods，还记得我们在建立 Pod 的时候，会帮它上 label，这时就可以透过 app: demoApp，去找到那群 label 的 app 属性是 demoApp 的 Pods 们</p>
+</li>
+<li>
+<p>ports</p>
+<ul>
+<li>targetPort<br>
+指定我们 Pod 上允许外部资源存取 Port Number</li>
+<li>port<br>
+指定我们 Pod 上的 targetPort 要 mapping 到 Service 中 ClusterIP 中的哪个 port</li>
+<li>nodePort<br>
+指定我们 Pod 上的 targetPort 要 mapping 到 Node 上的哪个 port</li>
+</ul>
+</li>
+</ul>
+<p>接下来我们先重新建立我们的 Pod</p>
+<p><code>kubectl create -f kubernetes-demo.yaml</code></p>
+<p>接下来我们透过 service.yaml 来建立我们的 Service 元件</p>
+<p><code>kubectl create -f service.yaml</code></p>
+<p>然后我们可以透过</p>
+<p><code>kubectl get services</code></p>
+<p>取得我们新建立 Service 的资料</p>
+<pre><code class="language-bash">NAME       TYPE      CLUSTER-IP     EXTERNAL-IP PORT(S)          AGE
+my-service NodePort  10.110.237.205 &lt;none&gt;      3001:30391/TCP   60s
+</code></pre>
+<p>有了建立好的 Service 后，我们可以透过两种方式连线我们的 Pod 的服务资源。首先，要从外部连线到我们的 Pod 资源服务，我们必须要先有我们的 Kubernetes Cluster（在这边是 minikube）对外开放的 IP。我们先透过指令</p>
+<p><code>minikube ip</code></p>
+<p>得到我们 minikube 的 ip</p>
+<p><code>192.168.99.100</code></p>
+<p>接着打开我们的浏览器，输入上面的 ip 加上我们在 yaml 档指定的 nodePort，在这边是 192.168.99.100:30390，就会得到我们的小鲸鱼了。</p>
+<p>而如果不从浏览器，而是直接从 minikube 里面连线到我们的 Pod 则要先透过指令</p>
+<p><code>minikube ssh</code></p>
+<p>ssh 进入我们的 minikube cluster，接着输入指令</p>
+<p><code>curl &lt;CLUSTER-IP&gt;:&lt;port&gt;</code></p>
+<p>其中 CLUSTER-IP 就是我们用 kubectl get services 得到我们 Service 的 IP，而 port 就是我们在 yaml 档指定的 port，在这边合起来就是 10.110.237.205:3001，于是我们</p>
+<p><code>curl 10.110.237.205:3001</code></p>
+<p>就可以在 minikube 里面得到我们的小鲸鱼啰！</p>
+<p><strong>Deployment</strong></p>
+<p>了解了 Service 后，接下来要来了解第二个进阶元件：Deployment。今天当我们同时要把一个Pod 做横向扩展，也就是复制多个相同的Pod 在Cluster 中同时提供服务，并监控如果有Pod 当机我们就要重新把它启动时，如果我们要一个Pod 一个Pod透过指令建立并监控是很花时间的。因此，我们可以透过 Deployment 这个特殊元件帮我们达成上述的要求。</p>
+<p>同样要建立一个 Deployment，要先撰写属于他的身分证。</p>
+<p>deployment.yaml</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: demoApp
+    spec:
+      containers:
+        - name: kubernetes-demo-container
+          image: hcwxd/kubernetes-demo
+          ports:
+            - containerPort: 3000
+  selector:
+    matchLabels:
+      app: demoApp
+</code></pre>
+<p>apiVersion</p>
+<ul>
+<li>该元件的版本号</li>
+</ul>
+<p>kind</p>
+<ul>
+<li>该元件是什么属性，常见有 Pod、Node、Service、Namespace、ReplicationController 等</li>
+</ul>
+<p>metadata</p>
+<ul>
+<li>name<br>
+指定该 Pod 的名称</li>
+</ul>
+<p>spec</p>
+<ul>
+<li>
+<p>replicas<br>
+指定要建立多少个相同的 Pod，在这边给的数字是所谓的 Desire State，当 Cluster 运行时如果 Pod 数量低于此数字，Kubernetes 就会自动帮我们增加 pod，反之就会帮我们关掉 Pod</p>
+</li>
+<li>
+<p>template<br>
+指定这个 Deployment 建立的 Pod 们统一的设定，包括 metadata 以及这些 Pod 的 Containers，这边我们就沿用之前建立 Pod 的设定</p>
+</li>
+<li>
+<p>selector<br>
+指定这个 Deployment 的规则要适用到哪些 Pod，在这边就是指定我们在 template 中指定的 labels</p>
+</li>
+</ul>
+<p>接下来我们就可以透过指令</p>
+<p><code>kubectl create -f deployment.yaml</code></p>
+<p>建立好我们的 Deployment，这时我们可以查看我们的 Deployment 有没有被建立好</p>
+<pre><code class="language-bash">kubectl get deploy
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+my-deployment   3/3     3            3           60s
+</code></pre>
+<p>接着我们在看 Pod 们有没有乖乖按照 Deployment 建立</p>
+<pre><code class="language-bash">kubectl get pods
+NAME                             READY   STATUS    RESTARTS   AGE
+my-deployment-5454f687cd-bxjfz   1/1     Running   0          60s
+my-deployment-5454f687cd-gszbr   1/1     Running   0          60s
+my-deployment-5454f687cd-k6zfv   1/1     Running   0          60s
+</code></pre>
+<p>这边我们可以看到三个 Pod 都被建立好了，我们就成功做到了 Pod 的横向扩展。而除了 Pod 的横向扩展外，Deployment 的另外一个好处就是可以帮我们做到无停机的系统升级（Zero Downtime Rollout）。也就是说，当我们要更新我们的 Pod 时，Kubernetes 并不会直接砍掉我们所有的 Pod，而是会建立新的 Pod，等新的 Pod 开始正常运行后，再来取代旧的 Pod。</p>
+<p>举例来说，假设我们现在想要更新我们 Pod 对外的 Port，我们可以先透过指令</p>
+<p><code>kubectl edit deployments my-deployment</code></p>
+<p>接着我们会看到我们的 Yaml 档</p>
+<pre><code class="language-yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: '2'
+  creationTimestamp: '2019-04-26T04:18:26Z'
+  generation: 2
+  labels:
+    app: demoApp
+  name: my-deployment
+  namespace: default
+  resourceVersion: '328692'
+  selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/my-deployment
+  uid: 56608fb5-67da-11e9-933f-08002789461f
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: demoApp
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: demoApp
+    spec:
+      containers:
+        - image: hcwxd/kubernetes-demo
+          imagePullPolicy: Always
+          name: kubernetes-demo-container
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+</code></pre>
+<p>我们把其中 containerPort: 3000 改成 3001 后储存，Kubernetes 就会开始帮我们进行更新。这时我们继续用指令 kubectl get pods 就会看到</p>
+<pre><code class="language-bash">NAME                          READY STATUS            RESTARTS   AGE
+my-deployment-5454f687cd-bxjf 1/1   Running           0          60s
+my-deployment-5454f687cd-gszb 1/1   Terminating       0          60s
+my-deployment-5454f687cd-k6zf 1/1   Running           0          60s
+my-deployment-78dc8dcb89-5927 0/1   ContainerCreating 0          1s
+my-deployment-78dc8dcb89-dwtl 1/1   Running           0          5s
+</code></pre>
+<p>从上面可以看到，Kubernetes 会永远保持有 3 个 Pods 在正常运作，如果有新的 Pod 还在 ContainerCreating 的阶段时，他还不会关掉对应要被取代的 Pod。而在过一段时间我们输入同样指令可以看到</p>
+<p><code>kubectl rollout history deployment my-deployment</code></p>
+<p>看到我们目前更改过的版本</p>
+<pre><code class="language-bash">deployment.extensions/my-deployment
+REVISION  CHANGE-CAUSE
+1         &lt;none&gt;
+2         &lt;none&gt;
+</code></pre>
+<p>从上面可以看出来，我们目前有两个版本，如果我们发现版本 2 的程式有问题，想要先让服务先恢复成版本 1 的程式（Rollback）时，我们还可以透过指令</p>
+<p><code>kubectl rollout undo deploy my-deployment</code></p>
+<p>让我们的 Pod 都恢复成版本 1。甚至之后如果版本变的较多后，我们也可以指定要 Rollback 到的版本</p>
+<p><code>kubectl rollout undo deploy my-deployment --to-revision=2</code></p>
+<p><strong>Ingress</strong><br>
+了解完了 Service 跟 Deployment 後，接下來就輪到概ㄓ念稍微複雜的 Ingress 元件了。 在上面有提到 Service 就是 Kubernetes 中用來定義「一群 Pod 要如何被連線及存取」的元件。 但在 Service 中，我們是將每個 Service 元件對外的 port number 跟 Node 上的 port number 做 mapping，這樣在我們的 Service 變多時，port number 以及分流規則的管理變得相當困難。</p>
+<p>而 Ingress 可以透過 HTTP/HTTPS，在我們眾多的 Service 前搭建一個 reverse-proxy。這樣 Ingress 可以幫助我們統一一個對外的 port number，並且根據 hostname 或是 pathname 決定封包要轉發到哪個 Service 上，如同下圖的比較：</p>
+<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1597919286278.jpg" alt="" loading="lazy"></figure>
+<p>在 Kubernetes 中，Ingress 这项服务其实是由 Ingress Resources、Ingress Server、Ingress Controller 构成。其中 Ingress Resources 就是定义 Ingress 的身分证，而 Ingress Server 则是实体化用来接收 HTTP/HTTPS 连线的网路伺服器。但实际上，Ingress Server 有各式各样的实作，就如同市面上的 Web Server 琳琅满目一样。因此，Ingress Controller 就是一个可以把定义好的 Ingress Resources 设定转换成特定 Ingress Server 实作的角色。</p>
+<p>举例来说，Kubernetes 由官方维护的两种 Ingress Controller 就有 ingress-gce 跟 ingress-nginx，分别可以对应转换成 GCE 与 Nginx。也有其他非官方在维护的 Controller，详细的列表可见官网的 additional-controllers。</p>
+<p>接下来我们要来试着建立一个 Ingress 物件去根据 hostname 转发封包到不同的 Pod 上面。所以第一步，我们要用 Deployment 建立好几个不同的 Pod。在这边我们直接透过准备好的两个Image 来建立其中的Container，blue-whale 这个Image 里的程式会监听3000 port 然后在浏览器上被存取时会吐出蓝色的鲸鱼，purple-whale 则会吐出紫色的鲸鱼。</p>
+<p>deployment.yaml</p>
+<pre><code class="language-yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: blue-nginx
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: blue-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: hcwxd/blue-whale
+          ports:
+            - containerPort: 3000
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: purple-nginx
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: purple-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: hcwxd/purple-whale
+          ports:
+            - containerPort: 3000
+</code></pre>
+<p>接着我们就可以透过 kubectl create -f deployment.yaml 建立好我们的 Pod。</p>
+<pre><code class="language-yaml">AME                            READY   STATUS    RESTARTS  AGE
+blue-nginx-6b68c797c7-28tkz    1/1     Running   0         60s
+blue-nginx-6b68c797c7-8ww8l    1/1     Running   0         60s
+purple-nginx-84854fd7c-8g4nl   1/1     Running   0         60s
+purple-nginx-84854fd7c-tmrbs   1/1     Running   0         60s
+</code></pre>
+<p>建立好了 Pod 们后，接下来我们就要建立这些 Pod 对外的各自 Service，在这边我们会把各至 Container 上的 3000 port 全部都转到 80 port 上。</p>
+<p>service.yaml</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: blue-service
+spec:
+  type: NodePort
+  selector:
+    app: blue-nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: purple-service
+spec:
+  type: NodePort
+  selector:
+    app: purple-nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+</code></pre>
+<p>透过 kubectl create -f service.yaml 建立好我们的 Pod。</p>
+<pre><code class="language-yaml">NAME            TYPE      CLUSTER-IP      EXTERNAL-IP  PORT(S)        
+blue-service    NodePort  10.111.192.164  &lt;none&gt;       80:30492/TCP
+purple-service  NodePort  0.107.21.77     &lt;none&gt;       80:32086/TCP
+</code></pre>
+<p>最后，我们就可以来建立我们的主角 Ingress 了！在这边我们的Ingress 只有很简单的规则，他会把所有发送到blue.demo.com 的封包交给service blue-service 负责，而根据上面service.yaml 的定义，他会再转交给blue-nginx这个Pod。而发送给 purple.demo.com 则会转交给 purple-nginx。<br>
+在这边，我们要先记得使用指令 minikube addons enable ingress 来启用 minikube 的 ingress 功能。接着，我们就来撰写 ingress 的身分证。</p>
+<p>ingress.yaml</p>
+<pre><code class="language-yaml">apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web
+spec:
+  rules:
+    - host: blue.demo.com
+      http:
+        paths:
+          - backend:
+              serviceName: blue-service
+              servicePort: 80
+    - host: purple.demo.com
+      http:
+        paths:
+          - backend:
+              serviceName: purple-service
+              servicePort: 80
+</code></pre>
+<p>我们一样透过 kubectl create -f ingress.yaml 来建立我们的 ingress 物件。并使用 kubectl get ingress 来查看我们的 ingress 状况：</p>
+<pre><code class="language-bash">NAME   HOSTS                           ADDRESS     PORTS   AGE
+web    blue.demo.com,purple.demo.com   10.0.2.15   80      60s
+</code></pre>
+<p>接下来我们要来测试 ingress 有没有乖乖帮我们转发。因为我们的Cluster 实际上对外的ip 都是我们透过指令minikube ip 会看到的192.168.99.100，这样我们要怎么同时让这个ip 可以是我们设定规则中的blue.demo.com 以及purple.demo.com呢？</p>
+<p>因为我们知道在 DNS 解析网址时，会先查找本机上 /etc/hosts 后才会到其他 DNS Server 上寻找。所以我们可以透过一个小技巧，在本机上把 blue.demo.com 以及 purple.demo.com 都指向 192.168.99.100。透过指令</p>
+<pre><code class="language-bash">echo 192.168.99.100   blue.demo.com  &gt;&gt; /etc/hosts
+echo 192.168.99.100   purple.demo.com &gt;&gt; /etc/hosts
+</code></pre>
+<p>或是透过 sudo vim /etc/hosts 手动加上这两条规则，我们就成功搞定 DNS 可以来测试了。接下来我们打开浏览器，输入 blue.demo.com 就可以得到熟悉的蓝色小鲸鱼</p>
+<figure data-type="image" tabindex="3"><img src="https://chriswsq.github.io/post-images/1597919547364.png" alt="" loading="lazy"></figure>
+<p>然后输入 purple.demo.com 就可以得到紫色小鲸鱼啰！</p>
+<figure data-type="image" tabindex="4"><img src="https://chriswsq.github.io/post-images/1597919583300.png" alt="" loading="lazy"></figure>
+<p>在实际建立过 Pod、Service、Deployment 还有 Ingress 后，在接下来的文章，我们要来介绍一个可以让这个建立流程变得更简单的工具，也就是 Kubernetes 中的 Package Manager：Helm！</p>
 </div>
                                     <div class="mdui-divider mdui-m-b-2"></div>
                                     <div class="mdui-row-xs-2 post-fenye">

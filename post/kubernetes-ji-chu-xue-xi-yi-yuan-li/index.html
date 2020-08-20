@@ -3,7 +3,7 @@
         <head>
         <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
         <meta charset="utf-8">
-        <title>k8s——apiVersion对照表 | chris&#39;wang</title>
+        <title>kubernetes基础学习（一）原理 | chris&#39;wang</title>
         <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
         <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
         <link href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css" rel="stylesheet">
@@ -56,189 +56,81 @@
                 <div class="mdui-row">
                         <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
                                 <article class="mdui-p-a-2 post animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="post-title  mdui-m-b-1">k8s——apiVersion对照表</div>
-                                    <div class="mdui-typo-body-2 mdui-m-b-2" datetime="2020-08-20 15:10:24">2020-08-20 / 4 min read</div>
-                                    <div class="mdui-m-b-2 mdui-typo post-neirong"><!-- more -->
-<p>不同的控制器选用不同的apiVersion</p>
+                                    <div class="post-title  mdui-m-b-1">kubernetes基础学习（一）原理</div>
+                                    <div class="mdui-typo-body-2 mdui-m-b-2" datetime="2020-08-20 17:32:13">2020-08-20 / 4 min read</div>
+                                    <div class="mdui-m-b-2 mdui-typo post-neirong"><p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。<br>
+更进一步地说，Kubernetes 想解决的问题是：「手动部署多个容器到多台机器上并监测管理这些容器的状态非常麻烦。」而Kubernetes 要提供的解法： 提供一个平台以较高层次的抽象化去自动化操作与管理容器们。</p>
 <!-- more -->
-<h2 id="对照表">对照表</h2>
-<table>
-<thead>
-<tr>
-<th>kind</th>
-<th>apiVersion</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CertificateSigningRequest</td>
-<td>certificates.k8s.io/v1beta1</td>
-</tr>
-<tr>
-<td>ClusterRoleBinding</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>ClusterRole</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>ComponentStatus</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ConfigMap</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ControllerRevision</td>
-<td>apps/v1</td>
-</tr>
-<tr>
-<td>CronJob</td>
-<td>batch/v1beta1</td>
-</tr>
-<tr>
-<td>DaemonSet</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Deployment</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Endpoints</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>Event</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>HorizontalPodAutoscaler</td>
-<td>autoscaling/v1</td>
-</tr>
-<tr>
-<td>Ingress</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Job</td>
-<td>batch/v1</td>
-</tr>
-<tr>
-<td>LimitRange</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>Namespace</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>NetworkPolicy</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Node</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PersistentVolumeClaim</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PersistentVolume</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PodDisruptionBudget</td>
-<td>policy/v1beta1</td>
-</tr>
-<tr>
-<td>Pod</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PodSecurityPolicy</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>PodTemplate</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ReplicaSet</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>ReplicationController</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ResourceQuota</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>RoleBinding</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>Role</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>Secret</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ServiceAccount</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>Service</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>StatefulSet</td>
-<td>apps/v1</td>
-</tr>
-</tbody>
-</table>
-<h2 id="apiversion分别是什么意思">apiVersion分别是什么意思？</h2>
-<p>名称中带有'alpha'的alpha API版本是Kubernetes中新功能的早期候选者。这些可能包含错误，并且不能保证将来能够正常工作。</p>
-<p><strong>测试</strong><br>
-在API版本名称意味着测试已取得进展过去的阿尔法水平，并且该功能最终将被列入Kubernetes“测试”。尽管其工作方式可能会发生变化，并且对象的定义方式可能会发生完全变化，但功能本身很有可能以某种形式将其纳入Kubernetes。</p>
-<p><strong>稳定名称中</strong><br>
-不包含“ alpha”或“ beta”。它们是安全使用的。</p>
-<hr>
-<p><strong>v1</strong><br>
-这是Kubernetes API的第一个稳定版本。它包含许多核心对象。</p>
-<p><strong>apps / v1</strong><br>
-apps是Kubernetes中最常见的API组，其中许多核心对象均来自v1。它包括与在Kubernetes上运行应用程序相关的功能，例如Deployments，RollingUpdates和ReplicaSets。</p>
-<p><strong>autoscaling / v1</strong><br>
-此API版本允许根据不同的资源使用量指标对pod进行自动缩放。此稳定版本仅支持CPU扩展，但是将来的alpha和beta版本将允许您根据内存使用情况和自定义指标进行扩展。</p>
-<p><strong>batch/v1</strong><br>
-的batchAPI组包含与批处理和作业样的任务（而不是应用类一样无限期运行Web服务器的任务）的对象。该apiVersion是这些API对象的第一个稳定版本。</p>
-<p><strong>batch / v1beta1</strong><br>
-Beta版本，用于Kubernetes中批处理对象的新功能，特别是包括CronJobs，它使您可以在特定的时间或周期性地运行Jobs。</p>
-<p><strong>certificate.k8s.io/v1beta1</strong><br>
-此API版本增加了用于验证网络证书以在群集中进行安全通信的功能。您可以阅读更多有关官方文档的信息。</p>
-<p><strong>extensions / v1beta1</strong><br>
-此版本的API包括Kubernetes的许多常用新功能。在此版本中，部署，DaemonSet，副本集和Ingress都进行了重大更改。</p>
-<p>请注意，在Kubernetes 1.6中，其中一些对象已从重新定位extensions到特定的API组（例如apps）。当这些对象移出测试版时，应将它们归入特定的API组，例如apps/v1。使用extensions/v1beta1正变得过时，尝试用在可能情况下，根据您的Kubernetes集群版本的特定API组。</p>
-<p><strong>policy / v1beta1</strong><br>
-此apiVersion增加了设置容器中断预算和有关容器安全性的新规则的功能。</p>
-<p><strong>rbac.authorization.k8s.io/v1</strong><br>
-此apiVersion包含用于Kubernetes基于角色的访问控制的附加功能。这可以帮助您保护群集。查看官方博客文章。</p>
+<p>打开 Kubernetes 的官网，我们可以看到关于 Kubernetes 服务的描述为：</p>
+<blockquote>
+<p>Automated container deployment, scaling, and management</p>
+</blockquote>
+<p>而白话来说，上面的描述表示他可以做到：</p>
+<ul>
+<li>同时部署多个容器到多台机器上（Deployment）</li>
+<li>服务的乘载量有变化时，可以对容器做自动扩展（Scaling）</li>
+<li>管理多个容器的状态，自动侦测并重启故障的容器（Management）</li>
+</ul>
+<h2 id="kubernetes-四元件">Kubernetes 四元件</h2>
+<p>在了解 Kubernetes 如何帮助我们管理容器们前，我们先要由小到大依序了解组成 Kubernetes 的四种最基本的元件：Pod、Worker Node、Master Node、Cluster。</p>
+<p><strong>Pod</strong></p>
+<p>Kubernetes 运作的最小单位，一个 Pod 对应到一个应用服务（Application） ，举例来说一个 Pod 可能会对应到一个 API Server。</p>
+<ul>
+<li>每个 Pod 都有一个身分证，也就是属于这个 Pod 的 yaml 档</li>
+<li>一个 Pod 里面可以有一个或是多个 Container，但一般情况一个 Pod 最好只有一个 Container</li>
+<li>同一个 Pod 中的 Containers 共享相同资源及网路，彼此透过 local port number 沟通</li>
+</ul>
+<p><strong>Worker Node</strong></p>
+<p>Kubernetes 运作的最小硬体单位，一个Worker Node（简称Node）对应到一台机器，可以是实体机如你的笔电、或是虚拟机如AWS 上的一台EC2 或GCP 上的一台Computer Engine 。</p>
+<p>每个 Node 中都有三个组件：kubelet、kube-proxy、Container Runtime。</p>
+<blockquote>
+<p>小提醒：在 Worker Node 与 Master Node 的组件部分，因为 Kubernetes 本身其实都抽象的很好，所以在 Kubernetes 「基础的」使用上如何不了解这些组建也不会有非常大的影响。</p>
+</blockquote>
+<p><strong>kubelet</strong></p>
+<ul>
+<li>该 Node 的管理员，负责管理该 Node 上的所有 Pods 的状态并负责与 Master 沟通</li>
+</ul>
+<p><strong>kube-proxy</strong></p>
+<ul>
+<li>该 Node 的传讯员，负责更新 Node 的 iptables，让 Kubernetes 中不在该 Node 的其他物件可以得知该 Node 上所有 Pods 的最新状态</li>
+</ul>
+<p><strong>kube-apiserver</strong></p>
+<ul>
+<li>
+<p>管理整个 Kubernetes 所需 API 的接口（Endpoint），例如从 Command Line 下 kubectl 指令就会把指令送到这里</p>
+</li>
+<li>
+<p>负责 Node 之间的沟通桥梁，每个 Node 彼此不能直接沟通，必须要透过 apiserver 转介<br>
+负责 Kubernetes 中的请求的身份认证与授权</p>
+</li>
+</ul>
+<p><strong>etcd</strong></p>
+<ul>
+<li>用来存放 Kubernetes Cluster 的资料作为备份，当 Master 因为某些原因而故障时，我们可以透过 etcd 帮我们还原 Kubernetes 的状态</li>
+</ul>
+<p><strong>kube-controller-manager</strong></p>
+<ul>
+<li>负责管理并运行 Kubernetes controller 的组件，简单来说 controller 就是 Kubernetes 里一个个负责监视 Cluster 状态的 Process，例如：Node Controller、Replication Controller</li>
+<li>这些 Process 会在 Cluster 与预期状态（desire state）不符时尝试更新现有状态（current state）。例如：现在要多开一台机器以应付突然增加的流量，那我的预期状态就会更新成 N+1，现有状态为 N，这时相对应的 controller 就会想办法多开一台机器</li>
+<li>controller-manager 的监视与尝试更新也都需要透过访问 kube-apiserver 达成</li>
+</ul>
+<p><strong>kube-scheduler</strong></p>
+<p>整个Kubernetes 的Pods 调度员，scheduler 会监视新建立但还没有被指定要跑在哪个Node 上的Pod，并根据每个Node 上面资源规定、硬体限制等条件去协调出一个最适合放置的Node 让该Pod 跑</p>
+<p><strong>Cluster</strong></p>
+<p>Kubernetes 中多个 Node 与 Master 的集合。基本上可以想成在同一个环境里所有 Node 集合在一起的单位。</p>
+<h2 id="基本运作与安装">基本运作与安装</h2>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1597917479477.jpg" alt="" loading="lazy"></figure>
+<p>因原文为外网才能访问所以转载<br>
+<a href="https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0">原文链接</a></p>
 </div>
                                     <div class="mdui-divider mdui-m-b-2"></div>
                                     <div class="mdui-row-xs-2 post-fenye">
                                        
-                                        <div class="mdui-col"> <div class="mdui-text-left"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">kubernetes基础学习（一）原理</a></div></div>
+                                        <div class="mdui-col"> </div>
                                         
 
                                         
-                                        <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">NFS网络文件系统部署</a></div> </div>
+                                        <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">k8s——apiVersion对照表</a></div> </div>
                                        
                                       </div>
                                    

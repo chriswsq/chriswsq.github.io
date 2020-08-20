@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T10:33:29.189Z</updated>
+    <updated>2020-08-20T10:33:47.238Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -418,7 +418,7 @@ echo 192.168.99.100   purple.demo.com &gt;&gt; /etc/hosts
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[kubernetes基础学习（一）原理]]></title>
+        <title type="html"><![CDATA[kubernetes基础教学（一）原理]]></title>
         <id>https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/</id>
         <link href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">
         </link>

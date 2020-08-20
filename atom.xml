@@ -2,11 +2,11 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T07:51:53.572Z</updated>
+    <updated>2020-08-20T08:45:44.539Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
-    <subtitle>不要让自己感到无聊</subtitle>
+    <subtitle>当你觉得无所事事时，那你就是在虚度光阴</subtitle>
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>

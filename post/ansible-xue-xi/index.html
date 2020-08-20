@@ -1,52 +1,100 @@
+<!DOCTYPE html>
 <html>
-      <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <meta name="referrer" content="never">
-        <title>ansible学习 | chris&#39;wang</title>
-        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
-        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-          <script src="https://chriswsq.github.io/media/scripts/mdui.min.js"></script>
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
-        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://chriswsq.github.io/media/scripts/script.js"></script>
-        <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    <meta charset="utf-8" >
+
+<title>ansible学习 | chris&#39;wang</title>
+<meta name="description" content="不要让自己感到无聊">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1597908004885">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://chriswsq.github.io">chris&#39;wang</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
         
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
 
-    </head>
-    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="index-img mdui-m-b-3"  style="background-image: url(https://chriswsq.github.io/post-images/ansible-xue-xi.jpeg);" >
-                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
-                <ul class="mdui-menu" id="demo-attr-cascade">
-                
-                        <li class="mdui-menu-item">
-                          <a href="/" class="mdui-ripple">首页</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/archives" class="mdui-ripple">归档</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/tags" class="mdui-ripple">标签</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/post/about" class="mdui-ripple">关于</a>
-                        </li>
-                
-                      </ul>
-
-        </header>
-        <div class="mdui-container post">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
-                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
-                           <div class="mdui-typo-display-1 mdui-m-b-3">ansible学习</div>
-                           <a  class="index-list-biaoqian ">2020-08-19</a>
-                           <div class="mdui-typo mdui-m-t-3 post-neirong"><p>⏰ansible自动化运维工具，可以同时对多台主机进行管理，提升工作效率。在此记录工作中用到的东西</p>
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>ansible学习</h1>
+            <p class="article-meta">
+              2020-08-19
+              
+                <a href="https://chriswsq.github.io/tag/6JfAGgYaP/" class="badge success">
+                  ansible
+                </a>
+              
+            </p>
+            
+              <img src="https://chriswsq.github.io/post-images/ansible-xue-xi.jpeg" alt="ansible学习">
+            
+            <div class="post-content">
+              <p>⏰ansible自动化运维工具，可以同时对多台主机进行管理，提升工作效率。在此记录工作中用到的东西</p>
 <!--more-->
 <h3 id="ansible基本小知识">ansible基本小知识</h3>
 <h4 id="组件inventory">组件inventory</h4>
@@ -132,120 +180,126 @@ ansible_sudo_pass：指定SSH连接时sudo密码
  
 ansible_ssh_private_key_file：指定特有私钥文件
 </code></pre>
-</div>
-                              <div class="mdui-divider mdui-m-t-3"></div>
-                              <div class="mdui-row-xs-2 mdui-m-t-2">
-  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/">生产xuperchain部署文档</a></div></div>
- <div class="mdui-col"></div>
-                                </div>
-                                <div class="mdui-divider mdui-m-t-2"></div>
-   
- <script src="https://chriswsq.github.io/media/scripts/Valine.min.js"></script>
- <div class="comment"></div>
 
-<script>
-      new Valine({
-            el: '.comment',
-
-            app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
-
-
-            app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
-
-
-            placeholder: '没事儿说两句',
-            
-            path: window.location.pathname,
-            pageSize: 30,
-            avatar:'mm', 
-       })
-
-    </script> 
-<script>
-    if(window.location.hash){
-        var checkExist = setInterval(function() {
-           if ($(window.location.hash).length) {
-              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
-              clearInterval(checkExist);
-           }
-        }, 100);
-    }
-</script>
-                         </article>
-                 <div class="toc-container mdui-float-right">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li>
-<ul>
-<li><a href="#ansible%E5%9F%BA%E6%9C%AC%E5%B0%8F%E7%9F%A5%E8%AF%86">ansible基本小知识</a>
-<ul>
-<li><a href="#%E7%BB%84%E4%BB%B6inventory">组件inventory</a></li>
-<li><a href="#ventory%E6%B8%85%E5%8D%95%E7%9A%84%E4%BD%BF%E7%94%A8%E8%A7%84%E5%88%99%E5%AE%9A%E4%B9%89%E4%B8%BB%E6%9C%BA%E5%92%8C%E7%BB%84">ventory（清单）的使用规则（定义主机和组）</a></li>
-<li><a href="#%E5%AE%9A%E4%B9%89%E4%B8%BB%E6%9C%BA%E5%8F%98%E9%87%8F">定义主机变量</a></li>
-<li><a href="#%E5%AE%9A%E4%B9%89%E7%BB%84%E5%8F%98%E9%87%8F">定义组变量</a></li>
-<li><a href="#%E5%85%B6%E4%BB%96inventory%E6%B8%85%E5%8D%95%E5%8F%82%E6%95%B0%E5%88%97%E8%A1%A8">其他Inventory（清单）参数列表</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
-
-                        </div>
-                 </div>
+            </div>
+          </article>
+        </div>
+        <div class="paper" data-aos="fade-in">
           
         </div>
-        <script data-no-instant>
-    (function ($) {
-        $.extend({
-            adamsOverload: function () {
-                $.viewImage({
-                    'target'  : '.post-neirong img',
-                    'exclude' : '.vsmile-icons img , .song-links-item img',
-                    'delay'   : 300
-                });
-            }
-        });
-    })(jQuery);
-    jQuery.adamsOverload();
+        
+      </div>
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://chriswsq.github.io/images/avatar.png?v=1597908004885" class="no-responsive avatar">
+    <div class="text-muted">不要让自己感到无聊</div>
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">k8s——apiVersion对照表</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">NFS网络文件系统部署</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://chriswsq.github.io/post/sedandawk-bi-ji/">sed&amp;awk笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://chriswsq.github.io/post/xuperchain-tian-jia-kuang-gong-jie-dian/">xuperchain添加旷工节点</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/">生产xuperchain部署文档</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://chriswsq.github.io/post/ansible-xue-xi/">ansible学习</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://chriswsq.github.io/post/about/">关于</a>
+            </li>
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://chriswsq.github.io/tag/a8HA2VQaH/" class="badge secondary">
+          linux
+        </a>
+      
+        <a href="https://chriswsq.github.io/tag/ZheGLyv2M/" class="badge success">
+          xuperchain
+        </a>
+      
+        <a href="https://chriswsq.github.io/tag/6JfAGgYaP/" class="badge secondary">
+          ansible
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+  </div>
+</div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
 </script>
-        <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                      </ul>
-                    </nav>
-                  <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a></p>
-                  </div>
-              </footer>
-    </body>
+
+
+
+
+  </body>
 </html>

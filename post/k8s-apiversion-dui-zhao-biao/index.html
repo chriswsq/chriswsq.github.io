@@ -4,92 +4,115 @@
     <meta charset="utf-8" >
 
 <title>k8s——apiVersion对照表 | chris&#39;wang</title>
-<meta name="description" content="不要让自己感到无聊">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1597908004885">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1597908120477">
 <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
 
 
-<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-
 
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 
+
+    <meta name="description" content="不同的控制器选用不同的apiVersion
+
+对照表
+
+
+
+kind
+apiVersion
+
+
+
+
+CertificateSigningRequest
+certificates.k8s.io/v1beta1
+
+
+ClusterRoleBin..." />
+    <meta name="keywords" content="" />
   </head>
   <body>
-  
-    <nav class="navbar border fixed split-nav">
-  <div class="nav-brand">
-    <h3><a href="https://chriswsq.github.io">chris&#39;wang</a></h3>
-  </div>
-  <div class="collapsible">
-    <input id="collapsible1" type="checkbox" name="collapsible1">
-    <button>
-      <label for="collapsible1">
-        <div class="bar1"></div>
-        <div class="bar2"></div>
-        <div class="bar3"></div>
-      </label>
-    </button>
-    <div class="collapsible-body">
-      <ul class="inline">
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://chriswsq.github.io">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1597908120477" class="site-logo">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
         
-          <li>
-            
-              <a href="/" class="menu">
-                首页
-              </a>
-            
-          </li>
+          <a href="/" class="site-nav">
+            首页
+          </a>
         
-          <li>
-            
-              <a href="/archives" class="menu">
-                归档
-              </a>
-            
-          </li>
+      
         
-          <li>
-            
-              <a href="/tags" class="menu">
-                标签
-              </a>
-            
-          </li>
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
         
-          <li>
-            
-              <a href="/post/about" class="menu">
-                关于
-              </a>
-            
-          </li>
+      
         
-      </ul>
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
     </div>
   </div>
-</nav>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不要让自己感到无聊
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
 
-    <div id="top" class="row site">
-      <div class="sm-12 md-8 col">
-        <div class="paper">
-          <article class="article">
-            <h1>k8s——apiVersion对照表</h1>
-            <p class="article-meta">
-              2020-08-20
-              
-            </p>
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">k8s——apiVersion对照表</h2>
+            <div class="post-date">2020-08-20</div>
             
-              <img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1597917633977&amp;di=1663d845f89c422cb400d80c82b79f2b&amp;imgtype=0&amp;src=http%3A%2F%2Fimgcdn.sdk.cn%2Feditor%2F8znUHAiWSEP0yw2C5-dd.jpg" alt="k8s——apiVersion对照表">
+              <div class="feature-container" style="background-image: url('https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1597917633977&amp;di=1663d845f89c422cb400d80c82b79f2b&amp;imgtype=0&amp;src=http%3A%2F%2Fimgcdn.sdk.cn%2Feditor%2F8znUHAiWSEP0yw2C5-dd.jpg')">
+              </div>
             
-            <div class="post-content">
+            <div class="post-content" v-pre>
               <p>不同的控制器选用不同的apiVersion</p>
 <!-- more -->
 <h2 id="对照表">对照表</h2>
@@ -263,132 +286,41 @@ Beta版本，用于Kubernetes中批处理对象的新功能，特别是包括Cro
 此apiVersion包含用于Kubernetes基于角色的访问控制的附加功能。这可以帮助您保护群集。查看官方博客文章。</p>
 
             </div>
-          </article>
-        </div>
-        <div class="paper" data-aos="fade-in">
-          
-            <div class="next-post">
-              <div class="next">
-                下一篇
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">
+                  <h3 class="post-title">
+                    NFS网络文件系统部署
+                  </h3>
+                </a>
               </div>
-              <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">
-                <h3 class="post-title">
-                  NFS网络文件系统部署
-                </h3>
-              </a>
-            </div>
-          
+            
+
+            
+
+          </div>
+
         </div>
-        
       </div>
-
-      <div class="sm-12 md-4 col sidebar">
-  <div class="paper info-container">
-    <img src="https://chriswsq.github.io/images/avatar.png?v=1597908004885" class="no-responsive avatar">
-    <div class="text-muted">不要让自己感到无聊</div>
-    <div class="social-container">
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-  </div>
-  <div class="paper">
-    <div class="sidebar-title">
-      最新文章
-    </div>
-    <div class="row">
-      <ul>
-        
-          
-            <li>
-              <a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">k8s——apiVersion对照表</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">NFS网络文件系统部署</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://chriswsq.github.io/post/sedandawk-bi-ji/">sed&amp;awk笔记</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://chriswsq.github.io/post/xuperchain-tian-jia-kuang-gong-jie-dian/">xuperchain添加旷工节点</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/">生产xuperchain部署文档</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://chriswsq.github.io/post/ansible-xue-xi/">ansible学习</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://chriswsq.github.io/post/about/">关于</a>
-            </li>
-          
-        
-      </ul>
-    </div>
-  </div>
-  <div class="paper">
-    <div class="sidebar-title">
-      标签列表
-    </div>
-    <div class="row">
-      
-        <a href="https://chriswsq.github.io/tag/a8HA2VQaH/" class="badge secondary">
-          linux
-        </a>
-      
-        <a href="https://chriswsq.github.io/tag/ZheGLyv2M/" class="badge ">
-          xuperchain
-        </a>
-      
-        <a href="https://chriswsq.github.io/tag/6JfAGgYaP/" class="badge ">
-          ansible
-        </a>
-      
-    </div>
-  </div>
-  <div class="paper">
-    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
-  </div>
-</div>
-
-
     </div>
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-
 <script type="application/javascript">
 
 AOS.init();
 
-hljs.initHighlightingOnLoad()
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
+
+
 
 
 

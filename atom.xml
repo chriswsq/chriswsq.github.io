@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T06:38:19.265Z</updated>
+    <updated>2020-08-20T06:39:51.684Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -50,7 +50,7 @@ enableXEndorser: true
 
 </code></pre>
 <h3 id="修改outputdataconfigxuperjson文件拷贝至其他节点选择挖矿节点-挖矿节点数量-address地址为主节点即可-更改时间戳-挖矿节点neturl">修改/output/data/config/xuper.json文件，拷贝至其他节点（选择挖矿节点、挖矿节点数量、address地址为主节点即可、更改时间戳、挖矿节点netURL)</h3>
-<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1597893450356.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1597905583948.jpg" alt="" loading="lazy"></figure>
 <blockquote>
 <p>注意： 此模板文件节点之间必须一致，否则会出现块高不一致的情况<br>
 maxblocksize、proposer_num、period、alternate_interval、term_interval、block_num参数根据实际情况修改，我这里是测试环境的配置</p>

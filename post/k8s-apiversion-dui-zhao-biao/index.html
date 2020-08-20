@@ -1,0 +1,325 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>k8s——apiVersion对照表 | chris&#39;wang</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+          <script src="https://chriswsq.github.io/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://chriswsq.github.io/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/post/about" class="mdui-ripple">关于</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">k8s——apiVersion对照表</div>
+                           <a  class="index-list-biaoqian ">2020-08-20</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><p>不同的控制器选用不同的apiVersion</p>
+<!-- more -->
+<h2 id="对照表">对照表</h2>
+<table>
+<thead>
+<tr>
+<th>kind</th>
+<th>apiVersion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CertificateSigningRequest</td>
+<td>certificates.k8s.io/v1beta1</td>
+</tr>
+<tr>
+<td>ClusterRoleBinding</td>
+<td>rbac.authorization.k8s.io/v1</td>
+</tr>
+<tr>
+<td>ClusterRole</td>
+<td>rbac.authorization.k8s.io/v1</td>
+</tr>
+<tr>
+<td>ComponentStatus</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ConfigMap</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ControllerRevision</td>
+<td>apps/v1</td>
+</tr>
+<tr>
+<td>CronJob</td>
+<td>batch/v1beta1</td>
+</tr>
+<tr>
+<td>DaemonSet</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>Endpoints</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Event</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>HorizontalPodAutoscaler</td>
+<td>autoscaling/v1</td>
+</tr>
+<tr>
+<td>Ingress</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>Job</td>
+<td>batch/v1</td>
+</tr>
+<tr>
+<td>LimitRange</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Namespace</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>NetworkPolicy</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>Node</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>PersistentVolumeClaim</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>PersistentVolume</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>PodDisruptionBudget</td>
+<td>policy/v1beta1</td>
+</tr>
+<tr>
+<td>Pod</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>PodSecurityPolicy</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>PodTemplate</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ReplicaSet</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>ReplicationController</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ResourceQuota</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>RoleBinding</td>
+<td>rbac.authorization.k8s.io/v1</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>rbac.authorization.k8s.io/v1</td>
+</tr>
+<tr>
+<td>Secret</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ServiceAccount</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Service</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>StatefulSet</td>
+<td>apps/v1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="apiversion分别是什么意思">apiVersion分别是什么意思？</h2>
+<p>名称中带有'alpha'的alpha API版本是Kubernetes中新功能的早期候选者。这些可能包含错误，并且不能保证将来能够正常工作。</p>
+<p><strong>测试</strong><br>
+在API版本名称意味着测试已取得进展过去的阿尔法水平，并且该功能最终将被列入Kubernetes“测试”。尽管其工作方式可能会发生变化，并且对象的定义方式可能会发生完全变化，但功能本身很有可能以某种形式将其纳入Kubernetes。</p>
+<p><strong>稳定名称中</strong><br>
+不包含“ alpha”或“ beta”。它们是安全使用的。</p>
+<hr>
+<p><strong>v1</strong><br>
+这是Kubernetes API的第一个稳定版本。它包含许多核心对象。</p>
+<p><strong>apps / v1</strong><br>
+apps是Kubernetes中最常见的API组，其中许多核心对象均来自v1。它包括与在Kubernetes上运行应用程序相关的功能，例如Deployments，RollingUpdates和ReplicaSets。</p>
+<p><strong>autoscaling / v1</strong><br>
+此API版本允许根据不同的资源使用量指标对pod进行自动缩放。此稳定版本仅支持CPU扩展，但是将来的alpha和beta版本将允许您根据内存使用情况和自定义指标进行扩展。</p>
+<p><strong>batch/v1</strong><br>
+的batchAPI组包含与批处理和作业样的任务（而不是应用类一样无限期运行Web服务器的任务）的对象。该apiVersion是这些API对象的第一个稳定版本。</p>
+<p><strong>batch / v1beta1</strong><br>
+Beta版本，用于Kubernetes中批处理对象的新功能，特别是包括CronJobs，它使您可以在特定的时间或周期性地运行Jobs。</p>
+<p><strong>certificate.k8s.io/v1beta1</strong><br>
+此API版本增加了用于验证网络证书以在群集中进行安全通信的功能。您可以阅读更多有关官方文档的信息。</p>
+<p><strong>extensions / v1beta1</strong><br>
+此版本的API包括Kubernetes的许多常用新功能。在此版本中，部署，DaemonSet，副本集和Ingress都进行了重大更改。</p>
+<p>请注意，在Kubernetes 1.6中，其中一些对象已从重新定位extensions到特定的API组（例如apps）。当这些对象移出测试版时，应将它们归入特定的API组，例如apps/v1。使用extensions/v1beta1正变得过时，尝试用在可能情况下，根据您的Kubernetes集群版本的特定API组。</p>
+<p><strong>policy / v1beta1</strong><br>
+此apiVersion增加了设置容器中断预算和有关容器安全性的新规则的功能。</p>
+<p><strong>rbac.authorization.k8s.io/v1</strong><br>
+此apiVersion包含用于Kubernetes基于角色的访问控制的附加功能。这可以帮助您保护群集。查看官方博客文章。</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> </div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">NFS网络文件系统部署</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://chriswsq.github.io/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+
+
+            app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+
+
+            placeholder: '没事儿说两句',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AF%B9%E7%85%A7%E8%A1%A8">对照表</a></li>
+<li><a href="#apiversion%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D">apiVersion分别是什么意思？</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a></p>
+                  </div>
+              </footer>
+    </body>
+</html>

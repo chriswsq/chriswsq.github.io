@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T07:06:16.414Z</updated>
+    <updated>2020-08-20T07:12:58.990Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,187 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[k8s——apiVersion对照表]]></title>
+        <id>https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/</id>
+        <link href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">
+        </link>
+        <updated>2020-08-20T07:10:24.000Z</updated>
+        <summary type="html"><![CDATA[<p>不同的控制器选用不同的apiVersion</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>不同的控制器选用不同的apiVersion</p>
+<!-- more -->
+<h2 id="对照表">对照表</h2>
+<table>
+<thead>
+<tr>
+<th>kind</th>
+<th>apiVersion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CertificateSigningRequest</td>
+<td>certificates.k8s.io/v1beta1</td>
+</tr>
+<tr>
+<td>ClusterRoleBinding</td>
+<td>rbac.authorization.k8s.io/v1</td>
+</tr>
+<tr>
+<td>ClusterRole</td>
+<td>rbac.authorization.k8s.io/v1</td>
+</tr>
+<tr>
+<td>ComponentStatus</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ConfigMap</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ControllerRevision</td>
+<td>apps/v1</td>
+</tr>
+<tr>
+<td>CronJob</td>
+<td>batch/v1beta1</td>
+</tr>
+<tr>
+<td>DaemonSet</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>Endpoints</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Event</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>HorizontalPodAutoscaler</td>
+<td>autoscaling/v1</td>
+</tr>
+<tr>
+<td>Ingress</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>Job</td>
+<td>batch/v1</td>
+</tr>
+<tr>
+<td>LimitRange</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Namespace</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>NetworkPolicy</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>Node</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>PersistentVolumeClaim</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>PersistentVolume</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>PodDisruptionBudget</td>
+<td>policy/v1beta1</td>
+</tr>
+<tr>
+<td>Pod</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>PodSecurityPolicy</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>PodTemplate</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ReplicaSet</td>
+<td>extensions/v1beta1</td>
+</tr>
+<tr>
+<td>ReplicationController</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ResourceQuota</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>RoleBinding</td>
+<td>rbac.authorization.k8s.io/v1</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>rbac.authorization.k8s.io/v1</td>
+</tr>
+<tr>
+<td>Secret</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>ServiceAccount</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Service</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>StatefulSet</td>
+<td>apps/v1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="apiversion分别是什么意思">apiVersion分别是什么意思？</h2>
+<p>名称中带有'alpha'的alpha API版本是Kubernetes中新功能的早期候选者。这些可能包含错误，并且不能保证将来能够正常工作。</p>
+<p><strong>测试</strong><br>
+在API版本名称意味着测试已取得进展过去的阿尔法水平，并且该功能最终将被列入Kubernetes“测试”。尽管其工作方式可能会发生变化，并且对象的定义方式可能会发生完全变化，但功能本身很有可能以某种形式将其纳入Kubernetes。</p>
+<p><strong>稳定名称中</strong><br>
+不包含“ alpha”或“ beta”。它们是安全使用的。</p>
+<hr>
+<p><strong>v1</strong><br>
+这是Kubernetes API的第一个稳定版本。它包含许多核心对象。</p>
+<p><strong>apps / v1</strong><br>
+apps是Kubernetes中最常见的API组，其中许多核心对象均来自v1。它包括与在Kubernetes上运行应用程序相关的功能，例如Deployments，RollingUpdates和ReplicaSets。</p>
+<p><strong>autoscaling / v1</strong><br>
+此API版本允许根据不同的资源使用量指标对pod进行自动缩放。此稳定版本仅支持CPU扩展，但是将来的alpha和beta版本将允许您根据内存使用情况和自定义指标进行扩展。</p>
+<p><strong>batch/v1</strong><br>
+的batchAPI组包含与批处理和作业样的任务（而不是应用类一样无限期运行Web服务器的任务）的对象。该apiVersion是这些API对象的第一个稳定版本。</p>
+<p><strong>batch / v1beta1</strong><br>
+Beta版本，用于Kubernetes中批处理对象的新功能，特别是包括CronJobs，它使您可以在特定的时间或周期性地运行Jobs。</p>
+<p><strong>certificate.k8s.io/v1beta1</strong><br>
+此API版本增加了用于验证网络证书以在群集中进行安全通信的功能。您可以阅读更多有关官方文档的信息。</p>
+<p><strong>extensions / v1beta1</strong><br>
+此版本的API包括Kubernetes的许多常用新功能。在此版本中，部署，DaemonSet，副本集和Ingress都进行了重大更改。</p>
+<p>请注意，在Kubernetes 1.6中，其中一些对象已从重新定位extensions到特定的API组（例如apps）。当这些对象移出测试版时，应将它们归入特定的API组，例如apps/v1。使用extensions/v1beta1正变得过时，尝试用在可能情况下，根据您的Kubernetes集群版本的特定API组。</p>
+<p><strong>policy / v1beta1</strong><br>
+此apiVersion增加了设置容器中断预算和有关容器安全性的新规则的功能。</p>
+<p><strong>rbac.authorization.k8s.io/v1</strong><br>
+此apiVersion包含用于Kubernetes基于角色的访问控制的附加功能。这可以帮助您保护群集。查看官方博客文章。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[NFS网络文件系统部署]]></title>
         <id>https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/</id>

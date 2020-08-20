@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T06:55:14.187Z</updated>
+    <updated>2020-08-20T06:59:49.815Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,151 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[NFS网络文件系统部署]]></title>
+        <id>https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/</id>
+        <link href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">
+        </link>
+        <updated>2020-08-20T06:58:24.000Z</updated>
+        <summary type="html"><![CDATA[<p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
+<!-- more -->
+<h2 id="系统环境">系统环境</h2>
+<table>
+<thead>
+<tr>
+<th>主机名称</th>
+<th>操作系统</th>
+<th>IP地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFS服务器</td>
+<td>Centos 7 64位</td>
+<td>192.168.40.6</td>
+</tr>
+<tr>
+<td>NFS客户端</td>
+<td>Centos 7 64位</td>
+<td>192.168.40.7</td>
+</tr>
+</tbody>
+</table>
+<h2 id="nfs服务配置文件的参数">NFS服务配置文件的参数</h2>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ro</td>
+<td></td>
+</tr>
+<tr>
+<td>rw</td>
+<td>读写</td>
+</tr>
+<tr>
+<td>root_squash</td>
+<td>当NFS客户端以root管理员访问时，映射为NFS服务器的匿名用户</td>
+</tr>
+<tr>
+<td>no_root_squash</td>
+<td>当NFS客户端以root管理员访问时，映射为NFS服务器的root管理员</td>
+</tr>
+<tr>
+<td>all_squash</td>
+<td>无论NFS客户端使用什么账户访问，均映射为NFS服务器的匿名用户</td>
+</tr>
+<tr>
+<td>sync</td>
+<td>同时将数据写入到内存与硬盘中，保证不丢失数据</td>
+</tr>
+<tr>
+<td>async</td>
+<td>优先将数据写入到内存，然后再写入硬盘；这样效率更高，但可能会丢失数据</td>
+</tr>
+</tbody>
+</table>
+<h2 id="nfs服务器操作">NFS服务器操作</h2>
+<h3 id="1-安装nfs">1、安装NFS</h3>
+<p><code>yum -y install nfs-utils</code></p>
+<h3 id="2-创建用于nfs共享的目录">2、创建用于NFS共享的目录</h3>
+<pre><code class="language-bash">mkdir /test
+chown -R nfsnobody /nfsdata
+</code></pre>
+<h3 id="3-编辑nfs的配置文件添加如下内容">3、编辑NFS的配置文件，添加如下内容</h3>
+<p><em>注：NFS的配置文件默认是没有内容的</em></p>
+<pre><code class="language-conf">vim /etc/exports
+/nfsdata 192.168.40.*(rw,sync,root_squash)
+</code></pre>
+<h3 id="4-启动nfs服务并加入开机启动项">4、启动NFS服务，并加入开机启动项</h3>
+<p>NFS服务需要使用RPC（Remote Procedure Call，远程过程调用）服务将NFS服务器的IP地址和端口号等信息发送给客户端，因此，在启动NFS服务之前，还需要顺带启动rpcbind服务。</p>
+<pre><code class="language-shell">systemctl start rpcbind
+systemctl enable rpcbind
+systemctl start nfs-server
+systemctl enable nfs-server
+</code></pre>
+<h3 id="5-查看nfs向rpc注册的端口信息">5、查看nfs向rpc注册的端口信息</h3>
+<p><code>rpcinfo -p localhost</code><br>
+<em>注：下图中用红框括起来的端口号需要防火墙允许</em><br>
+<img src="/images/nfs/nfs.jpg" alt="" loading="lazy"></p>
+<h3 id="6-配置firewalld防火墙允许nfs和rpc端口">6、配置firewalld防火墙，允许nfs和rpc端口</h3>
+<pre><code class="language-bash">firewall-cmd --permanent --add-service=nfs
+firewall-cmd --permanent --add-service=mountd
+firewall-cmd --permanent --add-port=111/tcp
+firewall-cmd --permanent --add-port=111/udp
+firewall-cmd --reload
+</code></pre>
+<h2 id="nfs客户端操作">NFS客户端操作</h2>
+<h3 id="1-使用showmount命令查询nfs服务器的远程共享信息">1、使用showmount命令查询NFS服务器的远程共享信息</h3>
+<p><strong>表3：showmount命令可用的参数以及作用</strong></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-e</td>
+<td>显示NFS服务器的共享列表</td>
+</tr>
+<tr>
+<td>-a</td>
+<td>显示本机挂载的文件资源的情况</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>显示版本号</td>
+</tr>
+</tbody>
+</table>
+<p>查看能否连接到nfs服务</p>
+<pre><code>showmount -e 192.168.40.6
+</code></pre>
+<h3 id="2-创建挂载目录并挂载">2、创建挂载目录，并挂载</h3>
+<pre><code class="language-bash">mkdir /nfsdata
+mount -t nfs 192.168.40.6:/nfsdata /nfsdata
+df -h
+</code></pre>
+<h3 id="3-将挂载信息写入etcfstab文件中以便开机自动挂载">3、将挂载信息写入/etc/fstab文件中，以便开机自动挂载</h3>
+<pre><code class="language-bash">vim /etc/fstab
+192.168.40.6:/nfsdata /nfsdata nfs defaults 0 0
+</code></pre>
+<p>4、测试<br>
+往/nfsdata目录下写入一个文件</p>
+<pre><code>echo &quot;welcome to xuad.com&quot; &amp;gt; /nfsdata/xuad.txt
+</code></pre>
+<p>在NFS服务器上查看/nfsdata目录下是否生成了此文件</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[sed&awk笔记]]></title>
         <id>https://chriswsq.github.io/post/sedandawk-bi-ji/</id>

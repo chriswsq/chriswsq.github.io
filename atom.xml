@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T06:44:23.843Z</updated>
+    <updated>2020-08-20T06:54:39.865Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,53 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[sed&awk笔记]]></title>
+        <id>https://chriswsq.github.io/post/sedandawk-bi-ji/</id>
+        <link href="https://chriswsq.github.io/post/sedandawk-bi-ji/">
+        </link>
+        <updated>2020-08-20T06:49:30.000Z</updated>
+        <summary type="html"><![CDATA[<p>sed&amp;awk 提升工作效率的小工具</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>sed&amp;awk 提升工作效率的小工具</p>
+<!-- more -->
+<h2 id="删除行首空格或者tab">删除行首空格或者tab</h2>
+<p><code>sed -i 's/^[ \t]*//g' file</code></p>
+<p>删除行尾空格或者tab<br>
+<code>sed -i 's/[ \t]*$//g' file</code></p>
+<h2 id="注释特定行">注释特定行</h2>
+<pre><code>sed -i '/swapfile/s/^/#/' /etc/fstab
+sed -i '/xvdb/s/^/#/g' /etc/fstab
+sed -i '/vdb/s/^/#/g' /etc/fstab
+</code></pre>
+<h2 id="取消注释">取消注释</h2>
+<pre><code>sed -i '/swapfile/s/^#//' /etc/fstab
+sed -i '/xvdb/s/^#//g' /etc/fstab
+sed -i '/vdb/s/^#//g' /etc/fstab
+</code></pre>
+<h2 id="注释未注释行">注释未注释行</h2>
+<p><code>sed -i 's/^[^#]/#&amp;/' /var/spool/cron/root</code></p>
+<h2 id="首字母大写">首字母大写</h2>
+<p><code>sed 's/\b[a-z]/\U&amp;/g' file</code></p>
+<h2 id="首字母小写">首字母小写</h2>
+<p><code>sed 's/\b[a-Z]/\L&amp;/g' file</code></p>
+<h2 id="在包含某个字符的上一行或者下一行插入内容">在包含某个字符的上一行或者下一行插入内容</h2>
+<pre><code>[root@RedHat test]# cat testfile 
+hello
+[root@RedHat test]# sed -i '/hello/i\\up' testfile 
+[root@RedHat test]# cat testfile 
+up
+hello
+[root@RedHat test]# sed -i '/hello/a\\down' testfile 
+[root@RedHat test]# cat testfile 
+up
+hello
+down
+[root@RedHat test]#
+</code></pre>
+<p><strong>假如有两个关键字hello，那么在每一行上面或者下面都插入内容</strong></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[xuperchain添加旷工节点]]></title>
         <id>https://chriswsq.github.io/post/xuperchain-tian-jia-kuang-gong-jie-dian/</id>

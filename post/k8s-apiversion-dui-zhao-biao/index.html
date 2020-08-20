@@ -1,110 +1,64 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>k8s——apiVersion对照表 | chris&#39;wang</title>
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1597908403078">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="k8s——apiVersion对照表 | chris&#39;wang - Atom Feed" href="https://chriswsq.github.io/atom.xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+        <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <title>k8s——apiVersion对照表 | chris&#39;wang</title>
+        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css" rel="stylesheet">
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+        <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+         <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+         <script >hljs.initHighlightingOnLoad();</script>
 
-
-
-    <meta name="description" content="不同的控制器选用不同的apiVersion
-
-对照表
-
-
-
-kind
-apiVersion
-
-
-
-
-CertificateSigningRequest
-certificates.k8s.io/v1beta1
-
-
-ClusterRoleBin..." />
-    <meta name="keywords" content="" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-  </head>
-  <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://chriswsq.github.io">
-  <img class="avatar" src="https://chriswsq.github.io/images/avatar.png?v=1597908403078" alt="">
-  </a>
-  <h1 class="site-title">
-    chris&#39;wang
-  </h1>
-  <p class="site-description">
-    不要让自己感到无聊
-  </p>
-  <div class="menu-container">
-    
-      
-        <a href="/" class="menu">
-          首页
-        </a>
-      
-    
-      
-        <a href="/archives" class="menu">
-          归档
-        </a>
-      
-    
-      
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
-  </div>
-  <div class="social-container">
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-  </div>
-</div>
-
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              k8s——apiVersion对照表
-            </h2>
-            <div class="post-info">
-              <span>
-                2020-08-20
-              </span>
-              <span>
-                4 min read
-              </span>
-              
-            </div>
-            
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <p>不同的控制器选用不同的apiVersion</p>
+    </head>
+    <body>
+              <header class="header mdui-m-b-5">      
+            <div class="container  ">
+                <div class="index-title animated fadeInDown mdui-text-center mdui-text-color-white mdui-m-b-2" style="animation-delay: 0.2s"><a href="https://chriswsq.github.io">chris&#39;wang</a></div>
+                <div class="mdui-text-color-white animated fadeInDown mdui-text-center  mdui-m-b-3" style="animation-delay: 0.4s">不要让自己感到无聊</div>
+           
+            <nav id="nav" class="mdui-text-center animated fadeInDown" style="animation-delay: 0.6s">
+                   
+                            <li><a href="/">首页</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                            <li><a href="/archives">归档</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                            <li><a href="/tags">标签</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                            <li><a href="/post/about">关于</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                  </nav>
+                </div>
+        </header>
+        <div class="mdui-container ">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                                <article class="mdui-p-a-2 post animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
+                                    <div class="post-title  mdui-m-b-1">k8s——apiVersion对照表</div>
+                                    <div class="mdui-typo-body-2 mdui-m-b-2" datetime="2020-08-20 15:10:24">2020-08-20 / 4 min read</div>
+                                    <div class="mdui-m-b-2 mdui-typo post-neirong"><p>不同的控制器选用不同的apiVersion</p>
 <!-- more -->
 <h2 id="对照表">对照表</h2>
 <table>
@@ -275,85 +229,87 @@ Beta版本，用于Kubernetes中批处理对象的新功能，特别是包括Cro
 此apiVersion增加了设置容器中断预算和有关容器安全性的新规则的功能。</p>
 <p><strong>rbac.authorization.k8s.io/v1</strong><br>
 此apiVersion包含用于Kubernetes基于角色的访问控制的附加功能。这可以帮助您保护群集。查看官方博客文章。</p>
-
-              </div>
-              <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#%E5%AF%B9%E7%85%A7%E8%A1%A8">对照表</a></li>
-<li><a href="#apiversion%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D">apiVersion分别是什么意思？</a></li>
-</ul>
-</li>
-</ul>
-
-              </div>
-            </div>
-          </article>
-        </div>
-
-        
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">
-              <h3 class="post-title">
-                NFS网络文件系统部署
-              </h3>
-            </a>
-          </div>
-        
-
-        
-
-        <div class="site-footer">
-  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">
-    <i class="ri-rss-line"></i> RSS
-  </a>
 </div>
+                                    <div class="mdui-divider mdui-m-b-2"></div>
+                                    <div class="mdui-row-xs-2 post-fenye">
+                                       
+                                        <div class="mdui-col"> </div>
+                                        
 
-      </div>
-    </div>
+                                        
+                                        <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">NFS网络文件系统部署</a></div> </div>
+                                       
+                                      </div>
+                                   
+                                    <div class="mdui-divider mdui-m-t-2 mdui-m-b-2"></div>
+                                    
+                                     <script src="https://chriswsq.github.io/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
 
-    <script>
-      hljs.initHighlightingOnLoad()
+<script>
+      new Valine({
+            el: '.comment',
 
-      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
 
-      // This should probably be throttled.
-      // Especially because it triggers during smooth scrolling.
-      // https://lodash.com/docs/4.17.10#throttle
-      // You could do like...
-      // window.addEventListener("scroll", () => {
-      //    _.throttle(doThatStuff, 100);
-      // });
-      // Only not doing it here to keep this Pen dependency-free.
 
-      window.addEventListener("scroll", event => {
-        let fromTop = window.scrollY;
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                                </article>
 
-        mainNavLinks.forEach((link, index) => {
-          let section = document.getElementById(decodeURI(link.hash).substring(1));
-          let nextSection = null
-          if (mainNavLinks[index + 1]) {
-            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-          }
-          if (section.offsetTop <= fromTop) {
-            if (nextSection) {
-              if (nextSection.offsetTop > fromTop) {
-                link.classList.add("current");
-              } else {
-                link.classList.remove("current");    
-              }
-            } else {
-              link.classList.add("current");
-            }
-          } else {
-            link.classList.remove("current");
-          }
-        });
-      });
+                                    
+                        </div>
+                      </div>
+    
+                
 
-    </script>
-  </body>
+              </div>
+                    <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      </ul>
+                    </nav>
+                    <div class="copyright">
+                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> <br/> Theme <a href="https://github.com/alterfang/gridea-theme-song/" target="_blank"  title="宋"  >Song</a> by <a href="https://shanbu.fun/" target="_blank"  title="山卜方" >shanbufun</a> </p>
+                  </div>
+                  
+              </footer>
+    </body>
 </html>

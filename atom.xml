@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T07:15:26.938Z</updated>
+    <updated>2020-08-20T07:17:52.007Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -331,7 +331,7 @@ df -h
 </code></pre>
 <p>4、测试<br>
 往/nfsdata目录下写入一个文件</p>
-<pre><code>echo &quot;welcome to xuad.com&quot; &amp;gt; /nfsdata/xuad.txt
+<pre><code>echo &quot;welcome to xuad.com&quot; &gt; /nfsdata/xuad.txt
 </code></pre>
 <p>在NFS服务器上查看/nfsdata目录下是否生成了此文件</p>
 ]]></content>

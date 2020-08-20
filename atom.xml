@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T02:58:54.823Z</updated>
+    <updated>2020-08-20T05:31:31.791Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,105 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[生产xuperchain部署文档]]></title>
+        <id>https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/</id>
+        <link href="https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/">
+        </link>
+        <updated>2020-08-20T03:02:14.000Z</updated>
+        <summary type="html"><![CDATA[<p>百度区块链部署xuperchain</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>百度区块链部署xuperchain</p>
+<!-- more -->
+<p>##部署信息<br>
+版本：3.7.0<br>
+加密方式：国密<br>
+共识：tdpos<br>
+链类型：联盟链</p>
+<h2 id="以下为初始化-建链前的一次性操作建链后再修改需要进提案修改完后创建xuper链并将ouput目录拷贝至其他节点后续其他节点根据情况修改个别需要节点唯一的内容即可keys的三个文件-neturl地址">以下为初始化 建链前的一次性操作（建链后再修改需要进提案），修改完后创建xuper链，并将ouput目录拷贝至其他节点，后续其他节点根据情况修改个别需要节点唯一的内容即可（keys的三个文件 ,netURL地址）</h2>
+<h3 id="修改outputconfpluginsconf-文件将default的加密方式改为国密方式">修改/output/conf/plugins.conf 文件(将default的加密方式改为国密方式)</h3>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1597892994286.jpg" alt="" loading="lazy"></figure>
+<h3 id="修改-outputconfxchainyaml文件">修改 /output/conf/xchain.yaml文件</h3>
+<pre><code class="language-yaml">#在 utxo 区域中添加 `nonUtxo: true`  参数
+utxo:
+  nonUtxo: true    #
+
+# wasm合约配置
+wasm:
+  driver: &quot;xvm&quot;
+  enableUpgrade: true
+
+#能够创建平行链的节点
+kernel:
+  # minNewChainAmount 设置创建平行链时最少要转多少钱到同链名address
+  minNewChainAmount: &quot;10&quot;
+  newChainWhiteList:
+    - 25nbSZeSjMs8GT4TiSmgofnRusg1rxxggV: true
+
+# 是否开启默认的XEndorser背书服务
+enableXEndorser: true
+
+</code></pre>
+<h3 id="修改outputdataconfigxuperjson文件拷贝至其他节点选择挖矿节点-挖矿节点数量-address地址为主节点即可-更改时间戳-挖矿节点neturl">修改/output/data/config/xuper.json文件，拷贝至其他节点（选择挖矿节点、挖矿节点数量、address地址为主节点即可、更改时间戳、挖矿节点netURL)</h3>
+<p><img src="https://chriswsq.github.io/post-images/1597893450356.jpg" alt="" loading="lazy"><br>
+注意： 此模板文件节点之间必须一致，否则会出现块高不一致的情况</p>
+<h2 id="拷贝至其他节点后的操作">拷贝至其他节点后的操作</h2>
+<p>拷贝时确保主节点模板文件没有问题，不会再更改，这样拷贝过去后，不需要重新建链，如改动/output/data/config/xuper.json文件后，需要重新生成链，</p>
+<ul>
+<li>重新生成 neturl 地址</li>
+<li>重新生成address地址（生产环境为开发提供每个节点的address地址）</li>
+<li>修改xchain.yaml文件 p2p 区域的 netURL 地址，连接主节点  （主节点开始先别连接其他节点，待环境部署好后可停止刚开始的主节点然后添加其他节点，使全部节点互相备份）</li>
+</ul>
+<h2 id="启动服务">启动服务</h2>
+<pre><code class="language-bash">#删除 data/blockchain/*文件
+rm -rf   data/blockchain/*
+
+#创建链
+./xchain-cli createChain
+
+#启动服务节点
+nohup ./xchain &amp;
+</code></pre>
+<h2 id="注">注</h2>
+<ul>
+<li>如果是单台机器启动多节点需修改三个端口（RPC、metricPort、p2p）</li>
+<li>先启动bootnode节点</li>
+<li>先修改插件的默认加密方式为国密后，手动生成的私有公钥和秘钥都会以国密的加密方式生成。</li>
+</ul>
+<h2 id="基本命令">基本命令</h2>
+<pre><code class="language-bash"># 创建普通用户, 包含地址，公钥，私钥
+./xchain-cli account newkeys  -f
+
+# 获取本地netURL地址
+./xchain-cli netURL get -H 127.0.0.1:37101
+
+ #重新生成本地节点的网络私钥
+./xchain-cli netURL gen
+
+#显示本地节点的p2p地址
+./xchain-cli netURL preview
+
+# 创建xuper链
+./xchain-cli createChain
+
+# check服务运行状况
+./xchain-cli status -H 127.0.0.1:37101
+
+#查看块高 确保每个节点一致变化
+./xchain-cli status -H 127.0.0.1:37101 | jq '.blockchains[] | {&quot;name&quot;:.name,&quot;height&quot;:.ledger.trunkHeight}'
+
+#查看本节点账户余额
+./xchain-cli account balance --keys data/keys -H 127.0.0.1:37101
+
+#查看链总账户余额（要注意如果多个链可能会有多个utxoTotal）
+./xchain-cli status  | grep utxoTotal  
+
+#查看tdpos共识的状态
+./xchain-cli tdpos status
+</code></pre>
+<h2 id="查看">查看</h2>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[ansible学习]]></title>
         <id>https://chriswsq.github.io/post/ansible-xue-xi/</id>

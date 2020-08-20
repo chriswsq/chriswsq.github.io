@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T10:01:30.046Z</updated>
+    <updated>2020-08-20T10:06:16.382Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,37 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress]]></title>
+        <id>https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/</id>
+        <link href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">
+        </link>
+        <updated>2020-08-20T10:02:28.000Z</updated>
+        <summary type="html"><![CDATA[<p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
+<!-- more -->
+<p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。简单来说，他可以做到：</p>
+<ul>
+<li>同时部署多个容器到多台机器上（Deployment）</li>
+<li>服务的乘载量有变化时，可以对容器做自动扩展（Scaling）</li>
+<li>管理多个容器的状态，自动侦测并重启故障的容器（Management）</li>
+</ul>
+<p>在系列文的上一篇文章中，我们了解了构成 Kubernetes 的四个重要元素：Pod、Node、Master、Cluster，并安装好了我们要实际动手玩 Kubernetes 前需要的套件与工具。接下来在这篇文章中，我们会透过例子来实际建立那些在 Kubernetes 中常见的元件们。</p>
+<h2 id="如何建立一个-pod">如何建立一个 Pod</h2>
+<p>在基本运作与安装中，我们下载好了我们需要的三个程式：Minikube、Virtual Box、Kubectl，接下来我们就可以来练习如何建立我们的第一个 Pod 了。</p>
+<h2 id="启动-minikube">启动 Minikube</h2>
+<p>下载完 minikube 之后，我们可以先透过</p>
+<p><code>minikube</code></p>
+<p>瞧瞧所有 minikube 的指令，然后透过</p>
+<p><code>minikube start</code></p>
+<p>就可以启动 minikube。另外再补充五个常用的指令：<br>
+列出 minikube 的状态</p>
+<p><code>minikube status</code></p>
+<p>停止 minikube 运行</p>
+<p><code>minikube stop</code></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[kubernetes基础学习（一）原理]]></title>
         <id>https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/</id>

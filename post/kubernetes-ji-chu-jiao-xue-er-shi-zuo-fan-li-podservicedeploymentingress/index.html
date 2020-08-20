@@ -3,7 +3,7 @@
         <head>
         <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
         <meta charset="utf-8">
-        <title>kubernetes基础学习（一）原理 | chris&#39;wang</title>
+        <title>Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress | chris&#39;wang</title>
         <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
         <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
         <link href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css" rel="stylesheet">
@@ -56,81 +56,38 @@
                 <div class="mdui-row">
                         <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
                                 <article class="mdui-p-a-2 post animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="post-title  mdui-m-b-1">kubernetes基础学习（一）原理</div>
-                                    <div class="mdui-typo-body-2 mdui-m-b-2" datetime="2020-08-20 17:32:13">2020-08-20 / 4 min read</div>
-                                    <div class="mdui-m-b-2 mdui-typo post-neirong"><p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。<br>
-更进一步地说，Kubernetes 想解决的问题是：「手动部署多个容器到多台机器上并监测管理这些容器的状态非常麻烦。」而Kubernetes 要提供的解法： 提供一个平台以较高层次的抽象化去自动化操作与管理容器们。</p>
+                                    <div class="post-title  mdui-m-b-1">Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress</div>
+                                    <div class="mdui-typo-body-2 mdui-m-b-2" datetime="2020-08-20 18:02:28">2020-08-20 / 2 min read</div>
+                                    <div class="mdui-m-b-2 mdui-typo post-neirong"><p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
 <!-- more -->
-<p>打开 Kubernetes 的官网，我们可以看到关于 Kubernetes 服务的描述为：</p>
-<blockquote>
-<p>Automated container deployment, scaling, and management</p>
-</blockquote>
-<p>而白话来说，上面的描述表示他可以做到：</p>
+<p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。简单来说，他可以做到：</p>
 <ul>
 <li>同时部署多个容器到多台机器上（Deployment）</li>
 <li>服务的乘载量有变化时，可以对容器做自动扩展（Scaling）</li>
 <li>管理多个容器的状态，自动侦测并重启故障的容器（Management）</li>
 </ul>
-<h2 id="kubernetes-四元件">Kubernetes 四元件</h2>
-<p>在了解 Kubernetes 如何帮助我们管理容器们前，我们先要由小到大依序了解组成 Kubernetes 的四种最基本的元件：Pod、Worker Node、Master Node、Cluster。</p>
-<p><strong>Pod</strong></p>
-<p>Kubernetes 运作的最小单位，一个 Pod 对应到一个应用服务（Application） ，举例来说一个 Pod 可能会对应到一个 API Server。</p>
-<ul>
-<li>每个 Pod 都有一个身分证，也就是属于这个 Pod 的 yaml 档</li>
-<li>一个 Pod 里面可以有一个或是多个 Container，但一般情况一个 Pod 最好只有一个 Container</li>
-<li>同一个 Pod 中的 Containers 共享相同资源及网路，彼此透过 local port number 沟通</li>
-</ul>
-<p><strong>Worker Node</strong></p>
-<p>Kubernetes 运作的最小硬体单位，一个Worker Node（简称Node）对应到一台机器，可以是实体机如你的笔电、或是虚拟机如AWS 上的一台EC2 或GCP 上的一台Computer Engine 。</p>
-<p>每个 Node 中都有三个组件：kubelet、kube-proxy、Container Runtime。</p>
-<blockquote>
-<p>小提醒：在 Worker Node 与 Master Node 的组件部分，因为 Kubernetes 本身其实都抽象的很好，所以在 Kubernetes 「基础的」使用上如何不了解这些组建也不会有非常大的影响。</p>
-</blockquote>
-<p><strong>kubelet</strong></p>
-<ul>
-<li>该 Node 的管理员，负责管理该 Node 上的所有 Pods 的状态并负责与 Master 沟通</li>
-</ul>
-<p><strong>kube-proxy</strong></p>
-<ul>
-<li>该 Node 的传讯员，负责更新 Node 的 iptables，让 Kubernetes 中不在该 Node 的其他物件可以得知该 Node 上所有 Pods 的最新状态</li>
-</ul>
-<p><strong>kube-apiserver</strong></p>
-<ul>
-<li>
-<p>管理整个 Kubernetes 所需 API 的接口（Endpoint），例如从 Command Line 下 kubectl 指令就会把指令送到这里</p>
-</li>
-<li>
-<p>负责 Node 之间的沟通桥梁，每个 Node 彼此不能直接沟通，必须要透过 apiserver 转介<br>
-负责 Kubernetes 中的请求的身份认证与授权</p>
-</li>
-</ul>
-<p><strong>etcd</strong></p>
-<ul>
-<li>用来存放 Kubernetes Cluster 的资料作为备份，当 Master 因为某些原因而故障时，我们可以透过 etcd 帮我们还原 Kubernetes 的状态</li>
-</ul>
-<p><strong>kube-controller-manager</strong></p>
-<ul>
-<li>负责管理并运行 Kubernetes controller 的组件，简单来说 controller 就是 Kubernetes 里一个个负责监视 Cluster 状态的 Process，例如：Node Controller、Replication Controller</li>
-<li>这些 Process 会在 Cluster 与预期状态（desire state）不符时尝试更新现有状态（current state）。例如：现在要多开一台机器以应付突然增加的流量，那我的预期状态就会更新成 N+1，现有状态为 N，这时相对应的 controller 就会想办法多开一台机器</li>
-<li>controller-manager 的监视与尝试更新也都需要透过访问 kube-apiserver 达成</li>
-</ul>
-<p><strong>kube-scheduler</strong></p>
-<p>整个Kubernetes 的Pods 调度员，scheduler 会监视新建立但还没有被指定要跑在哪个Node 上的Pod，并根据每个Node 上面资源规定、硬体限制等条件去协调出一个最适合放置的Node 让该Pod 跑</p>
-<p><strong>Cluster</strong></p>
-<p>Kubernetes 中多个 Node 与 Master 的集合。基本上可以想成在同一个环境里所有 Node 集合在一起的单位。</p>
-<h2 id="基本运作与安装">基本运作与安装</h2>
-<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1597917479477.jpg" alt="" loading="lazy"></figure>
-<p>因原文为外网才能访问所以转载<br>
-<a href="https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0">原文链接</a></p>
+<p>在系列文的上一篇文章中，我们了解了构成 Kubernetes 的四个重要元素：Pod、Node、Master、Cluster，并安装好了我们要实际动手玩 Kubernetes 前需要的套件与工具。接下来在这篇文章中，我们会透过例子来实际建立那些在 Kubernetes 中常见的元件们。</p>
+<h2 id="如何建立一个-pod">如何建立一个 Pod</h2>
+<p>在基本运作与安装中，我们下载好了我们需要的三个程式：Minikube、Virtual Box、Kubectl，接下来我们就可以来练习如何建立我们的第一个 Pod 了。</p>
+<h2 id="启动-minikube">启动 Minikube</h2>
+<p>下载完 minikube 之后，我们可以先透过</p>
+<p><code>minikube</code></p>
+<p>瞧瞧所有 minikube 的指令，然后透过</p>
+<p><code>minikube start</code></p>
+<p>就可以启动 minikube。另外再补充五个常用的指令：<br>
+列出 minikube 的状态</p>
+<p><code>minikube status</code></p>
+<p>停止 minikube 运行</p>
+<p><code>minikube stop</code></p>
 </div>
                                     <div class="mdui-divider mdui-m-b-2"></div>
                                     <div class="mdui-row-xs-2 post-fenye">
                                        
-                                        <div class="mdui-col"> <div class="mdui-text-left"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress</a></div></div>
+                                        <div class="mdui-col"> </div>
                                         
 
                                         
-                                        <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">k8s——apiVersion对照表</a></div> </div>
+                                        <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">kubernetes基础学习（一）原理</a></div> </div>
                                        
                                       </div>
                                    

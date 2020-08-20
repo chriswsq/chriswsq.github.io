@@ -15,7 +15,6 @@
         <script >hljs.initHighlightingOnLoad();</script>
         
 
-<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
     </head>
     <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
         <header class="index-img mdui-m-b-3"  style="background-image: url(https://chriswsq.github.io/post-images/ansible-xue-xi.jpg);" >
@@ -148,8 +147,14 @@ ansible_ssh_private_key_file：指定特有私钥文件
       new Valine({
             el: '.comment',
 
+            app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
 
 
+            app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+
+
+            placeholder: '没事说两句',
+            
             path: window.location.pathname,
             pageSize: 30,
             avatar:'mm', 
@@ -244,11 +249,3 @@ ansible_ssh_private_key_file：指定特有私钥文件
               </footer>
     </body>
 </html>
-<div id="vcomments"></div>
-    <script>
-        new Valine({
-            el: '#vcomments',
-            appId: '<nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz>',
-            appKey: '<DiIo4l1dsGeJ9VKtPoGOjfN5>'
-        })
-    </script>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-20T10:34:09.851Z</updated>
+    <updated>2020-08-21T01:25:23.453Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -374,7 +374,7 @@ spec:
       port: 80
       targetPort: 3000
 </code></pre>
-<p>透过 kubectl create -f service.yaml 建立好我们的 Pod。</p>
+<p>透过 kubectl create -f service.yaml 建立好我们的 service。</p>
 <pre><code class="language-yaml">NAME            TYPE      CLUSTER-IP      EXTERNAL-IP  PORT(S)        
 blue-service    NodePort  10.111.192.164  &lt;none&gt;       80:30492/TCP
 purple-service  NodePort  0.107.21.77     &lt;none&gt;       80:32086/TCP

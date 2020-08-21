@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+        <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <title>Kubernetes 基礎教學（三）Helm 介紹與建立 Chart | chris&#39;wang</title>
+        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css" rel="stylesheet">
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+        <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+         <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+         <script >hljs.initHighlightingOnLoad();</script>
+
+    </head>
+    <body>
+              <header class="header mdui-m-b-5">      
+            <div class="container  ">
+                <div class="index-title animated fadeInDown mdui-text-center mdui-text-color-white mdui-m-b-2" style="animation-delay: 0.2s"><a href="https://chriswsq.github.io">chris&#39;wang</a></div>
+                <div class="mdui-text-color-white animated fadeInDown mdui-text-center  mdui-m-b-3" style="animation-delay: 0.4s">当你觉得无所事事时，那你就是在虚度光阴</div>
+           
+            <nav id="nav" class="mdui-text-center animated fadeInDown" style="animation-delay: 0.6s">
+                   
+                            <li><a href="/">首页</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                            <li><a href="/archives">归档</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                            <li><a href="/tags">标签</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                            <li><a href="/post/about">关于</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                  </nav>
+                </div>
+        </header>
+        <div class="mdui-container ">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                                <article class="mdui-p-a-2 post animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
+                                    <div class="post-title  mdui-m-b-1">Kubernetes 基礎教學（三）Helm 介紹與建立 Chart</div>
+                                    <div class="mdui-typo-body-2 mdui-m-b-2" datetime="2020-08-21 09:27:02">2020-08-21 / 10 min read</div>
+                                    <div class="mdui-m-b-2 mdui-typo post-neirong"><p>接下來在這篇文章中，我們會介紹一個建立 Kubernetes 應用變得輕鬆簡單的好幫手：Helm</p>
+<!-- more -->
+<h2 id="helm">Helm</h2>
+<p>在如何建立一個 Pod 以及 Kubernetes 進階三元件我們介紹了多個 Kubernetes 的元件與他們所對應到的 yaml 設定檔。假設我們今天有一個複雜的服務，裡面同時包含了很多種設定檔時，如何同時做好版本控制、管理、更新這些設定檔就變得不太容易，且要快速部署這個含有多個設定檔的服務也變得困難。因此 Helm 就是一個用來解決上述問題的工具。</p>
+<p>簡單來說，Helm 就是一個管理設定檔的工具。他會把 Kubernetes 一個服務中各種元件裡的 yaml 檔統一打包成一個叫做 chart 的集合，然後透過給參數的方式，去同時管理與設定這些 yaml 檔案。</p>
+<h2 id="使用一個現有-helm-chart">使用一個現有 Helm Chart</h2>
+<p>接下來我們要來示範用一個現有的 Helm Chart 來嘗試部署一個 Wordpress 的服務。首先，我們的第一步當然就是要下載 Helm。MacOS 中我們可以直接使用 Homebrew 安裝，其他環境可以參考 Helm 的 Github。</p>
+<p><code>brew install kubernetes-helm</code></p>
+<p>下載完後，我們記得要 Helm 把 Cluster 配置初始化</p>
+<p><code>helm init</code></p>
+<p>接下來讓我們安裝 Wordpress 的 Chart，我們可以直接透過指令</p>
+<p><code>helm install stable/wordpress</code></p>
+<p>這個指令會讓我們直接到 Chart Repository 去載入 Chart 檔並將它部署到我們的 Kubernetes Cluster 上，我們現在可以透過指令檢查我們的 Cluster</p>
+<pre><code class="language-bash">kubectl get all
+NAME                                    READY   STATUS    RESTARTS
+pod/peddling-hog-mariadb-0              1/1     Running   0
+pod/peddling-hog-wordpress-7bf6d69c8b   1/1     Running   1          
+ ​
+NAME                             TYPE           CLUSTER-IP                           
+service/peddling-hog-mariadb     ClusterIP      10.109.96.113
+service/peddling-hog-wordpress   LoadBalancer   10.101.157.184
+EXTERNAL-IP   PORT(S)
+&lt;none&gt;        3306/TCP                     
+&lt;pending&gt;     80:30439/TCP,443:31824/TCP
+ ​
+NAME                                   READY UP-TO-DATE AVAILABLE
+deployment.apps/peddling-hog-wordpress 1/1   1          1           
+ ​
+NAME                                                DESIRED
+replicaset.apps/peddling-hog-wordpress-7bf6d69c8b   1      
+ ​
+NAME                                    READY   AGE
+statefulset.apps/peddling-hog-mariadb   1/1     60s
+
+</code></pre>
+<p>可以看到我們透過 Chart 一次就安裝與部署了兩個 Pod、兩個 Service 以及其他各種元件。如果要一次把所有 Chart 所安裝的元件刪除，我們可以先透過 helm list 列出我們所有的 Chart。</p>
+<pre><code class="language-bash">NAME         REVISION UPDATED                  STATUS   CHART
+peddling-hog 1        Fri Apr 26 16:08:30 2019 DEPLOYED wordpress
+</code></pre>
+<p>然後輸入 helm delete peddling-hog 就可以一次把所有元件刪除。</p>
+<h2 id="chart-的運作方式">Chart 的運作方式</h2>
+<p>嘗試完從 Chart 部署元件後，我們可以進一步來暸解 Chart 是如何運作的。我們可以到 Wordpress chart 的 Github 上觀察這個 Chart 的檔案結構，或是透過指令來建立一個最簡單的 Chart</p>
+<p><code>helm create helm-demo</code></p>
+<p>接下來我們來看看 ./helm-demo 的資料夾</p>
+<pre><code class="language-bash">.
+├── Chart.yaml
+├── charts
+├── templates
+│   ├── deployment.yaml
+│   ├── ingress.yaml
+│   └── service.yaml
+└── values.yaml
+</code></pre>
+<p>把這個 Chart 的檔案結構化簡後就如上所見。</p>
+<p><code>Chart.yaml</code></p>
+<ul>
+<li>
+<p>定義了這個 Chart 的 Metadata，包括 Chart 的版本、名稱、敘述等</p>
+<p><code>charts</code></p>
+</li>
+<li>
+<p>在這個資料夾裡可以放其他的 Chart，這裡稱作 SubCha</p>
+</li>
+</ul>
+<p><code>templates</code></p>
+<ul>
+<li>定義這個 Chart 服務需要的 Kubernetes 元件。但我們並不會把各元件的參數寫死在裡面，而是會用參數的方式代入</li>
+</ul>
+<p><code>values.yaml</code></p>
+<ul>
+<li>定義這個 Chart 的所有參數，這些參數都會被代入在 templates 中的元件。例如我們會在這邊定義 nodePorts 給 service.yaml 、定義 replicaCount 給 deployment.yaml、定義 hosts 給 ingress.yaml 等等</li>
+</ul>
+<p>從上面的檔案結構可以看到，我們透過編輯 values.yaml，就可以對所有的 yaml 設定檔做到版本控制與管理。並透過 install / delete 的方式一鍵部署 / 刪除。</p>
+<h2 id="如何建立自己的-chart">如何建立自己的 Chart</h2>
+<p>了解了 Chart 大致上是如何運作後，我們就可以來實際建立一個簡單的 Chart。我們的目標是要透過 deployment、service、ingress 來讓使用者在輸入 blue.demo.com 時可以得到一隻小鯨魚。而首先，我們一樣輸入指令</p>
+<p><code>helm create helm-demo</code></p>
+<p>之後我們就先借看一下在 ingress 章節有使用過的 yaml 檔們。</p>
+<p><code>deployment.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: extensions/v1beta1
+ kind: Deployment
+ metadata:
+   name: blue-nginx
+ spec:
+   replicas: 2
+   template:
+     metadata:
+       labels:
+         app: blue-nginx
+     spec:
+       containers:
+         - name: nginx
+           image: hcwxd/blue-whale
+           ports:
+             - containerPort: 3000
+</code></pre>
+<p><code>service.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: v1
+ kind: Service
+ metadata:
+   name: blue-service
+ spec:
+   type: NodePort
+   selector:
+     app: blue-nginx
+   ports:
+     - protocol: TCP
+       port: 80
+       targetPort: 3000
+</code></pre>
+<p><code>ingress.yaml</code></p>
+<pre><code class="language-yaml">
+apiVersion: extensions/v1beta1
+ kind: Ingress
+ metadata:
+   name: web
+ spec:
+   rules:
+     - host: blue.demo.com
+       http:
+         paths:
+           - backend:
+               serviceName: blue-service
+               servicePort: 80
+</code></pre>
+<p>然後我們就可以嘗試來把上述 yaml 檔中可以作為參數的部分抽取出來，在這邊為了降低複雜度，我們只簡單挑幾個參數出來，然後我們就可以把這些參數寫到 values.yaml 中。</p>
+<p><code>values.yaml</code></p>
+<pre><code class="language-yaml">replicaCount: 2
+ ​
+ image:
+   repository: hcwxd/blue-whale
+ ​
+ service:
+   type: NodePort
+   port: 80
+ ​
+ ingress:
+   enabled: true
+ ​
+   hosts:
+     - host: blue.demo.com
+       paths: [/]
+</code></pre>
+<p>把參數提取出來後，我們就來依樣畫葫蘆地把 template 中其他三個 yaml 檔寫成可以接受參數的方式：</p>
+<p><code>deployment.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: {{ include &quot;value-helm-demo.fullname&quot; . }}
+ spec:
+   replicas: {{ .Values.replicaCount }}
+   selector:
+     matchLabels:
+       app: {{ include &quot;value-helm-demo.fullname&quot; . }}
+   template:
+     metadata:
+       labels:
+         app: {{ include &quot;value-helm-demo.fullname&quot; . }}
+     spec:
+       containers:
+         - name: {{ .Chart.Name }}
+           image: '{{ .Values.image.repository }}'
+           ports:
+             - containerPort: 3000
+</code></pre>
+<p><code>service.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: v1
+ kind: Service
+ metadata:
+   name: {{ include &quot;value-helm-demo.fullname&quot; . }}
+ spec:
+   type: {{ .Values.service.type }}
+   ports:
+     - port: {{ .Values.service.port }}
+       targetPort: 3000
+       protocol: TCP
+   selector:
+     app: {{ include &quot;value-helm-demo.fullname&quot; . }}
+</code></pre>
+<p><code>ingress.yaml</code></p>
+<pre><code class="language-yaml">{{- if .Values.ingress.enabled -}}
+ {{- $fullName := include &quot;value-helm-demo.fullname&quot; . -}}
+ apiVersion: extensions/v1beta1
+ kind: Ingress
+ metadata:
+   name: {{ $fullName }}
+ spec:
+   rules:
+   {{- range .Values.ingress.hosts }}
+     - host: {{ .host | quote }}
+       http:
+         paths:
+         {{- range .paths }}
+           - backend:
+               serviceName: {{ $fullName }}
+               servicePort: 80
+         {{- end }}
+   {{- end }}
+ {{- end }}
+</code></pre>
+<p>寫好後，我們就可以來一鍵部署我們的這三份檔案囉。我們可以直接在 /helm-demo 資料夾下輸入指令</p>
+<p><code>helm install .</code></p>
+<pre><code class="language-bash">NAME:   gilded-peacock
+LAST DEPLOYED: Mon May  6 16:31:27 2019
+NAMESPACE: default
+STATUS: DEPLOYED
+</code></pre>
+<p>部署成功後顯示的 NAME: gilded-peacock 就是這個 Chart 部署後的名稱囉（在 Helm 中稱部署出去的這個實體為 release）。我們可以再透過指令</p>
+<p><code>helm list</code></p>
+<p>列出我們目前所有的 releases。接下來我們可以用 kubectl get all 來看到我們目前的 kubernetes 狀況</p>
+<pre><code class="language-bash">NAME                                    READY STATUS  RESTARTS   
+pod/gilded-peacock-helm-demo-5fc5964759 1/1   Running 0          
+pod/gilded-peacock-helm-demo-5fc5964759 1/1   Running 0      
+ ​
+NAME                               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     
+service/gilded-peacock-helm-demo   NodePort    10.106.164.53   &lt;none&gt;        80:30333/TCP 
+ ​
+NAME                                     READY UP-TO-DATE AVAILABLE
+deployment.apps/gilded-peacock-helm-demo 2/2   2          2           
+ ​
+NAME                                                DESIRED CURRENT     
+replicaset.apps/gilded-peacock-helm-demo-5fc5964759 2       2      
+</code></pre>
+<p>這邊就可以看到我們所指定的資源都有按照 chart 的配置建立起來囉，所以打開 blue.demo.com 就可以看到一隻我們透過 Helm 實際部署出的小鯨魚。</p>
+<p>以上，我們就完成 Helm 的實際部署囉！</p>
+<p>而其他常用的 Helm 指令還有</p>
+<p><code>helm delete --purge RELEASE_NAME</code></p>
+<p>刪除一個 release（--purge 這個 flag 可以把該 RELEASE_NAME 釋放出來供之後重複使用）。</p>
+<p><code>helm upgrade RELEASE_NAME CHART_PATH</code></p>
+<p>如果有更新 Chart 的檔案時，可以透過 upgrade 去更新對應的 Release。</p>
+<p><code>helm lint CHART_PATH</code></p>
+<p>檢查你的 Chart 檔案有沒有錯誤的語法。</p>
+<p><code>helm package CHART_PATH</code></p>
+<p>打包並壓縮整個 Chart 資料夾的檔案。</p>
+<h2 id="kubectl-額外補充">kubectl 額外補充</h2>
+<h3 id="簡寫">簡寫</h3>
+<p>覺得每次下指令都要打 kubectl 很花時間的話，可以透過 alias 來節省時間，例如設定 alias kbs=kubectl 。</p>
+<p>kubectl 中的各項資源的名稱其實也都有內建的簡寫，可以透過指令</p>
+<p><code>kubectl api-resources</code></p>
+<p>去看到各個資源的簡寫，例如 deployments 可以簡寫成 deploy、services 簡寫成 svc 等。</p>
+<p><strong>auto-complete</strong></p>
+<p>覺得 kubectl 的指令沒有 auto-complete 很痛苦的話可以參考官網的教學。像是如果使用 zsh 的話，就可以透過指令</p>
+<pre><code class="language-bash">echo &quot;if [ $commands[kubectl] ]; then source &lt;(kubectl completion zsh); fi&quot; &gt;&gt; ~/.zshrc
+</code></pre>
+<p>來啟用 kubectl 的 auto-complete</p>
+<p><strong>create vs apply</strong></p>
+<p>在之前提到透過 yaml 建立資源時，我們都用了 kubectl create -f。但其實也可以使用 kubectl apply -f 達成建立與更新資源，雖然在單純建立的使用情景上沒有差別，但其它用法上的差別可見 kubectl apply vs kubectl create。</p>
+<h2 id="小結">小結</h2>
+<p>呼！希望這三篇 Kubernetes 基礎教學能對你有幫助！再次溫故知新一下：<br>
+在系列文的第一篇文章中，我們了解了構成 Kubernetes 的四個重要元素：Pod、Node、Master、Cluster，並安裝好了我們要實際動手玩 Kubernetes 前需要的套件與工具。<br>
+而在第二篇文章中，我們實際動手操作了 Kubernetes 中的 Pod、Service、Deployment、Ingress。<br>
+在最後的這篇文章中，我們了解了讓 Kubernetes 部署變得好輕鬆好棒棒的工具 Helm，並實際透過 Helm 部署了一個 Helm。<br>
+在學會了上述的各個基礎後，如果想要實際在各個雲端服務上操作 Kubernetes 的話，歡迎接下來可以進一步去了解 Kops！</p>
+<p><a href="https://medium.com/@C.W.Hu/kubernetes-helm-chart-tutorial-fbdad62a8b61">原文链接</a></p>
+<h2 id="參考資料">參考資料：</h2>
+<ul>
+<li>Helm Official Document<br>
+https://helm.sh/docs/</li>
+<li>Kubernetes Official Document<br>
+https://kubernetes.io/docs/home/</li>
+<li>Kubernetes 30天學習筆記 by zxcvbnius https://ithelp.ithome.com.tw/articles/10192401</li>
+<li>五分鐘 Kubernetes 有感<br>
+https://medium.com/@evenchange4/%E4%BA%94%E5%88%86%E9%90%98-kubernetes-%E6%9C%89%E6%84%9F-e51f093cb10b</li>
+<li>十分鐘帶你理解Kubernetes核心概念<br>
+http://dockone.io/article/932</li>
+<li>Kubernetes 學習筆記<br>
+https://gcpug-tw.gitbook.io/kuberbetes-in-action/</li>
+<li>[教學] 用Drone, Kubernetes跟Helm，以及RBAC來建置你的CI/CD流程<br>
+https://medium.com/@cloudsanchen/ci-cd-with-drone-kubernetes-and-helm-part-1-69c147046ffa</li>
+</ul>
+</div>
+                                    <div class="mdui-divider mdui-m-b-2"></div>
+                                    <div class="mdui-row-xs-2 post-fenye">
+                                       
+                                        <div class="mdui-col"> </div>
+                                        
+
+                                        
+                                        <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress</a></div> </div>
+                                       
+                                      </div>
+                                   
+                                    <div class="mdui-divider mdui-m-t-2 mdui-m-b-2"></div>
+                                    
+                                     <script src="https://chriswsq.github.io/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+
+
+            app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+
+
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                                </article>
+
+                                    
+                        </div>
+                      </div>
+    
+                
+
+              </div>
+                    <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      </ul>
+                    </nav>
+                    <div class="copyright">
+                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> <br/> Theme <a href="https://github.com/alterfang/gridea-theme-song/" target="_blank"  title="宋"  >Song</a> by <a href="https://shanbu.fun/" target="_blank"  title="山卜方" >shanbufun</a> </p>
+                  </div>
+                  
+              </footer>
+    </body>
+</html>

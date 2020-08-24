@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-24T02:48:49.767Z</updated>
+    <updated>2020-08-24T09:47:13.914Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,100 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[答题]]></title>
+        <id>https://chriswsq.github.io/post/da-ti/</id>
+        <link href="https://chriswsq.github.io/post/da-ti/">
+        </link>
+        <updated>2020-08-24T08:38:04.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="1题">1题</h2>
+<p>find /tmp -type f -mtime +5 -exec rm -f {} \</p>
+<h2 id="2题">2题</h2>
+<ul>
+<li>查看磁盘</li>
+</ul>
+<p>fdisk -l</p>
+<ul>
+<li>创建物理分区 pv</li>
+</ul>
+<p>pvcreate /dev/sdb  /dev/sdc    /dev/sdd</p>
+<ul>
+<li>创建卷组 vg</li>
+</ul>
+<p>vgcreate vgdisk  /dev/sdb  /dev/sdc    /dev/sdd</p>
+<ul>
+<li>创建逻辑卷组 lv</li>
+</ul>
+<p>lvcreate -L 100G -n lvdisk vgdisk</p>
+<ul>
+<li>格式化逻辑分区</li>
+</ul>
+<p>mkfs.ext4 /dev/vgdisk/lvdisk</p>
+<ul>
+<li>挂载</li>
+</ul>
+<p>mount /dev/vgdisk/lvdisk /d</p>
+<p>扩展</p>
+<ul>
+<li>卸载磁盘</li>
+</ul>
+<p>umount /dev/vgdisk/lvdisk /d</p>
+<ul>
+<li>扩展磁盘</li>
+</ul>
+<p>lvcreate -L +100G -n lvdisk vgdisk</p>
+<ul>
+<li>挂载</li>
+</ul>
+<p>mount /dev/vgdisk/lvdisk /d</p>
+<h2 id="3题">3题</h2>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1598260650470.png" alt="" loading="lazy"></figure>
+<h2 id="4题">4题</h2>
+<p>平时管理400多台主机，使用ansible来统一管理</p>
+<h2 id="5题">5题</h2>
+<ul>
+<li>修改 zabbix_agentd.conf，添加zabbix_agent 配置目录</li>
+<li>编写监控脚本</li>
+<li>在/usr/local/etc/zabbix_agentd.conf.d/目录下添加监控项配置文件get_mysql_status.conf</li>
+<li>重启zabbix_agent和zabbix_server</li>
+<li>web端添加监控项： 在主机上添加监控项</li>
+</ul>
+<h2 id="6题">6题</h2>
+<p>mysqldump/脚本/云平台镜像</p>
+<h2 id="7题">7题</h2>
+<p>guangzhou.ablesky.com 主机编写linux计划任务<br>
+<code>10 1 * * * /home/bakhost.sh</code></p>
+<pre><code class="language-bash">#!/bin/bash
+scp -r /usr/lacal/abc/*   root@shenzhen.ablesky.com：/usr/share/backup
+</code></pre>
+<h2 id="8题">8题</h2>
+<p>没有用过virst命令</p>
+<h2 id="9题">9题</h2>
+<p>key_buffer_size指定索引缓冲区的大小，它决定索引处理的速度，尤其是索引读的速度<br>
+innodb_buffer_size缓存大小设置<br>
+Query_cache_sizeySQL用于查询的缓存的内存被分成一个个变长数据块，用来存储类型，大小，数据等信息。<br>
+Tmp_table_size增加一张临时表的大小，例如做高级GROUP BY操作生成的临时表。<br>
+table_cache用于设置table高速缓存的数量</p>
+<h2 id="10题">10题</h2>
+<ul>
+<li>主数据服务器：主要用来从业务服务写入数据或者修改更新数据</li>
+<li>从数据服务器：主要用来读取业务所需要的数据</li>
+<li>二进制日志：用来存储写入以及更新的数据信息</li>
+<li>中继日志：承接主服务器数据信息，转存在从服务器上</li>
+<li>I/O线程：监听主服务器是否发生数据更改的行为</li>
+<li>SQL线程：将主服务器数据更改的数据从中继日志文件中读取数据写入到从数据服务器中</li>
+</ul>
+<h2 id="11-题">11 题</h2>
+<p>1.确定 flash控件正确安装<br>
+2.需要确定 浏览器是正常的 并且可以从多个视频网站 是不是都不能正常观看<br>
+3.更换多个浏览器 如 firefox Mozilla maxthon IE 等等</p>
+<h2 id="12-题">12 题</h2>
+<pre><code class="language-Dockerfile">FROM java:8
+COPY /develop/ test.jar  test.jar
+ENTRYPOINT [&quot;java&quot;,&quot;-jar&quot;,&quot;test.jar&quot;]   
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Kubernetes 基礎教學（三）Helm 介紹與建立 Chart]]></title>
         <id>https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/</id>

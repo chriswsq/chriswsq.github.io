@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+        <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <title>答题 | chris&#39;wang</title>
+        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css" rel="stylesheet">
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+        <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+         <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+         <script >hljs.initHighlightingOnLoad();</script>
+
+    </head>
+    <body>
+              <header class="header mdui-m-b-5">      
+            <div class="container  ">
+                <div class="index-title animated fadeInDown mdui-text-center mdui-text-color-white mdui-m-b-2" style="animation-delay: 0.2s"><a href="https://chriswsq.github.io">chris&#39;wang</a></div>
+                <div class="mdui-text-color-white animated fadeInDown mdui-text-center  mdui-m-b-3" style="animation-delay: 0.4s">当你觉得无所事事时，那你就是在虚度光阴</div>
+           
+            <nav id="nav" class="mdui-text-center animated fadeInDown" style="animation-delay: 0.6s">
+                   
+                            <li><a href="/">首页</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                            <li><a href="/archives">归档</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                            <li><a href="/tags">标签</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                            <li><a href="/post/about">关于</a>
+                                <span class="nav-style top"></span>
+                                <span class="nav-style bottom"></span>
+                                <span class="nav-style left"></span>
+                                <span class="nav-style right"></span>
+                                </li>
+                    
+                  </nav>
+                </div>
+        </header>
+        <div class="mdui-container ">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                                <article class="mdui-p-a-2 post animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
+                                    <div class="post-title  mdui-m-b-1">答题</div>
+                                    <div class="mdui-typo-body-2 mdui-m-b-2" datetime="2020-08-24 16:38:04">2020-08-24 / 3 min read</div>
+                                    <div class="mdui-m-b-2 mdui-typo post-neirong"><h2 id="1题">1题</h2>
+<p>find /tmp -type f -mtime +5 -exec rm -f {} \</p>
+<h2 id="2题">2题</h2>
+<ul>
+<li>查看磁盘</li>
+</ul>
+<p>fdisk -l</p>
+<ul>
+<li>创建物理分区 pv</li>
+</ul>
+<p>pvcreate /dev/sdb  /dev/sdc    /dev/sdd</p>
+<ul>
+<li>创建卷组 vg</li>
+</ul>
+<p>vgcreate vgdisk  /dev/sdb  /dev/sdc    /dev/sdd</p>
+<ul>
+<li>创建逻辑卷组 lv</li>
+</ul>
+<p>lvcreate -L 100G -n lvdisk vgdisk</p>
+<ul>
+<li>格式化逻辑分区</li>
+</ul>
+<p>mkfs.ext4 /dev/vgdisk/lvdisk</p>
+<ul>
+<li>挂载</li>
+</ul>
+<p>mount /dev/vgdisk/lvdisk /d</p>
+<p>扩展</p>
+<ul>
+<li>卸载磁盘</li>
+</ul>
+<p>umount /dev/vgdisk/lvdisk /d</p>
+<ul>
+<li>扩展磁盘</li>
+</ul>
+<p>lvcreate -L +100G -n lvdisk vgdisk</p>
+<ul>
+<li>挂载</li>
+</ul>
+<p>mount /dev/vgdisk/lvdisk /d</p>
+<h2 id="3题">3题</h2>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1598260650470.png" alt="" loading="lazy"></figure>
+<h2 id="4题">4题</h2>
+<p>平时管理400多台主机，使用ansible来统一管理</p>
+<h2 id="5题">5题</h2>
+<ul>
+<li>修改 zabbix_agentd.conf，添加zabbix_agent 配置目录</li>
+<li>编写监控脚本</li>
+<li>在/usr/local/etc/zabbix_agentd.conf.d/目录下添加监控项配置文件get_mysql_status.conf</li>
+<li>重启zabbix_agent和zabbix_server</li>
+<li>web端添加监控项： 在主机上添加监控项</li>
+</ul>
+<h2 id="6题">6题</h2>
+<p>mysqldump/脚本/云平台镜像</p>
+<h2 id="7题">7题</h2>
+<p>guangzhou.ablesky.com 主机编写linux计划任务<br>
+<code>10 1 * * * /home/bakhost.sh</code></p>
+<pre><code class="language-bash">#!/bin/bash
+scp -r /usr/lacal/abc/*   root@shenzhen.ablesky.com：/usr/share/backup
+</code></pre>
+<h2 id="8题">8题</h2>
+<p>没有用过virst命令</p>
+<h2 id="9题">9题</h2>
+<p>key_buffer_size指定索引缓冲区的大小，它决定索引处理的速度，尤其是索引读的速度<br>
+innodb_buffer_size缓存大小设置<br>
+Query_cache_sizeySQL用于查询的缓存的内存被分成一个个变长数据块，用来存储类型，大小，数据等信息。<br>
+Tmp_table_size增加一张临时表的大小，例如做高级GROUP BY操作生成的临时表。<br>
+table_cache用于设置table高速缓存的数量</p>
+<h2 id="10题">10题</h2>
+<ul>
+<li>主数据服务器：主要用来从业务服务写入数据或者修改更新数据</li>
+<li>从数据服务器：主要用来读取业务所需要的数据</li>
+<li>二进制日志：用来存储写入以及更新的数据信息</li>
+<li>中继日志：承接主服务器数据信息，转存在从服务器上</li>
+<li>I/O线程：监听主服务器是否发生数据更改的行为</li>
+<li>SQL线程：将主服务器数据更改的数据从中继日志文件中读取数据写入到从数据服务器中</li>
+</ul>
+<h2 id="11-题">11 题</h2>
+<p>1.确定 flash控件正确安装<br>
+2.需要确定 浏览器是正常的 并且可以从多个视频网站 是不是都不能正常观看<br>
+3.更换多个浏览器 如 firefox Mozilla maxthon IE 等等</p>
+<h2 id="12-题">12 题</h2>
+<pre><code class="language-Dockerfile">FROM java:8
+COPY /develop/ test.jar  test.jar
+ENTRYPOINT [&quot;java&quot;,&quot;-jar&quot;,&quot;test.jar&quot;]   
+</code></pre>
+</div>
+                                    <div class="mdui-divider mdui-m-b-2"></div>
+                                    <div class="mdui-row-xs-2 post-fenye">
+                                       
+                                        <div class="mdui-col"> </div>
+                                        
+
+                                        
+                                        <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/">Kubernetes 基礎教學（三）Helm 介紹與建立 Chart</a></div> </div>
+                                       
+                                      </div>
+                                   
+                                    <div class="mdui-divider mdui-m-t-2 mdui-m-b-2"></div>
+                                    
+                                     <script src="https://chriswsq.github.io/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+
+
+            app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+
+
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                                </article>
+
+                                    
+                        </div>
+                      </div>
+    
+                
+
+              </div>
+                    <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      
+                           
+                      </ul>
+                    </nav>
+                    <div class="copyright">
+                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> <br/> Theme <a href="https://github.com/alterfang/gridea-theme-song/" target="_blank"  title="宋"  >Song</a> by <a href="https://shanbu.fun/" target="_blank"  title="山卜方" >shanbufun</a> </p>
+                  </div>
+                  
+              </footer>
+    </body>
+</html>

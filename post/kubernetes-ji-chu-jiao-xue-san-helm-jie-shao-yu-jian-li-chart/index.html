@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>Kubernetes 基礎教學（三）Helm 介紹與建立 Chart | chris&#39;wang</title>
+<link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+<script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
+
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<link rel="canonical" href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/" />
+</head>
+<body>
+<div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
+<noscript><p class="warn" >本页面需要浏览器支持（启用）JavaScript</p></noscript><div class="header"><div class="logo_title"><div class="title animated fadeInDown"><a href="https://chriswsq.github.io"><img alt="logo" style="display:inline-block;" src="https://chriswsq.github.io/images/avatar.png"/></a><h1 title="chris&#39;wang" class="weaklink"><a  href="/">chris&#39;wang</a></h1>
+
+<style>.santa-body{float:left;margin:10.5px 7.5px 0px 0px;font-size:20px;color:#f91047;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;width:1em;height:1em;background-color:currentColor;-webkit-box-shadow:inset 0 -0.25em rgba(0,0,0,0.1);box-shadow:inset 0 -0.25em rgba(0,0,0,0.1);border-radius:50%;-webkit-transform-origin:center bottom;-ms-transform-origin:center bottom;transform-origin:center bottom;-webkit-animation:balance alternate infinite 2s ease-in-out;animation:balance alternate infinite 2s ease-in-out;}.santa-head{font-size:.4em;width:1em;height:1.9em;background-color:white;border-radius:.5em;-webkit-transform:translateY(-1em);-ms-transform:translateY(-1em);transform:translateY(-1em);position:relative;}.santa-head::before{content:'';width:1em;height:.375em;display:block;background-color:#ff9876;position:absolute;left:0;top:.65em;}.santa-ear{background-color:#fc8363;width:.1em;height:.3em;position:absolute;top:.75em;}.santa-ear:nth-of-type(1){border-radius:.05em 0 0 .05em;left:-0.1em;}.santa-ear:nth-of-type(2){border-radius:0 .05em .05em 0;right:-0.1em;}.santa-hat{content:'';width:1em;height:.15em;position:absolute;-webkit-transform:scale(1.1);-ms-transform:scale(1.1);transform:scale(1.1);top:.5em;left:0;background-color:white;}.santa-hat::before{content:'';display:block;width:1em;height:.5em;background:#f91047;border-radius:.5em .5em 0 0;z-index:2;position:absolute;top:-0.5em;}.santa-hat::after{content:'';width:.25em;height:.25em;display:block;background-color:white;border-radius:50%;position:absolute;z-index:0;top:-0.72em;right:0;-webkit-box-shadow:-0.2em .2em 0 .12em rgba(0,0,0,0.2),-0.2em .2em 0 .12em #f91047;box-shadow:-0.2em .2em 0 .12em rgba(0,0,0,0.2),-0.2em .2em 0 .12em #f91047;}.santa-eye{width:.12em;height:.12em;background-color:black;border-radius:50%;position:absolute;top:.76em;left:.2em;}.santa-eye + .santa-eye{left:auto;right:.2em;}.santa-nose{width:.12em;height:.22em;background-color:#f24c4c;border-radius:0 0 .12em .12em;position:absolute;top:.84em;left:50%;-webkit-transform:translateX(-50%);-ms-transform:translateX(-50%);transform:translateX(-50%);}.santa-mouth{width:.18em;height:.1em;border-bottom-right-radius:5vw;border-bottom-left-radius:5vw;margin-top:.3em;background-color:black;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);-ms-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-animation:hohoho 4s linear forwards infinite;animation:hohoho 4s linear forwards infinite;}@-webkit-keyframes hohoho{0%,10%,20%,40%,100%{width:.18em;height:.1em;border-bottom-right-radius:1vw;border-bottom-left-radius:1vw;}5%,15%,25%,35%{width:.15em;height:.2em;border-radius:50%;}}@keyframes hohoho{0%,10%,20%,40%,100%{width:.18em;height:.1em;border-bottom-right-radius:1vw;border-bottom-left-radius:1vw;}5%,15%,25%,35%{width:.15em;height:.2em;border-radius:50%;}}@-webkit-keyframes balance{from{-webkit-transform:rotate(-4deg);transform:rotate(-4deg);}to{-webkit-transform:rotate(4deg);transform:rotate(4deg);}}@keyframes balance{from{-webkit-transform:rotate(-4deg);transform:rotate(-4deg);}to{-webkit-transform:rotate(4deg);transform:rotate(4deg);}}</style>
+<div class="santa"><div class="santa-body"><div class="santa-head"><div class="santa-ear"></div><div class="santa-ear"></div><div class="santa-hat"></div><div class="santa-eye"></div><div class="santa-eye"></div><div class="santa-nose"></div><div class="santa-mouth"></div></div></div></div>
+
+<div class="navbar weaklink">
+<div class="normal_nav">
+<div class="bitcron_nav_container"><div class="bitcron_nav"><div class="bitcron_nav"><div style="display:flex;justify-content:center;"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul></nav>
+<div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
+<div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1598432090458" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+</div></div>
+<script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
+
+<style>.deng-box{position:fixed;top:-40px;left:-80px;z-index:9999}.deng-box1{position:fixed;top:-30px;left:-80px;z-index:9999}.deng-box1 .deng{position:relative;width:120px;height:90px;margin:50px;background:#d8000f;background:rgba(216,0,15,0.8);border-radius:50% 50%;-webkit-transform-origin:50% -100px;-webkit-animation:swing 5s infinite ease-in-out;box-shadow:-5px 5px 30px 4px rgba(252,144,61,1)}.deng{position:relative;width:120px;height:90px;margin:50px;background:#d8000f;background:rgba(216,0,15,0.8);border-radius:50% 50%;-webkit-transform-origin:50% -100px;-webkit-animation:swing 3s infinite ease-in-out;box-shadow:-5px 5px 50px 4px rgba(250,108,0,1)}.deng-a{width:100px;height:90px;background:#d8000f;background:rgba(216,0,15,0.1);margin:12px 8px 8px 8px;border-radius:50% 50%;border:2px solid #dc8f03}.deng-b{width:45px;height:90px;background:#d8000f;background:rgba(216,0,15,0.1);margin:-4px 8px 8px 26px;border-radius:50% 50%;border:2px solid #dc8f03}.xian{position:absolute;top:-20px;left:60px;width:2px;height:20px;background:#dc8f03}.shui-a{position:relative;width:5px;height:20px;margin:-5px 0 0 59px;-webkit-animation:swing 4s infinite ease-in-out;-webkit-transform-origin:50% -45px;background:#ffa500;border-radius:0 0 5px 5px}.shui-b{position:absolute;top:14px;left:-2px;width:10px;height:10px;background:#dc8f03;border-radius:50%}.shui-c{position:absolute;top:18px;left:-2px;width:10px;height:35px;background:#ffa500;border-radius:0 0 0 5px}.deng:before{position:absolute;top:-7px;left:29px;height:12px;width:60px;content:" ";display:block;z-index:999;border-radius:5px 5px 0 0;border:solid 1px #dc8f03;background:#ffa500;background:linear-gradient(to right,#dc8f03,#ffa500,#dc8f03,#ffa500,#dc8f03)}.deng:after{position:absolute;bottom:-7px;left:10px;height:12px;width:60px;content:" ";display:block;margin-left:20px;border-radius:0 0 5px 5px;border:solid 1px #dc8f03;background:#ffa500;background:linear-gradient(to right,#dc8f03,#ffa500,#dc8f03,#ffa500,#dc8f03)}.deng-t{font-family:华文行楷,Arial,Lucida Grande,Tahoma,sans-serif;color:#dc8f03;font-weight:bold;line-height:85px;text-align:center}.night .deng-t,.night .deng-box,.night .deng-box1{background:transparent !important}@-moz-keyframes swing{0%{-moz-transform:rotate(-10deg)}50%{-moz-transform:rotate(10deg)}100%{-moz-transform:rotate(-10deg)}}@-webkit-keyframes swing{0%{-webkit-transform:rotate(-10deg)}50%{-webkit-transform:rotate(10deg)}100%{-webkit-transform:rotate(-10deg)}}</style>
+<div class="deng-box"><div class="deng"><div class="xian"></div><div class="deng-a"><div class="deng-b"><div class="deng-t">节</div></div></div><div class="shui shui-a"><div class="shui-c"></div><div class="shui-b"></div></div></div></div> <div class="deng-box1"><div class="deng"><div class="xian"></div><div class="deng-a"><div class="deng-b"><div class="deng-t">春节</div></div></div><div class="shui shui-a"><div class="shui-c"></div><div class="shui-b"></div></div></div></div>
+
+<div class="main"><div class="main-inner"><div class="content">
+<article class="post">
+<h2 class="post_title sm_margin"><a>Kubernetes 基礎教學（三）Helm 介紹與建立 Chart</a></h2>
+<script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-21</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/09VioQtSo/" class="tag">kubernetes</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">2308字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">10 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+</section>
+
+<div style="display:flex">
+<div class="md_block" id="md_block">
+<div class="round-shape-one"></div>
+<p>接下來在這篇文章中，我們會介紹一個建立 Kubernetes 應用變得輕鬆簡單的好幫手：Helm</p>
+<!-- more -->
+<h2 id="helm">Helm</h2>
+<p>在如何建立一個 Pod 以及 Kubernetes 進階三元件我們介紹了多個 Kubernetes 的元件與他們所對應到的 yaml 設定檔。假設我們今天有一個複雜的服務，裡面同時包含了很多種設定檔時，如何同時做好版本控制、管理、更新這些設定檔就變得不太容易，且要快速部署這個含有多個設定檔的服務也變得困難。因此 Helm 就是一個用來解決上述問題的工具。</p>
+<p>簡單來說，Helm 就是一個管理設定檔的工具。他會把 Kubernetes 一個服務中各種元件裡的 yaml 檔統一打包成一個叫做 chart 的集合，然後透過給參數的方式，去同時管理與設定這些 yaml 檔案。</p>
+<h2 id="使用一個現有-helm-chart">使用一個現有 Helm Chart</h2>
+<p>接下來我們要來示範用一個現有的 Helm Chart 來嘗試部署一個 Wordpress 的服務。首先，我們的第一步當然就是要下載 Helm。MacOS 中我們可以直接使用 Homebrew 安裝，其他環境可以參考 Helm 的 Github。</p>
+<p><code>brew install kubernetes-helm</code></p>
+<p>下載完後，我們記得要 Helm 把 Cluster 配置初始化</p>
+<p><code>helm init</code></p>
+<p>接下來讓我們安裝 Wordpress 的 Chart，我們可以直接透過指令</p>
+<p><code>helm install stable/wordpress</code></p>
+<p>這個指令會讓我們直接到 Chart Repository 去載入 Chart 檔並將它部署到我們的 Kubernetes Cluster 上，我們現在可以透過指令檢查我們的 Cluster</p>
+<pre><code class="language-bash">kubectl get all
+NAME                                    READY   STATUS    RESTARTS
+pod/peddling-hog-mariadb-0              1/1     Running   0
+pod/peddling-hog-wordpress-7bf6d69c8b   1/1     Running   1          
+ ​
+NAME                             TYPE           CLUSTER-IP                           
+service/peddling-hog-mariadb     ClusterIP      10.109.96.113
+service/peddling-hog-wordpress   LoadBalancer   10.101.157.184
+EXTERNAL-IP   PORT(S)
+&lt;none&gt;        3306/TCP                     
+&lt;pending&gt;     80:30439/TCP,443:31824/TCP
+ ​
+NAME                                   READY UP-TO-DATE AVAILABLE
+deployment.apps/peddling-hog-wordpress 1/1   1          1           
+ ​
+NAME                                                DESIRED
+replicaset.apps/peddling-hog-wordpress-7bf6d69c8b   1      
+ ​
+NAME                                    READY   AGE
+statefulset.apps/peddling-hog-mariadb   1/1     60s
+
+</code></pre>
+<p>可以看到我們透過 Chart 一次就安裝與部署了兩個 Pod、兩個 Service 以及其他各種元件。如果要一次把所有 Chart 所安裝的元件刪除，我們可以先透過 helm list 列出我們所有的 Chart。</p>
+<pre><code class="language-bash">NAME         REVISION UPDATED                  STATUS   CHART
+peddling-hog 1        Fri Apr 26 16:08:30 2019 DEPLOYED wordpress
+</code></pre>
+<p>然後輸入 helm delete peddling-hog 就可以一次把所有元件刪除。</p>
+<h2 id="chart-的運作方式">Chart 的運作方式</h2>
+<p>嘗試完從 Chart 部署元件後，我們可以進一步來暸解 Chart 是如何運作的。我們可以到 Wordpress chart 的 Github 上觀察這個 Chart 的檔案結構，或是透過指令來建立一個最簡單的 Chart</p>
+<p><code>helm create helm-demo</code></p>
+<p>接下來我們來看看 ./helm-demo 的資料夾</p>
+<pre><code class="language-bash">.
+├── Chart.yaml
+├── charts
+├── templates
+│   ├── deployment.yaml
+│   ├── ingress.yaml
+│   └── service.yaml
+└── values.yaml
+</code></pre>
+<p>把這個 Chart 的檔案結構化簡後就如上所見。</p>
+<p><code>Chart.yaml</code></p>
+<ul>
+<li>
+<p>定義了這個 Chart 的 Metadata，包括 Chart 的版本、名稱、敘述等</p>
+<p><code>charts</code></p>
+</li>
+<li>
+<p>在這個資料夾裡可以放其他的 Chart，這裡稱作 SubCha</p>
+</li>
+</ul>
+<p><code>templates</code></p>
+<ul>
+<li>定義這個 Chart 服務需要的 Kubernetes 元件。但我們並不會把各元件的參數寫死在裡面，而是會用參數的方式代入</li>
+</ul>
+<p><code>values.yaml</code></p>
+<ul>
+<li>定義這個 Chart 的所有參數，這些參數都會被代入在 templates 中的元件。例如我們會在這邊定義 nodePorts 給 service.yaml 、定義 replicaCount 給 deployment.yaml、定義 hosts 給 ingress.yaml 等等</li>
+</ul>
+<p>從上面的檔案結構可以看到，我們透過編輯 values.yaml，就可以對所有的 yaml 設定檔做到版本控制與管理。並透過 install / delete 的方式一鍵部署 / 刪除。</p>
+<h2 id="如何建立自己的-chart">如何建立自己的 Chart</h2>
+<p>了解了 Chart 大致上是如何運作後，我們就可以來實際建立一個簡單的 Chart。我們的目標是要透過 deployment、service、ingress 來讓使用者在輸入 blue.demo.com 時可以得到一隻小鯨魚。而首先，我們一樣輸入指令</p>
+<p><code>helm create helm-demo</code></p>
+<p>之後我們就先借看一下在 ingress 章節有使用過的 yaml 檔們。</p>
+<p><code>deployment.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: extensions/v1beta1
+ kind: Deployment
+ metadata:
+   name: blue-nginx
+ spec:
+   replicas: 2
+   template:
+     metadata:
+       labels:
+         app: blue-nginx
+     spec:
+       containers:
+         - name: nginx
+           image: hcwxd/blue-whale
+           ports:
+             - containerPort: 3000
+</code></pre>
+<p><code>service.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: v1
+ kind: Service
+ metadata:
+   name: blue-service
+ spec:
+   type: NodePort
+   selector:
+     app: blue-nginx
+   ports:
+     - protocol: TCP
+       port: 80
+       targetPort: 3000
+</code></pre>
+<p><code>ingress.yaml</code></p>
+<pre><code class="language-yaml">
+apiVersion: extensions/v1beta1
+ kind: Ingress
+ metadata:
+   name: web
+ spec:
+   rules:
+     - host: blue.demo.com
+       http:
+         paths:
+           - backend:
+               serviceName: blue-service
+               servicePort: 80
+</code></pre>
+<p>然後我們就可以嘗試來把上述 yaml 檔中可以作為參數的部分抽取出來，在這邊為了降低複雜度，我們只簡單挑幾個參數出來，然後我們就可以把這些參數寫到 values.yaml 中。</p>
+<p><code>values.yaml</code></p>
+<pre><code class="language-yaml">replicaCount: 2
+ ​
+ image:
+   repository: hcwxd/blue-whale
+ ​
+ service:
+   type: NodePort
+   port: 80
+ ​
+ ingress:
+   enabled: true
+ ​
+   hosts:
+     - host: blue.demo.com
+       paths: [/]
+</code></pre>
+<p>把參數提取出來後，我們就來依樣畫葫蘆地把 template 中其他三個 yaml 檔寫成可以接受參數的方式：</p>
+<p><code>deployment.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: {{ include &quot;value-helm-demo.fullname&quot; . }}
+ spec:
+   replicas: {{ .Values.replicaCount }}
+   selector:
+     matchLabels:
+       app: {{ include &quot;value-helm-demo.fullname&quot; . }}
+   template:
+     metadata:
+       labels:
+         app: {{ include &quot;value-helm-demo.fullname&quot; . }}
+     spec:
+       containers:
+         - name: {{ .Chart.Name }}
+           image: '{{ .Values.image.repository }}'
+           ports:
+             - containerPort: 3000
+</code></pre>
+<p><code>service.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: v1
+ kind: Service
+ metadata:
+   name: {{ include &quot;value-helm-demo.fullname&quot; . }}
+ spec:
+   type: {{ .Values.service.type }}
+   ports:
+     - port: {{ .Values.service.port }}
+       targetPort: 3000
+       protocol: TCP
+   selector:
+     app: {{ include &quot;value-helm-demo.fullname&quot; . }}
+</code></pre>
+<p><code>ingress.yaml</code></p>
+<pre><code class="language-yaml">{{- if .Values.ingress.enabled -}}
+ {{- $fullName := include &quot;value-helm-demo.fullname&quot; . -}}
+ apiVersion: extensions/v1beta1
+ kind: Ingress
+ metadata:
+   name: {{ $fullName }}
+ spec:
+   rules:
+   {{- range .Values.ingress.hosts }}
+     - host: {{ .host | quote }}
+       http:
+         paths:
+         {{- range .paths }}
+           - backend:
+               serviceName: {{ $fullName }}
+               servicePort: 80
+         {{- end }}
+   {{- end }}
+ {{- end }}
+</code></pre>
+<p>寫好後，我們就可以來一鍵部署我們的這三份檔案囉。我們可以直接在 /helm-demo 資料夾下輸入指令</p>
+<p><code>helm install .</code></p>
+<pre><code class="language-bash">NAME:   gilded-peacock
+LAST DEPLOYED: Mon May  6 16:31:27 2019
+NAMESPACE: default
+STATUS: DEPLOYED
+</code></pre>
+<p>部署成功後顯示的 NAME: gilded-peacock 就是這個 Chart 部署後的名稱囉（在 Helm 中稱部署出去的這個實體為 release）。我們可以再透過指令</p>
+<p><code>helm list</code></p>
+<p>列出我們目前所有的 releases。接下來我們可以用 kubectl get all 來看到我們目前的 kubernetes 狀況</p>
+<pre><code class="language-bash">NAME                                    READY STATUS  RESTARTS   
+pod/gilded-peacock-helm-demo-5fc5964759 1/1   Running 0          
+pod/gilded-peacock-helm-demo-5fc5964759 1/1   Running 0      
+ ​
+NAME                               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     
+service/gilded-peacock-helm-demo   NodePort    10.106.164.53   &lt;none&gt;        80:30333/TCP 
+ ​
+NAME                                     READY UP-TO-DATE AVAILABLE
+deployment.apps/gilded-peacock-helm-demo 2/2   2          2           
+ ​
+NAME                                                DESIRED CURRENT     
+replicaset.apps/gilded-peacock-helm-demo-5fc5964759 2       2      
+</code></pre>
+<p>這邊就可以看到我們所指定的資源都有按照 chart 的配置建立起來囉，所以打開 blue.demo.com 就可以看到一隻我們透過 Helm 實際部署出的小鯨魚。</p>
+<p>以上，我們就完成 Helm 的實際部署囉！</p>
+<p>而其他常用的 Helm 指令還有</p>
+<p><code>helm delete --purge RELEASE_NAME</code></p>
+<p>刪除一個 release（--purge 這個 flag 可以把該 RELEASE_NAME 釋放出來供之後重複使用）。</p>
+<p><code>helm upgrade RELEASE_NAME CHART_PATH</code></p>
+<p>如果有更新 Chart 的檔案時，可以透過 upgrade 去更新對應的 Release。</p>
+<p><code>helm lint CHART_PATH</code></p>
+<p>檢查你的 Chart 檔案有沒有錯誤的語法。</p>
+<p><code>helm package CHART_PATH</code></p>
+<p>打包並壓縮整個 Chart 資料夾的檔案。</p>
+<h2 id="kubectl-額外補充">kubectl 額外補充</h2>
+<h3 id="簡寫">簡寫</h3>
+<p>覺得每次下指令都要打 kubectl 很花時間的話，可以透過 alias 來節省時間，例如設定 alias kbs=kubectl 。</p>
+<p>kubectl 中的各項資源的名稱其實也都有內建的簡寫，可以透過指令</p>
+<p><code>kubectl api-resources</code></p>
+<p>去看到各個資源的簡寫，例如 deployments 可以簡寫成 deploy、services 簡寫成 svc 等。</p>
+<p><strong>auto-complete</strong></p>
+<p>覺得 kubectl 的指令沒有 auto-complete 很痛苦的話可以參考官網的教學。像是如果使用 zsh 的話，就可以透過指令</p>
+<pre><code class="language-bash">echo &quot;if [ $commands[kubectl] ]; then source &lt;(kubectl completion zsh); fi&quot; &gt;&gt; ~/.zshrc
+</code></pre>
+<p>來啟用 kubectl 的 auto-complete</p>
+<p><strong>create vs apply</strong></p>
+<p>在之前提到透過 yaml 建立資源時，我們都用了 kubectl create -f。但其實也可以使用 kubectl apply -f 達成建立與更新資源，雖然在單純建立的使用情景上沒有差別，但其它用法上的差別可見 kubectl apply vs kubectl create。</p>
+<h2 id="小結">小結</h2>
+<p>呼！希望這三篇 Kubernetes 基礎教學能對你有幫助！再次溫故知新一下：<br>
+在系列文的第一篇文章中，我們了解了構成 Kubernetes 的四個重要元素：Pod、Node、Master、Cluster，並安裝好了我們要實際動手玩 Kubernetes 前需要的套件與工具。<br>
+而在第二篇文章中，我們實際動手操作了 Kubernetes 中的 Pod、Service、Deployment、Ingress。<br>
+在最後的這篇文章中，我們了解了讓 Kubernetes 部署變得好輕鬆好棒棒的工具 Helm，並實際透過 Helm 部署了一個 Helm。<br>
+在學會了上述的各個基礎後，如果想要實際在各個雲端服務上操作 Kubernetes 的話，歡迎接下來可以進一步去了解 Kops！</p>
+<p><a href="https://medium.com/@C.W.Hu/kubernetes-helm-chart-tutorial-fbdad62a8b61">原文链接</a></p>
+<h2 id="參考資料">參考資料：</h2>
+<ul>
+<li>Helm Official Document<br>
+https://helm.sh/docs/</li>
+<li>Kubernetes Official Document<br>
+https://kubernetes.io/docs/home/</li>
+<li>Kubernetes 30天學習筆記 by zxcvbnius https://ithelp.ithome.com.tw/articles/10192401</li>
+<li>五分鐘 Kubernetes 有感<br>
+https://medium.com/@evenchange4/%E4%BA%94%E5%88%86%E9%90%98-kubernetes-%E6%9C%89%E6%84%9F-e51f093cb10b</li>
+<li>十分鐘帶你理解Kubernetes核心概念<br>
+http://dockone.io/article/932</li>
+<li>Kubernetes 學習筆記<br>
+https://gcpug-tw.gitbook.io/kuberbetes-in-action/</li>
+<li>[教學] 用Drone, Kubernetes跟Helm，以及RBAC來建置你的CI/CD流程<br>
+https://medium.com/@cloudsanchen/ci-cd-with-drone-kubernetes-and-helm-part-1-69c147046ffa</li>
+</ul>
+
+<span id="footnote"></span>
+<div id = "warn"></div>
+</div>
+<div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#helm">Helm</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E4%B8%80%E5%80%8B%E7%8F%BE%E6%9C%89-helm-chart">使用一個現有 Helm Chart</a></li>
+<li><a href="#chart-%E7%9A%84%E9%81%8B%E4%BD%9C%E6%96%B9%E5%BC%8F">Chart 的運作方式</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E5%BB%BA%E7%AB%8B%E8%87%AA%E5%B7%B1%E7%9A%84-chart">如何建立自己的 Chart</a></li>
+<li><a href="#kubectl-%E9%A1%8D%E5%A4%96%E8%A3%9C%E5%85%85">kubectl 額外補充</a>
+<ul>
+<li><a href="#%E7%B0%A1%E5%AF%AB">簡寫</a></li>
+</ul>
+</li>
+<li><a href="#%E5%B0%8F%E7%B5%90">小結</a></li>
+<li><a href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99">參考資料：</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="fullPage"><canvas id="canvas"></canvas></div>
+</article>
+<div id="eof"><span>EOF</span></div><div class="round-shape-one"></div>
+<section>
+<div class="doc_comments">
+
+</div></section>
+</div></div></div><script>
+"use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){n[s].innerHTML='<span class="line-number"></span>'+n[s].innerHTML+'<span class="cl"></span>';for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+content="本文最后更新于2020-08-21，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-08-21 09:27:02";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+</script>
+<style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
+<a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>
+<span style="display: inline;margin-right:15px;">👁<strong><span id="busuanzi_value_site_uv"></span></strong></span><span id="busuanzi_container_page_pv" style="display: inline;"><span>📚<strong>11</strong> posts</span></div></div>
+<script>
+console.log("\n %c \u26a1Theme: Bitcron-pro Author's Blog:https://blog.blinkstar.cn  Writen By Serence  \n\n", "color: #ffffff; background: rgba(49, 49, 49, 0.85); padding:5px 0;border-radius:5px;", );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/instant.page@3.0.0/instantpage.min.js" type="module" defer></script>
+<script type="text/javascript" async src="https://chriswsq.github.io/media/js/prism.js"></script>
+</body>
+</html>
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+            appKey: 'DiIo4l1dsGeJ9VKtPoGOjfN5'
+        })
+    </script>

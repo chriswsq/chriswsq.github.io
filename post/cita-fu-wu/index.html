@@ -5,6 +5,7 @@
 <link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 <script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
 
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
 
 <link rel="canonical" href="https://chriswsq.github.io/post/cita-fu-wu/" />
 </head>
@@ -228,6 +229,25 @@ cita-network.log日志会有<br>
 <div id="eof"><span>EOF</span></div><div class="round-shape-one"></div>
 <section>
 <div class="doc_comments">
+<!--载入js，在</body>之前插入即可-->
+    <!--Leancloud 操作库:-->
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <!--Valine 的核心代码库-->
+    <script src="/media/scripts/Valine.min.js"></script>
+<div class="comment"></div>
+<script>
+    new Valine({
+        // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+        av: AV, 
+        el: '.comment',
+	      lang: 'zh-cn',//设置评论语言
+        emoticon_url: 'https://cloud.panjunwen.com/alu',
+  emoticon_list: ["狂汗.png","不说话.png","汗.png","坐等.png","献花.png","不高兴.png","中刀.png","害羞.png","皱眉.png","小眼睛.png","暗地观察.png"],
+  app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+  app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+  placeholder: '唠两块钱儿'
+    });
+</script>  
 
 </div></section>
 </div></div></div><script>
@@ -248,24 +268,5 @@ console.log("\n %c \u26a1Theme: Bitcron-pro Author's Blog:https://blog.blinkstar
 </script>
 <script src="https://cdn.jsdelivr.net/npm/instant.page@3.0.0/instantpage.min.js" type="module" defer></script>
 <script type="text/javascript" async src="https://chriswsq.github.io/media/js/prism.js"></script>
-<!--载入js，在</body>之前插入即可-->
-    <!--Leancloud 操作库:-->
-    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-    <!--Valine 的核心代码库-->
-    <script src="/media/scripts/Valine.min.js"></script>
-<div class="comment"></div>
-<script>
-    new Valine({
-        // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
-        av: AV, 
-        el: '.comment',
-	      lang: 'zh-cn',//设置评论语言
-        emoticon_url: 'https://cloud.panjunwen.com/alu',
-  emoticon_list: ["狂汗.png","不说话.png","汗.png","坐等.png","献花.png","不高兴.png","中刀.png","害羞.png","皱眉.png","小眼睛.png","暗地观察.png"],
-  app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
-  app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
-  placeholder: '评论留言啊a'
-    });
-</script>  
 </body>
 </html>

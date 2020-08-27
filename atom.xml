@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-27T10:04:11.742Z</updated>
+    <updated>2020-08-27T10:11:24.606Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -1331,8 +1331,10 @@ nanping_gateway_M
 </code></pre>
 <h4 id="上传gateway相关文件">上传gateway相关文件</h4>
 <p>fuzhou-certs.zip</p>
+<p>上传至<br>
+/application/ansible-playbook/localnode/fabirc/gateway/install-gate/gateway-certs</p>
 <h4 id="部署gateway">部署gateway</h4>
-<p>执行目录：/application/ansible-playbook/localnode/fabirc/gateway/install-gateway</p>
+<p>执行目录：/application/ansible-playbook/localnode/fabirc/gateway/install-gate</p>
 <pre><code class="language-bash">ansible-playbook -e host=gateway_M install.yaml -l fuzhou_gateway_M
 </code></pre>
 <h3 id="部署采集器服务">部署采集器服务</h3>

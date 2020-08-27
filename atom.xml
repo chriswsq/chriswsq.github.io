@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-27T10:13:17.822Z</updated>
+    <updated>2020-08-27T10:19:37.046Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -1360,9 +1360,11 @@ gmfabriccron=false       #没有微服务则填写false
 </code></pre>
 <h4 id="上传采集器相关文件">上传采集器相关文件</h4>
 <p>fuzhou-collect.zip</p>
+<p>上传至<br>
+/application/ansible-playbook/localnode/fabirc/cjq/install-cjq/install-package</p>
 <h4 id="部署cjq">部署CJQ</h4>
 <p>执行目录：/application/ansible-playbook/localnode/fabirc/cjq/install-cjq</p>
-<pre><code class="language-bash">ansible-playbook -e host=cjq cjq.yaml -l fuzhou_cjq
+<pre><code class="language-bash">ansible-playbook -e host=cjq install-cjq.yaml -l fuzhou_cjq
 </code></pre>
 <h4 id="查看服务日志">查看服务日志</h4>
 <p>/bsn/go/src/node-collect/logs</p>

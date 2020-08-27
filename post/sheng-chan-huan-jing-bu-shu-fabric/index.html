@@ -19,7 +19,7 @@
 <div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 <div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
 <div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
-<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1598516625894" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1598517447157" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 </div></div>
 <script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
 
@@ -57,8 +57,8 @@
 </ul>
 <h4 id="ansible临时添加主机信息">ansible临时添加主机信息</h4>
 <p>因为后续需要根据不同节点传递不同的镜像文件，所以先临时添加节点信息。</p>
-<p>例如：龙岩节点   longyan</p>
-<pre><code class="language-bash">[longyan]
+<p>例如：龙岩节点   fz</p>
+<pre><code class="language-bash">[fz]
 ly1      ansible_host=121.204.20.15
 ly2      ansible_host=121.204.220.15
 ly3      ansible_host=121.204.20.14
@@ -85,20 +85,20 @@ ansible-playbook -e host=fz  changepw.yaml
 <h4 id="安装docker">安装docker</h4>
 <p><strong>安装docker</strong></p>
 <pre><code class="language-bash">#安装依赖
-ansible     longyan  -m shell -a    &quot;yum install -y yum-utils ;yum-config-manager --add-repo   https://download.docker.com/linux/centos/docker-ce.repo&quot;
+ansible     fz  -m shell -a    &quot;yum install -y yum-utils ;yum-config-manager --add-repo   https://download.docker.com/linux/centos/docker-ce.repo&quot;
 
 #从ansible主机传送 docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm 文件
 
-ansible longyan  -m copy -a &quot;src=/home/ansible-playbook/optimization/common/docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm dest=/root/&quot;
+ansible fz  -m copy -a &quot;src=/home/ansible-playbook/optimization/common/docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm dest=/root/&quot;
 
 # 安装
-ansible longyan  -m  shell  -a &quot;yum  -y install docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm&quot;
+ansible fz  -m  shell  -a &quot;yum  -y install docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm&quot;
 </code></pre>
 <p><strong>拷贝daemon.json文件</strong></p>
 <pre><code class="language-bash">
-ansible longyan  -m shell -a &quot;mkdir /etc/docker&quot;
+ansible fz  -m shell -a &quot;mkdir /etc/docker&quot;
 
-ansible longyan  -m copy -a &quot;src=/application/ansible-playbook/localnode/fabirc/peer/install-peer/template/daemon.json dest=/etc/docker/&quot;
+ansible fz  -m copy -a &quot;src=/application/ansible-playbook/localnode/fabirc/peer/install-peer/template/daemon.json dest=/etc/docker/&quot;
 </code></pre>
 <h4 id="安装docker-compose">安装docker-compose</h4>
 <p>可在传送镜像是安装也可执行下面命令安装</p>
@@ -107,7 +107,7 @@ mv ./docker-compose /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 docker-compose -v
 或
-ansible longyan  -m copy -a &quot;src=/application/ansible-playbook/common/iso/docker-compose dest=/usr/local/bin/docker-compose&quot;
+ansible fz  -m copy -a &quot;src=/application/ansible-playbook/common/iso/docker-compose dest=/usr/local/bin/docker-compose&quot;
 </code></pre>
 <h4 id="挂载数据盘">挂载数据盘</h4>
 <pre><code class="language-bash">#查看数据盘

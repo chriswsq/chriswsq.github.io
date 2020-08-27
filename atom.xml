@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-27T08:23:48.443Z</updated>
+    <updated>2020-08-27T08:37:30.615Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -1075,8 +1075,8 @@ grok正则表达式：(?<temMsg>(?=Report)(.</em>)/?) 获取Report之后的字�
 </ul>
 <h4 id="ansible临时添加主机信息">ansible临时添加主机信息</h4>
 <p>因为后续需要根据不同节点传递不同的镜像文件，所以先临时添加节点信息。</p>
-<p>例如：龙岩节点   longyan</p>
-<pre><code class="language-bash">[longyan]
+<p>例如：龙岩节点   fz</p>
+<pre><code class="language-bash">[fz]
 ly1      ansible_host=121.204.20.15
 ly2      ansible_host=121.204.220.15
 ly3      ansible_host=121.204.20.14
@@ -1103,20 +1103,20 @@ ansible-playbook -e host=fz  changepw.yaml
 <h4 id="安装docker">安装docker</h4>
 <p><strong>安装docker</strong></p>
 <pre><code class="language-bash">#安装依赖
-ansible     longyan  -m shell -a    &quot;yum install -y yum-utils ;yum-config-manager --add-repo   https://download.docker.com/linux/centos/docker-ce.repo&quot;
+ansible     fz  -m shell -a    &quot;yum install -y yum-utils ;yum-config-manager --add-repo   https://download.docker.com/linux/centos/docker-ce.repo&quot;
 
 #从ansible主机传送 docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm 文件
 
-ansible longyan  -m copy -a &quot;src=/home/ansible-playbook/optimization/common/docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm dest=/root/&quot;
+ansible fz  -m copy -a &quot;src=/home/ansible-playbook/optimization/common/docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm dest=/root/&quot;
 
 # 安装
-ansible longyan  -m  shell  -a &quot;yum  -y install docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm&quot;
+ansible fz  -m  shell  -a &quot;yum  -y install docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm&quot;
 </code></pre>
 <p><strong>拷贝daemon.json文件</strong></p>
 <pre><code class="language-bash">
-ansible longyan  -m shell -a &quot;mkdir /etc/docker&quot;
+ansible fz  -m shell -a &quot;mkdir /etc/docker&quot;
 
-ansible longyan  -m copy -a &quot;src=/application/ansible-playbook/localnode/fabirc/peer/install-peer/template/daemon.json dest=/etc/docker/&quot;
+ansible fz  -m copy -a &quot;src=/application/ansible-playbook/localnode/fabirc/peer/install-peer/template/daemon.json dest=/etc/docker/&quot;
 </code></pre>
 <h4 id="安装docker-compose">安装docker-compose</h4>
 <p>可在传送镜像是安装也可执行下面命令安装</p>
@@ -1125,7 +1125,7 @@ mv ./docker-compose /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 docker-compose -v
 或
-ansible longyan  -m copy -a &quot;src=/application/ansible-playbook/common/iso/docker-compose dest=/usr/local/bin/docker-compose&quot;
+ansible fz  -m copy -a &quot;src=/application/ansible-playbook/common/iso/docker-compose dest=/usr/local/bin/docker-compose&quot;
 </code></pre>
 <h4 id="挂载数据盘">挂载数据盘</h4>
 <pre><code class="language-bash">#查看数据盘

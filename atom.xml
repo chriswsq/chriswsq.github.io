@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-27T08:38:37.711Z</updated>
+    <updated>2020-08-27T08:40:23.555Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -1125,7 +1125,7 @@ mv ./docker-compose /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 docker-compose -v
 或
-ansible fz  -m copy -a &quot;src=/application/ansible-playbook/common/iso/docker-compose dest=/usr/local/bin/docker-compose&quot;
+ansible fz  -m copy -a &quot;src=/application/ansible-playbook/common/iso/docker-compose dest=/usr/bin/docker-compose mode=0755&quot;
 </code></pre>
 <h4 id="挂载数据盘">挂载数据盘</h4>
 <pre><code class="language-bash">#查看数据盘

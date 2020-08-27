@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-26T09:52:03.606Z</updated>
+    <updated>2020-08-27T05:50:07.495Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,325 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[生产环境部署fabric]]></title>
+        <id>https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/</id>
+        <link href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/">
+        </link>
+        <updated>2020-08-27T05:40:46.000Z</updated>
+        <content type="html"><![CDATA[<!-- more -->
+<h3 id="环境准备">环境准备</h3>
+<ul>
+<li>
+<p>ansible临时添加主机信息</p>
+</li>
+<li>
+<p>修改服务器密码</p>
+</li>
+<li>
+<p>docker</p>
+</li>
+<li>
+<p>docker-compose</p>
+</li>
+<li>
+<p>挂载数据盘</p>
+</li>
+<li>
+<p>传送镜像文件</p>
+</li>
+</ul>
+<h4 id="ansible临时添加主机信息">ansible临时添加主机信息</h4>
+<p>因为后续需要根据不同节点传递不同的镜像文件，所以先临时添加节点信息。</p>
+<p>例如：福州节点   fz</p>
+<pre><code class="language-bash">[fz]
+z1      ansible_host=121.204.20.157
+z2      ansible_host=121.204.220.154
+z3      ansible_host=121.204.20.143
+z4      ansible_host=121.204.20.158
+z5      ansible_host=121.204.20.117
+z6      ansible_host=121.204.20.14
+z7      ansible_host=121.204.22.145
+z8      ansible_host=121.204.20.141
+z9      ansible_host=121.204.20.144
+z10     ansible_host=121.204.220.13
+                     
+[fz:vars]
+ansible_ssh_port=650
+ansible_ssh_pass='123456'
+</code></pre>
+<h4 id="修改服务器密码">修改服务器密码</h4>
+<p>/application/ansible-playbook/optimization/</p>
+<pre><code class="language-bash">#推送ansible服务器秘钥
+ansible-playbook -e host=fz  push-ssh.yaml
+#更改服务器密码
+ansible-playbook -e host=fz  changepw.yaml
+
+</code></pre>
+<h4 id="安装docker">安装docker</h4>
+<p><strong>安装docker</strong></p>
+<p>从ansible主机传送 docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm 文件</p>
+<p><code>yum install ./docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm</code></p>
+<p><strong>拷贝daemon.json文件</strong></p>
+<p><code>/application/ansible-playbook/localnode/fabirc/peer/install-peer/template/daemon.json</code></p>
+<h4 id="安装docker-compose">安装docker-compose</h4>
+<p>可在传送镜像是安装也可执行下面命令安装</p>
+<pre><code class="language-bash">curl -L https://get.daocloud.io/docker/compose/releases/download/1.12.0/docker-compose-`uname -s`-`uname -m` &gt; ./docker-compose
+mv ./docker-compose /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+docker-compose -v
+</code></pre>
+<h4 id="挂载数据盘">挂载数据盘</h4>
+<pre><code class="language-bash">#查看数据盘
+fdisk -l
+#磁盘分区
+fdisk /dev/vdb
+n
+p
+回车
+回车
+w
+#格式化磁盘
+mkfs.xfs -n ftype=1 /dev/vdb1
+#添加永久挂载
+echo '/dev/vdb1                                 /bsn                    xfs     defaults        0 0' &gt;&gt;/etc/fstab
+#创建挂在目录
+mkdir /bsn
+#初始化挂载
+mount -a
+#查看挂在情况
+df -hT
+
+</code></pre>
+<h4 id="传送镜像文件">传送镜像文件</h4>
+<p>根据节点不同的服务类型来传送不同的镜像</p>
+<p><strong>传送服务节点的镜像</strong></p>
+<p>使用ansible服务器上  /application/ansible-playbook/optimization/copy.yaml 文件进行传送</p>
+<pre><code class="language-bash">- hosts: &quot;{{ host }}&quot;
+  remote_user: root
+  tasks:
+    #- name: 安装zip
+    #  yum: name=unzip state=latest
+    - name: 创建镜像目录/bsn/iso
+      file:
+        path: /bsn/iso
+        state: directory
+        mode: '0755'
+    - name: 传镜像
+      copy:
+        src: /application/ansible-playbook/common/iso/{{ item }}
+        dest: /bsn/iso
+      with_items:
+       # - bsnCa-tomcat9.zip
+       # - zipkin.zip
+        - docker-compose
+        - fabric-peer1.4.3.1.zip
+        - fabric-tools1.4.3.1.zip
+        - fabric-couchdb.zip
+        - fabric-ccenv.zip
+        - docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm
+        - fabric-ca-postgresql.zip
+        - fabric-ca-service.zip
+        - webase-mysql.zip     
+        - fabric-gateway.zip   
+        - fisco-gm-0.3.zip    
+        - webase-mysql.zip
+        - webasechainmanager.zip
+        - webasesign.zip       
+        - gateway-service-v4.zip               
+        - zipkin.zip
+        - mcs.zip
+    - name: 解压
+      shell: cd /bsn/iso &amp;&amp; unzip \*.zip
+      ignore_errors: yes
+</code></pre>
+<pre><code class="language-bash">#根据节点所需镜像进行传送，可先将不需要的注释掉
+
+peer节点
+        - fabric-peer1.4.3.1.zip
+        - fabric-tools1.4.3.1.zip
+        - fabric-couchdb.zip
+        - fabric-ccenv.zip
+        
+ca节点		
+        - fabric-ca-postgresql.zip
+        - fabric-ca-service.zip
+        - webase-mysql.zip 
+        
+网关节点		
+        - fabric-gateway.zip  
+        - rabbitmq.zip
+        - consul.zip
+        
+fisco节点		
+        - fisco-gm-0.3.zip
+        
+fisco签名服务 链管理
+        - webase-mysql.zip
+        - webasechainmanager.zip
+        - webasesign.zip
+        
+微服务节点		
+        - zipkin.zip
+        - mcs.zip
+ 
+</code></pre>
+<p><strong>peer节点 （z1  z2  z3）</strong></p>
+<pre><code class="language-bash">ansible-playbook -e host=fz copy.yaml -l z1,z2,z3   #保留copy.yaml文件中四个文件，其他注释
+</code></pre>
+<p><strong>ca节点（z6）</strong></p>
+<pre><code class="language-bash">ansible-playbook -e host=fz copy.yaml -l z6   #保留copy.yaml文件中三个文件，其他注释
+</code></pre>
+<p><strong>网关节点（z4）</strong></p>
+<pre><code class="language-bash">ansible-playbook -e host=fz copy.yaml -l z4   #保留copy.yaml文件中三个文件，其他注释
+</code></pre>
+<blockquote>
+<p>注： 因镜像文件较大，传送时间较长，需耐心等候</p>
+<p>传送镜像服务结束之后将临时创建的变量文件移除掉（一般移除至/mnt 下）</p>
+</blockquote>
+<h3 id="部署peer服务">部署peer服务</h3>
+<h4 id="修改peer变量文件">修改peer变量文件</h4>
+<p>/etc/ansible/inventory/peer1   peer2   peer3</p>
+<p>两个方面调整，添加主机组、主机组添加至子组（例如：peer1）</p>
+<pre><code class="language-bash">#添加主机组
+[fuzhou_peer1]
+fuzhou_peer1 ansible_host=121.204.220.16 ansible_ssh_port=22
+
+[fuzhou_peer1:vars]
+peer=peer1
+name=fuzhou
+MSP=Fuzhou
+node1=172.31.0.3
+node2=172.31.0.1
+node3=172.31.0.2
+cjq=172.31.0.2
+
+#添加子组
+[peer1:children]
+suzhou_peer1
+
+
+</code></pre>
+<h4 id="上传peer相关文件">上传peer相关文件</h4>
+<p>fuzhou-peer1.zip  fuzhou-peer2.zip  fuzhou-peer3.zip</p>
+<h4 id="部署peer1-2-3">部署peer1 2 3</h4>
+<p>执行目录：/application/ansible-playbook/localnode/fabirc/peer/install-peer</p>
+<pre><code class="language-bash">ansible-playbook -e host=peer1 install-peer1.yaml -l fuzhou_peer1
+ansible-playbook -e host=peer2 install-peer1.yaml -l fuzhou_peer2
+ansible-playbook -e host=peer3 install-peer1.yaml -l fuzhou_peer3
+</code></pre>
+<h3 id="部署ca服务">部署ca服务</h3>
+<h4 id="修改ca变量文件">修改ca变量文件</h4>
+<p>/etc/ansible/inventory/ca</p>
+<p>两个方面调整，添加主机组、主机组添加至子组</p>
+<pre><code class="language-bash">#添加群组
+[fuzhou_ca]
+fuzhou_ca ansible_host=121.204.220.14  ansible_ssh_port=22 name=fuzhou
+
+#添加子组
+[ca:children]
+fuzhou_ca
+
+</code></pre>
+<blockquote>
+<p>加入链码部分会报错，待采集器部署完后之后手动加入链码并安装（命令可见playbook文件底部）</p>
+</blockquote>
+<h4 id="上传ca相关文件">上传ca相关文件</h4>
+<p>fuzhou-ca.zip</p>
+<h4 id="部署ca-mysql">部署ca-mysql</h4>
+<p>执行目录 /application/ansible-playbook/localnode/fabirc/ca/install-mysql</p>
+<pre><code class="language-bash">ansible-playbook -e host=ca install-mysql.yaml -l fuzhou_ca
+</code></pre>
+<h4 id="部署ca-service">部署ca-service</h4>
+<p>执行目录 ：/application/ansible-playbook/localnode/fabirc/ca/install-ca</p>
+<pre><code class="language-bash">ansible-playbook -e host=ca install-service.yaml -l fuzhou_ca
+</code></pre>
+<h4 id="检查状态">检查状态</h4>
+<p>查看数据库表状态</p>
+<pre><code class="language-bash">  docker exec cjq-gate-mysql  mysql -uroot -pRed80@80 -e &quot;use bsnflowdb;select * from tb_nc_config&quot;
+</code></pre>
+<h3 id="部署gateway服务">部署gateway服务</h3>
+<h4 id="修改ca变量文件-2">修改ca变量文件</h4>
+<p>/etc/ansible/inventory/gateway_M</p>
+<p>两个方面调整，添加主机组、主机组添加至子组</p>
+<pre><code class="language-bash">#添加主机组
+[fuzhou_gateway_M]
+fuzhou_gateway_M ansible_host=121.204.220.10  ansible_ssh_port=22
+
+[fuzhou_gateway_M:vars]
+name=fuzhou
+MSP=Fuzhou
+titleName=福州
+code=ORG20200804                   #根据当天日志填写即可
+node1=172.31.0.31                  #三个peer节点的内网地址
+node2=172.31.0.23
+node3=172.31.0.26
+sign=1.1.1.1                        #没有fisco 填写1.1.1.1
+ca=172.31.0.24                      
+mcs=1.1.1.1                         #没有微服务 填写1.1.1.1
+
+#添加子组
+[gateway_M:children]
+nanping_gateway_M
+
+</code></pre>
+<h4 id="上传gateway相关文件">上传gateway相关文件</h4>
+<p>fuzhou-certs.zip</p>
+<h4 id="部署gateway">部署gateway</h4>
+<p>执行目录：/application/ansible-playbook/localnode/fabirc/gateway/install-gateway</p>
+<pre><code class="language-bash">ansible-playbook -e host=gateway_M install.yaml -l fuzhou_gateway_M
+</code></pre>
+<h3 id="部署采集器服务">部署采集器服务</h3>
+<h4 id="修改cjq变量文件">修改cjq变量文件</h4>
+<pre><code class="language-bash">[fuzhou_cjq]
+fuzhou_cjq ansible_host=121.204.220.18 ansible_ssh_port=22
+
+[fuzhou_cjq:vars]
+name=fuzhou
+MSP=Fuzhou
+titleName=福州
+code=ORG20200804
+node1=172.31.0.31
+node2=172.31.0.23
+node3=172.31.0.26
+ca=172.31.0.24
+peerport=22
+fiscocron=false          #没有fisco则填写false
+fiscosign=1.1.1.1        #没有fisco则填写 1.1.1.1
+xupercron=false          #没有xupercron则填写false    
+mcs=1.1.1.1              #没有微服务则填写1.1.1.1
+gmfabriccron=false       #没有微服务则填写false
+</code></pre>
+<h4 id="上传采集器相关文件">上传采集器相关文件</h4>
+<p>fuzhou-collect.zip</p>
+<h4 id="部署cjq">部署CJQ</h4>
+<p>执行目录：/application/ansible-playbook/localnode/fabirc/cjq/install-cjq</p>
+<pre><code class="language-bash">ansible-playbook -e host=cjq cjq.yaml -l fuzhou_cjq
+</code></pre>
+<h4 id="查看服务日志">查看服务日志</h4>
+<p>/bsn/go/src/node-collect/logs</p>
+<pre><code class="language-bash">tail -100f /bsn/go/src/node-collect/logs/catalina.out
+</code></pre>
+<p>如果出现以下报错，则需要重新加入链，安装链</p>
+<pre><code class="language-bash">2020-08-04 13:57:55.381 ERROR 4179 --- [ost-startStop-1] c.b.n.u.C.BaseConfigUtils$Companion      : /bsn/go/src/node-collect/webapps/nodecollectConf/conf/xuperChainBlockResult.properties (No such file or directory)
+2020-08-04 13:57:55.487  INFO 4179 --- [ost-startStop-1] c.b.n.utils.NetUtils$Companion           : 请求地址：http://1.1.1.1:5005/WeBASE-Chain-Manager/chain/all
+2020-08-04 14:00:02.770  INFO 4179 --- [ost-startStop-1] c.b.n.utils.NetUtils$Companion           : 处理异常：Connection timed out (Connection timed out),附加信息：fisco获取所有链编号
+2020-08-04 14:00:02.794 ERROR 4179 --- [ost-startStop-1] c.b.n.u.C.BaseConfigUtils$Companion      : /bsn/go/src/node-collect/webapps/nodecollectConf/conf/sm2FabricBlockResult.properties (No such file or directory)
+2020-08-04 14:00:02.830  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco fbTimetaskopenorclose==false
+2020-08-04 14:00:02.831  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco channelsUploadTime==1200000
+2020-08-04 14:00:02.831  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco blocksUploadTime==1200000
+2020-08-04 14:00:02.831  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco peerResourceUploadTime==600000
+</code></pre>
+<p>在peer的3个节点执行</p>
+<pre><code class="language-bash">#加入链码
+docker exec cli peer channel join -b blocktx/netchannel.block
+
+#安装链码
+docker exec cli peer chaincode install blocktx/cc_sys.3.0.pak 
+
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Gridea添加Valine评论系统]]></title>
         <id>https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/</id>
@@ -1554,147 +1873,6 @@ down
 rpc error: code = Unknown desc = leveldb: not found</p>
 <p>等一会就好了</p>
 </blockquote>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[生产xuperchain部署文档]]></title>
-        <id>https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/</id>
-        <link href="https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/">
-        </link>
-        <updated>2020-08-20T03:02:14.000Z</updated>
-        <summary type="html"><![CDATA[<p>百度区块链部署xuperchain</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>百度区块链部署xuperchain</p>
-<!-- more -->
-<h2 id="部署信息">部署信息</h2>
-<p>**版本：**3.7.0<br>
-**加密方式：**国密<br>
-**共识：**tdpos<br>
-**链类型：**联盟链</p>
-<p><strong>以下为初始化 建链前的一次性操作（建链后再修改需要进提案），修改完后创建xuper链，并将ouput目录拷贝至其他节点，后续其他节点根据情况修改个别需要节点唯一的内容即可（keys的三个文件 ,netURL地址）</strong></p>
-<h3 id="修改outputconfpluginsconf-文件将default的加密方式改为国密方式">修改/output/conf/plugins.conf 文件(将default的加密方式改为国密方式)</h3>
-<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1597892994286.jpg" alt="" loading="lazy"></figure>
-<h3 id="修改-outputconfxchainyaml文件">修改 /output/conf/xchain.yaml文件</h3>
-<pre><code class="language-yaml">#在 utxo 区域中添加 `nonUtxo: true`  参数
-utxo:
-  nonUtxo: true    #
-
-# wasm合约配置
-wasm:
-  driver: &quot;xvm&quot;
-  enableUpgrade: true
-
-#能够创建平行链的节点
-kernel:
-  # minNewChainAmount 设置创建平行链时最少要转多少钱到同链名address
-  minNewChainAmount: &quot;10&quot;
-  newChainWhiteList:
-    - 25nbSZeSjMs8GT4TiSmgofnRusg1rxxggV: true
-
-# 是否开启默认的XEndorser背书服务
-enableXEndorser: true
-
-</code></pre>
-<h3 id="修改outputdataconfigxuperjson文件拷贝至其他节点选择挖矿节点-挖矿节点数量-address地址为主节点即可-更改时间戳-挖矿节点neturl">修改/output/data/config/xuper.json文件，拷贝至其他节点（选择挖矿节点、挖矿节点数量、address地址为主节点即可、更改时间戳、挖矿节点netURL)</h3>
-<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1597905583948.jpg" alt="" loading="lazy"></figure>
-<blockquote>
-<p>注意： 此模板文件节点之间必须一致，否则会出现块高不一致的情况<br>
-maxblocksize、proposer_num、period、alternate_interval、term_interval、block_num参数根据实际情况修改，我这里是测试环境的配置</p>
-</blockquote>
-<h2 id="拷贝至其他节点后的操作">拷贝至其他节点后的操作</h2>
-<p>拷贝时确保主节点模板文件没有问题，不会再更改，这样拷贝过去后，不需要重新建链，如改动/output/data/config/xuper.json文件后，需要重新生成链，</p>
-<ul>
-<li>重新生成 neturl 地址(生成后的地址IP替换为实际IP)<br>
-<code>./xchain-cli netURL gen</code></li>
-<li>重新生成address地址（生产环境为开发提供每个节点的address地址）<br>
-<code>./xchain-cli account newkeys -f</code></li>
-<li>修改xchain.yaml文件 p2p 区域的 netURL 地址，连接主节点  （主节点开始先别连接其他节点，待环境部署好后可停止刚开始的主节点然后添加其他节点，使全部节点互相备份）</li>
-</ul>
-<h2 id="启动服务">启动服务</h2>
-<pre><code class="language-bash">#删除 data/blockchain/*文件
-rm -rf   data/blockchain/*
-
-#创建链
-./xchain-cli createChain
-
-#启动服务节点
-nohup ./xchain &amp;
-</code></pre>
-<h2 id="注">注</h2>
-<ul>
-<li>如果是单台机器启动多节点需修改三个端口（RPC、metricPort、p2p）</li>
-<li>先启动bootnode节点</li>
-<li>先修改插件的默认加密方式为国密后，手动生成的私有公钥和秘钥都会以国密的加密方式生成。</li>
-</ul>
-<h2 id="创建合约账号">创建合约账号</h2>
-<p>如何要支持群组，需要在xuper链部署一个系统合约：GroupChain（一个网络有且仅有一个）</p>
-<pre><code class="language-bash"># 在xuper链部署GroupChain合约
-#拷贝 group_chain.wasm 文件到 outpue 目录(group_chain.wasm文件由开发提供)
-./xchain-cli account new --account 1111111111111111
-./xchain-cli wasm deploy --account XC1111111111111111@xuper --cname group_chain ./group_chain.wasm
-./xchain-cli account contracts --account XC1111111111111111@xuper -H 127.0.0.1:37101
-</code></pre>
-<h3 id="创建平行链">创建平行链</h3>
-<p>此步骤在测试阶段可手动进行测试，正式环境集成在程序内<br>
-创建平行链应的节点应和xuper.json文件中指定地址、xchain.conf文件中允许创建平行链的地址一致</p>
-<pre><code class="language-bash">#创建群组
-./xchain-cli wasm invoke group_chain --method addChain -a '{&quot;bcname&quot;:&quot;xchain_chriswang&quot;}'
-
-#添加节点(可在网上https://www.bejson.com中检查；可添加多个节点)
-./xchain-cli wasm invoke group_chain --method addNode -a '{&quot;bcname&quot;:&quot;baidu_zhengqi3&quot;, &quot;ip&quot;:&quot;/ip4/192.168.52.4/tcp/40001/p2p/QmRUVTKqdYVE49VzQKEuGsr2afiwDkj1RMMtdcVdaaqLUX&quot;, &quot;address&quot;:&quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;}'
-
-#查看node节点，检查是否添加成功
-./xchain-cli wasm query group_chain --method listNode -a '{&quot;bcname&quot;:&quot;xchain_chriswang&quot;}'
-</code></pre>
-<pre><code class="language-json"># 创建平行链
-
-#创建平行链的json文件（模版），如下：
-
-{
-    &quot;Module&quot;: &quot;kernel&quot;,
-    &quot;Method&quot;: &quot;CreateBlockChain&quot;,
-    &quot;Args&quot;: {
-        &quot;name&quot;: &quot;xchain_chriswsq&quot;,
-        &quot;data&quot;: &quot;{\&quot;version\&quot;:\&quot;1\&quot;,\&quot;predistribution\&quot;:[{\&quot;address\&quot;:\&quot;266L6fw9rBXSm4uBciLwRWTkonb2HCqz5a\&quot;,\&quot;quota\&quot;:\&quot;100000000000000000000\&quot;}],\&quot;maxblocksize\&quot;:\&quot;128\&quot;,\&quot;award\&quot;:\&quot;1000000\&quot;,\&quot;decimals\&quot;:\&quot;8\&quot;,\&quot;award_decay\&quot;:{\&quot;height_gap\&quot;:31536000,\&quot;ratio\&quot;:1},\&quot;gas_price\&quot;:{\&quot;cpu_rate\&quot;:1000,\&quot;mem_rate\&quot;:1000000,\&quot;disk_rate\&quot;:1,\&quot;xfee_rate\&quot;:1},\&quot;new_account_resource_amount\&quot;:1000,\&quot;crypto\&quot;:\&quot;gm\&quot;,\&quot;genesis_consensus\&quot;:{\&quot;name\&quot;:\&quot;tdpos\&quot;,\&quot;config\&quot;:{\&quot;timestamp\&quot;:\&quot;1559021720000000000\&quot;,\&quot;proposer_num\&quot;:\&quot;1\&quot;,\&quot;period\&quot;:\&quot;3000\&quot;,\&quot;alternate_interval\&quot;:\&quot;3000\&quot;,\&quot;term_interval\&quot;:\&quot;6000\&quot;,\&quot;block_num\&quot;:\&quot;20\&quot;,\&quot;vote_unit_price\&quot;:\&quot;1\&quot;,\&quot;init_proposer\&quot;:{\&quot;1\&quot;:[\&quot;266L6fw9rBXSm4uBciLwRWTkonb2HCqz5a\&quot;]},\&quot;init_proposer_neturl\&quot;:{\&quot;1\&quot;:[\&quot;/ip4/127.0.0.1/tcp/47101/p2p/QmP38zphQmThRkK5DtiR7iN2ERDiZ1YZF5aXgJHjszj79t\&quot;]}}}}&quot;
-    }
-}
-</code></pre>
-<p>使用如下指令即可创建平行链,转了100个主链的token到平行链同名的address，作为创建链的代价：</p>
-<pre><code>./xchain-cli transfer --to baidu_zhengqi3 --amount 100 --desc xchain_chriswang.json
-
-02a19467620d01cea01242c94442a39e550e8ae30bc92eaffb341aeaf5f0fa66
-</code></pre>
-<h2 id="基本命令">基本命令</h2>
-<pre><code class="language-bash"># 创建普通用户, 包含地址，公钥，私钥
-./xchain-cli account newkeys  -f
-
-# 获取本地netURL地址
-./xchain-cli netURL get -H 127.0.0.1:37101
-
- #重新生成本地节点的网络私钥
-./xchain-cli netURL gen
-
-#显示本地节点的p2p地址
-./xchain-cli netURL preview
-
-# 创建xuper链
-./xchain-cli createChain
-
-# check服务运行状况
-./xchain-cli status -H 127.0.0.1:37101
-
-#查看块高 确保每个节点一致变化
-./xchain-cli status -H 127.0.0.1:37101 | jq '.blockchains[] | {&quot;name&quot;:.name,&quot;height&quot;:.ledger.trunkHeight}'
-
-#查看本节点账户余额
-./xchain-cli account balance --keys data/keys -H 127.0.0.1:37101
-
-#查看链总账户余额（要注意如果多个链可能会有多个utxoTotal）
-./xchain-cli status  | grep utxoTotal  
-
-#查看tdpos共识的状态
-./xchain-cli tdpos status
-</code></pre>
 ]]></content>
     </entry>
 </feed>

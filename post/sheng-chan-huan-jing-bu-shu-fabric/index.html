@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>生产环境部署fabric | chris&#39;wang</title>
+<link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+<script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
+
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+
+<link rel="canonical" href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/" />
+</head>
+<body>
+<div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
+<noscript><p class="warn" >本页面需要浏览器支持（启用）JavaScript</p></noscript><div class="header"><div class="logo_title"><div class="title animated fadeInDown"><a href="https://chriswsq.github.io"><img alt="logo" style="display:inline-block;" src="https://chriswsq.github.io/images/avatar.png"/></a><h1 title="chris&#39;wang" class="weaklink"><a  href="/">chris&#39;wang</a></h1>
+
+<div class="navbar weaklink">
+<div class="normal_nav">
+<div class="bitcron_nav_container"><div class="bitcron_nav"><div class="bitcron_nav"><div style="display:flex;justify-content:center;"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul></nav>
+<div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
+<div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1598507404982" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+</div></div>
+<script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
+
+<div class="main"><div class="main-inner"><div class="content">
+<article class="post">
+<h2 class="post_title sm_margin"><a>生产环境部署fabric</a></h2>
+<script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-27</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/qakyVMdT2/" class="tag">fabric</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">1768字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">9 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+</section>
+
+<div style="display:flex">
+<div class="md_block" id="md_block">
+<div class="round-shape-one"></div>
+<!-- more -->
+<h3 id="环境准备">环境准备</h3>
+<ul>
+<li>
+<p>ansible临时添加主机信息</p>
+</li>
+<li>
+<p>修改服务器密码</p>
+</li>
+<li>
+<p>docker</p>
+</li>
+<li>
+<p>docker-compose</p>
+</li>
+<li>
+<p>挂载数据盘</p>
+</li>
+<li>
+<p>传送镜像文件</p>
+</li>
+</ul>
+<h4 id="ansible临时添加主机信息">ansible临时添加主机信息</h4>
+<p>因为后续需要根据不同节点传递不同的镜像文件，所以先临时添加节点信息。</p>
+<p>例如：福州节点   fz</p>
+<pre><code class="language-bash">[fz]
+z1      ansible_host=121.204.20.157
+z2      ansible_host=121.204.220.154
+z3      ansible_host=121.204.20.143
+z4      ansible_host=121.204.20.158
+z5      ansible_host=121.204.20.117
+z6      ansible_host=121.204.20.14
+z7      ansible_host=121.204.22.145
+z8      ansible_host=121.204.20.141
+z9      ansible_host=121.204.20.144
+z10     ansible_host=121.204.220.13
+                     
+[fz:vars]
+ansible_ssh_port=650
+ansible_ssh_pass='123456'
+</code></pre>
+<h4 id="修改服务器密码">修改服务器密码</h4>
+<p>/application/ansible-playbook/optimization/</p>
+<pre><code class="language-bash">#推送ansible服务器秘钥
+ansible-playbook -e host=fz  push-ssh.yaml
+#更改服务器密码
+ansible-playbook -e host=fz  changepw.yaml
+
+</code></pre>
+<h4 id="安装docker">安装docker</h4>
+<p><strong>安装docker</strong></p>
+<p>从ansible主机传送 docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm 文件</p>
+<p><code>yum install ./docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm</code></p>
+<p><strong>拷贝daemon.json文件</strong></p>
+<p><code>/application/ansible-playbook/localnode/fabirc/peer/install-peer/template/daemon.json</code></p>
+<h4 id="安装docker-compose">安装docker-compose</h4>
+<p>可在传送镜像是安装也可执行下面命令安装</p>
+<pre><code class="language-bash">curl -L https://get.daocloud.io/docker/compose/releases/download/1.12.0/docker-compose-`uname -s`-`uname -m` &gt; ./docker-compose
+mv ./docker-compose /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+docker-compose -v
+</code></pre>
+<h4 id="挂载数据盘">挂载数据盘</h4>
+<pre><code class="language-bash">#查看数据盘
+fdisk -l
+#磁盘分区
+fdisk /dev/vdb
+n
+p
+回车
+回车
+w
+#格式化磁盘
+mkfs.xfs -n ftype=1 /dev/vdb1
+#添加永久挂载
+echo '/dev/vdb1                                 /bsn                    xfs     defaults        0 0' &gt;&gt;/etc/fstab
+#创建挂在目录
+mkdir /bsn
+#初始化挂载
+mount -a
+#查看挂在情况
+df -hT
+
+</code></pre>
+<h4 id="传送镜像文件">传送镜像文件</h4>
+<p>根据节点不同的服务类型来传送不同的镜像</p>
+<p><strong>传送服务节点的镜像</strong></p>
+<p>使用ansible服务器上  /application/ansible-playbook/optimization/copy.yaml 文件进行传送</p>
+<pre><code class="language-bash">- hosts: &quot;{{ host }}&quot;
+  remote_user: root
+  tasks:
+    #- name: 安装zip
+    #  yum: name=unzip state=latest
+    - name: 创建镜像目录/bsn/iso
+      file:
+        path: /bsn/iso
+        state: directory
+        mode: '0755'
+    - name: 传镜像
+      copy:
+        src: /application/ansible-playbook/common/iso/{{ item }}
+        dest: /bsn/iso
+      with_items:
+       # - bsnCa-tomcat9.zip
+       # - zipkin.zip
+        - docker-compose
+        - fabric-peer1.4.3.1.zip
+        - fabric-tools1.4.3.1.zip
+        - fabric-couchdb.zip
+        - fabric-ccenv.zip
+        - docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm
+        - fabric-ca-postgresql.zip
+        - fabric-ca-service.zip
+        - webase-mysql.zip     
+        - fabric-gateway.zip   
+        - fisco-gm-0.3.zip    
+        - webase-mysql.zip
+        - webasechainmanager.zip
+        - webasesign.zip       
+        - gateway-service-v4.zip               
+        - zipkin.zip
+        - mcs.zip
+    - name: 解压
+      shell: cd /bsn/iso &amp;&amp; unzip \*.zip
+      ignore_errors: yes
+</code></pre>
+<pre><code class="language-bash">#根据节点所需镜像进行传送，可先将不需要的注释掉
+
+peer节点
+        - fabric-peer1.4.3.1.zip
+        - fabric-tools1.4.3.1.zip
+        - fabric-couchdb.zip
+        - fabric-ccenv.zip
+        
+ca节点		
+        - fabric-ca-postgresql.zip
+        - fabric-ca-service.zip
+        - webase-mysql.zip 
+        
+网关节点		
+        - fabric-gateway.zip  
+        - rabbitmq.zip
+        - consul.zip
+        
+fisco节点		
+        - fisco-gm-0.3.zip
+        
+fisco签名服务 链管理
+        - webase-mysql.zip
+        - webasechainmanager.zip
+        - webasesign.zip
+        
+微服务节点		
+        - zipkin.zip
+        - mcs.zip
+ 
+</code></pre>
+<p><strong>peer节点 （z1  z2  z3）</strong></p>
+<pre><code class="language-bash">ansible-playbook -e host=fz copy.yaml -l z1,z2,z3   #保留copy.yaml文件中四个文件，其他注释
+</code></pre>
+<p><strong>ca节点（z6）</strong></p>
+<pre><code class="language-bash">ansible-playbook -e host=fz copy.yaml -l z6   #保留copy.yaml文件中三个文件，其他注释
+</code></pre>
+<p><strong>网关节点（z4）</strong></p>
+<pre><code class="language-bash">ansible-playbook -e host=fz copy.yaml -l z4   #保留copy.yaml文件中三个文件，其他注释
+</code></pre>
+<blockquote>
+<p>注： 因镜像文件较大，传送时间较长，需耐心等候</p>
+<p>传送镜像服务结束之后将临时创建的变量文件移除掉（一般移除至/mnt 下）</p>
+</blockquote>
+<h3 id="部署peer服务">部署peer服务</h3>
+<h4 id="修改peer变量文件">修改peer变量文件</h4>
+<p>/etc/ansible/inventory/peer1   peer2   peer3</p>
+<p>两个方面调整，添加主机组、主机组添加至子组（例如：peer1）</p>
+<pre><code class="language-bash">#添加主机组
+[fuzhou_peer1]
+fuzhou_peer1 ansible_host=121.204.220.16 ansible_ssh_port=22
+
+[fuzhou_peer1:vars]
+peer=peer1
+name=fuzhou
+MSP=Fuzhou
+node1=172.31.0.3
+node2=172.31.0.1
+node3=172.31.0.2
+cjq=172.31.0.2
+
+#添加子组
+[peer1:children]
+suzhou_peer1
+
+
+</code></pre>
+<h4 id="上传peer相关文件">上传peer相关文件</h4>
+<p>fuzhou-peer1.zip  fuzhou-peer2.zip  fuzhou-peer3.zip</p>
+<h4 id="部署peer1-2-3">部署peer1 2 3</h4>
+<p>执行目录：/application/ansible-playbook/localnode/fabirc/peer/install-peer</p>
+<pre><code class="language-bash">ansible-playbook -e host=peer1 install-peer1.yaml -l fuzhou_peer1
+ansible-playbook -e host=peer2 install-peer1.yaml -l fuzhou_peer2
+ansible-playbook -e host=peer3 install-peer1.yaml -l fuzhou_peer3
+</code></pre>
+<h3 id="部署ca服务">部署ca服务</h3>
+<h4 id="修改ca变量文件">修改ca变量文件</h4>
+<p>/etc/ansible/inventory/ca</p>
+<p>两个方面调整，添加主机组、主机组添加至子组</p>
+<pre><code class="language-bash">#添加群组
+[fuzhou_ca]
+fuzhou_ca ansible_host=121.204.220.14  ansible_ssh_port=22 name=fuzhou
+
+#添加子组
+[ca:children]
+fuzhou_ca
+
+</code></pre>
+<blockquote>
+<p>加入链码部分会报错，待采集器部署完后之后手动加入链码并安装（命令可见playbook文件底部）</p>
+</blockquote>
+<h4 id="上传ca相关文件">上传ca相关文件</h4>
+<p>fuzhou-ca.zip</p>
+<h4 id="部署ca-mysql">部署ca-mysql</h4>
+<p>执行目录 /application/ansible-playbook/localnode/fabirc/ca/install-mysql</p>
+<pre><code class="language-bash">ansible-playbook -e host=ca install-mysql.yaml -l fuzhou_ca
+</code></pre>
+<h4 id="部署ca-service">部署ca-service</h4>
+<p>执行目录 ：/application/ansible-playbook/localnode/fabirc/ca/install-ca</p>
+<pre><code class="language-bash">ansible-playbook -e host=ca install-service.yaml -l fuzhou_ca
+</code></pre>
+<h4 id="检查状态">检查状态</h4>
+<p>查看数据库表状态</p>
+<pre><code class="language-bash">  docker exec cjq-gate-mysql  mysql -uroot -pRed80@80 -e &quot;use bsnflowdb;select * from tb_nc_config&quot;
+</code></pre>
+<h3 id="部署gateway服务">部署gateway服务</h3>
+<h4 id="修改ca变量文件-2">修改ca变量文件</h4>
+<p>/etc/ansible/inventory/gateway_M</p>
+<p>两个方面调整，添加主机组、主机组添加至子组</p>
+<pre><code class="language-bash">#添加主机组
+[fuzhou_gateway_M]
+fuzhou_gateway_M ansible_host=121.204.220.10  ansible_ssh_port=22
+
+[fuzhou_gateway_M:vars]
+name=fuzhou
+MSP=Fuzhou
+titleName=福州
+code=ORG20200804                   #根据当天日志填写即可
+node1=172.31.0.31                  #三个peer节点的内网地址
+node2=172.31.0.23
+node3=172.31.0.26
+sign=1.1.1.1                        #没有fisco 填写1.1.1.1
+ca=172.31.0.24                      
+mcs=1.1.1.1                         #没有微服务 填写1.1.1.1
+
+#添加子组
+[gateway_M:children]
+nanping_gateway_M
+
+</code></pre>
+<h4 id="上传gateway相关文件">上传gateway相关文件</h4>
+<p>fuzhou-certs.zip</p>
+<h4 id="部署gateway">部署gateway</h4>
+<p>执行目录：/application/ansible-playbook/localnode/fabirc/gateway/install-gateway</p>
+<pre><code class="language-bash">ansible-playbook -e host=gateway_M install.yaml -l fuzhou_gateway_M
+</code></pre>
+<h3 id="部署采集器服务">部署采集器服务</h3>
+<h4 id="修改cjq变量文件">修改cjq变量文件</h4>
+<pre><code class="language-bash">[fuzhou_cjq]
+fuzhou_cjq ansible_host=121.204.220.18 ansible_ssh_port=22
+
+[fuzhou_cjq:vars]
+name=fuzhou
+MSP=Fuzhou
+titleName=福州
+code=ORG20200804
+node1=172.31.0.31
+node2=172.31.0.23
+node3=172.31.0.26
+ca=172.31.0.24
+peerport=22
+fiscocron=false          #没有fisco则填写false
+fiscosign=1.1.1.1        #没有fisco则填写 1.1.1.1
+xupercron=false          #没有xupercron则填写false    
+mcs=1.1.1.1              #没有微服务则填写1.1.1.1
+gmfabriccron=false       #没有微服务则填写false
+</code></pre>
+<h4 id="上传采集器相关文件">上传采集器相关文件</h4>
+<p>fuzhou-collect.zip</p>
+<h4 id="部署cjq">部署CJQ</h4>
+<p>执行目录：/application/ansible-playbook/localnode/fabirc/cjq/install-cjq</p>
+<pre><code class="language-bash">ansible-playbook -e host=cjq cjq.yaml -l fuzhou_cjq
+</code></pre>
+<h4 id="查看服务日志">查看服务日志</h4>
+<p>/bsn/go/src/node-collect/logs</p>
+<pre><code class="language-bash">tail -100f /bsn/go/src/node-collect/logs/catalina.out
+</code></pre>
+<p>如果出现以下报错，则需要重新加入链，安装链</p>
+<pre><code class="language-bash">2020-08-04 13:57:55.381 ERROR 4179 --- [ost-startStop-1] c.b.n.u.C.BaseConfigUtils$Companion      : /bsn/go/src/node-collect/webapps/nodecollectConf/conf/xuperChainBlockResult.properties (No such file or directory)
+2020-08-04 13:57:55.487  INFO 4179 --- [ost-startStop-1] c.b.n.utils.NetUtils$Companion           : 请求地址：http://1.1.1.1:5005/WeBASE-Chain-Manager/chain/all
+2020-08-04 14:00:02.770  INFO 4179 --- [ost-startStop-1] c.b.n.utils.NetUtils$Companion           : 处理异常：Connection timed out (Connection timed out),附加信息：fisco获取所有链编号
+2020-08-04 14:00:02.794 ERROR 4179 --- [ost-startStop-1] c.b.n.u.C.BaseConfigUtils$Companion      : /bsn/go/src/node-collect/webapps/nodecollectConf/conf/sm2FabricBlockResult.properties (No such file or directory)
+2020-08-04 14:00:02.830  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco fbTimetaskopenorclose==false
+2020-08-04 14:00:02.831  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco channelsUploadTime==1200000
+2020-08-04 14:00:02.831  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco blocksUploadTime==1200000
+2020-08-04 14:00:02.831  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco peerResourceUploadTime==600000
+</code></pre>
+<p>在peer的3个节点执行</p>
+<pre><code class="language-bash">#加入链码
+docker exec cli peer channel join -b blocktx/netchannel.block
+
+#安装链码
+docker exec cli peer chaincode install blocktx/cc_sys.3.0.pak 
+
+</code></pre>
+
+<span id="footnote"></span>
+<div id = "warn"></div>
+</div>
+<div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87">环境准备</a>
+<ul>
+<li><a href="#ansible%E4%B8%B4%E6%97%B6%E6%B7%BB%E5%8A%A0%E4%B8%BB%E6%9C%BA%E4%BF%A1%E6%81%AF">ansible临时添加主机信息</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AF%86%E7%A0%81">修改服务器密码</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85docker">安装docker</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85docker-compose">安装docker-compose</a></li>
+<li><a href="#%E6%8C%82%E8%BD%BD%E6%95%B0%E6%8D%AE%E7%9B%98">挂载数据盘</a></li>
+<li><a href="#%E4%BC%A0%E9%80%81%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6">传送镜像文件</a></li>
+</ul>
+</li>
+<li><a href="#%E9%83%A8%E7%BD%B2peer%E6%9C%8D%E5%8A%A1">部署peer服务</a>
+<ul>
+<li><a href="#%E4%BF%AE%E6%94%B9peer%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6">修改peer变量文件</a></li>
+<li><a href="#%E4%B8%8A%E4%BC%A0peer%E7%9B%B8%E5%85%B3%E6%96%87%E4%BB%B6">上传peer相关文件</a></li>
+<li><a href="#%E9%83%A8%E7%BD%B2peer1-2-3">部署peer1 2 3</a></li>
+</ul>
+</li>
+<li><a href="#%E9%83%A8%E7%BD%B2ca%E6%9C%8D%E5%8A%A1">部署ca服务</a>
+<ul>
+<li><a href="#%E4%BF%AE%E6%94%B9ca%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6">修改ca变量文件</a></li>
+<li><a href="#%E4%B8%8A%E4%BC%A0ca%E7%9B%B8%E5%85%B3%E6%96%87%E4%BB%B6">上传ca相关文件</a></li>
+<li><a href="#%E9%83%A8%E7%BD%B2ca-mysql">部署ca-mysql</a></li>
+<li><a href="#%E9%83%A8%E7%BD%B2ca-service">部署ca-service</a></li>
+<li><a href="#%E6%A3%80%E6%9F%A5%E7%8A%B6%E6%80%81">检查状态</a></li>
+</ul>
+</li>
+<li><a href="#%E9%83%A8%E7%BD%B2gateway%E6%9C%8D%E5%8A%A1">部署gateway服务</a>
+<ul>
+<li><a href="#%E4%BF%AE%E6%94%B9ca%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6-2">修改ca变量文件</a></li>
+<li><a href="#%E4%B8%8A%E4%BC%A0gateway%E7%9B%B8%E5%85%B3%E6%96%87%E4%BB%B6">上传gateway相关文件</a></li>
+<li><a href="#%E9%83%A8%E7%BD%B2gateway">部署gateway</a></li>
+</ul>
+</li>
+<li><a href="#%E9%83%A8%E7%BD%B2%E9%87%87%E9%9B%86%E5%99%A8%E6%9C%8D%E5%8A%A1">部署采集器服务</a>
+<ul>
+<li><a href="#%E4%BF%AE%E6%94%B9cjq%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6">修改cjq变量文件</a></li>
+<li><a href="#%E4%B8%8A%E4%BC%A0%E9%87%87%E9%9B%86%E5%99%A8%E7%9B%B8%E5%85%B3%E6%96%87%E4%BB%B6">上传采集器相关文件</a></li>
+<li><a href="#%E9%83%A8%E7%BD%B2cjq">部署CJQ</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E6%97%A5%E5%BF%97">查看服务日志</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="fullPage"><canvas id="canvas"></canvas></div>
+</article>
+<div id="eof"><span>EOF</span></div><div class="round-shape-one"></div>
+<section>
+<div class="doc_comments">
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+            appKey: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+			placeholder: '唠两块钱儿'
+        })
+    </script>
+
+</div></section>
+</div></div></div><script>
+"use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){n[s].innerHTML='<span class="line-number"></span>'+n[s].innerHTML+'<span class="cl"></span>';for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+content="本文最后更新于2020-08-27，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-08-27 13:40:46";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+</script>
+<style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
+<a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>
+<span style="display: inline;margin-right:15px;">👁<strong><span id="busuanzi_value_site_uv"></span></strong></span><span id="busuanzi_container_page_pv" style="display: inline;"><span>📚<strong>13</strong> posts</span></div></div>
+<script>
+console.log("\n %c \u26a1Theme: Bitcron-pro Author's Blog:https://blog.blinkstar.cn  Writen By Serence  \n\n", "color: #ffffff; background: rgba(49, 49, 49, 0.85); padding:5px 0;border-radius:5px;", );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/instant.page@3.0.0/instantpage.min.js" type="module" defer></script>
+<script type="text/javascript" async src="https://chriswsq.github.io/media/js/prism.js"></script>
+</body>
+</html>

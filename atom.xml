@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-27T08:37:30.615Z</updated>
+    <updated>2020-08-27T08:38:37.711Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -1077,16 +1077,16 @@ grok正则表达式：(?<temMsg>(?=Report)(.</em>)/?) 获取Report之后的字�
 <p>因为后续需要根据不同节点传递不同的镜像文件，所以先临时添加节点信息。</p>
 <p>例如：龙岩节点   fz</p>
 <pre><code class="language-bash">[fz]
-ly1      ansible_host=121.204.20.15
-ly2      ansible_host=121.204.220.15
-ly3      ansible_host=121.204.20.14
-ly4      ansible_host=121.204.20.15
-ly5      ansible_host=121.204.20.11
-ly6      ansible_host=121.204.20.1
-ly7      ansible_host=121.204.22.14
-ly8      ansible_host=121.204.20.14
-ly9      ansible_host=121.204.20.14
-ly10     ansible_host=121.204.220.1
+z1      ansible_host=121.204.20.15
+z2      ansible_host=121.204.220.15
+z3      ansible_host=121.204.20.14
+z4      ansible_host=121.204.20.15
+z5      ansible_host=121.204.20.11
+z6      ansible_host=121.204.20.1
+z7      ansible_host=121.204.22.14
+z8      ansible_host=121.204.20.14
+z9      ansible_host=121.204.20.14
+z10     ansible_host=121.204.220.1
                      
 [fz:vars]
 ansible_ssh_port=650

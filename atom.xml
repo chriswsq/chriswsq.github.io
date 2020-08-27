@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-27T08:40:23.555Z</updated>
+    <updated>2020-08-27T09:44:12.066Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -1261,6 +1261,7 @@ suzhou_peer1
 </code></pre>
 <h4 id="上传peer相关文件">上传peer相关文件</h4>
 <p>fuzhou-peer1.zip  fuzhou-peer2.zip  fuzhou-peer3.zip</p>
+<p>上传至 /application/ansible-playbook/localnode/fabirc/peer/install-peer/peer-package</p>
 <h4 id="部署peer1-2-3">部署peer1 2 3</h4>
 <p>执行目录：/application/ansible-playbook/localnode/fabirc/peer/install-peer</p>
 <pre><code class="language-bash">ansible-playbook -e host=peer1 install-peer1.yaml -l fuzhou_peer1

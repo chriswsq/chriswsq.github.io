@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>elk用户认证问题 | chris&#39;wang</title>
+<link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+<script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
+
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+
+<link rel="canonical" href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/" />
+</head>
+<body>
+<div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
+<noscript><p class="warn" >本页面需要浏览器支持（启用）JavaScript</p></noscript><div class="header"><div class="logo_title"><div class="title animated fadeInDown"><a href="https://chriswsq.github.io"><img alt="logo" style="display:inline-block;" src="https://chriswsq.github.io/images/avatar.png"/></a><h1 title="chris&#39;wang" class="weaklink"><a  href="/">chris&#39;wang</a></h1>
+
+<div class="navbar weaklink">
+<div class="normal_nav">
+<div class="bitcron_nav_container"><div class="bitcron_nav"><div class="bitcron_nav"><div style="display:flex;justify-content:center;"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul></nav>
+<div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
+<div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1598508341490" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+</div></div>
+<script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
+
+<div class="main"><div class="main-inner"><div class="content">
+<article class="post">
+<h2 class="post_title sm_margin"><a>elk用户认证问题</a></h2>
+<script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-27</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="tag">ELK</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">1506字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">8 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+</section>
+
+<div style="display:flex">
+<div class="md_block" id="md_block">
+<div class="round-shape-one"></div>
+<p>elk7+的用户认证免费了，不过没有集成在安装包里，还需要自己再进行一些操作，在此记录下自己再配置用户认证时遇到的问题</p>
+<!-- more -->
+<h2 id="开启安全功能">开启安全功能</h2>
+<p>首先在es配置文件中开启安全功能</p>
+<pre><code>.....
+
+xpack.security.enabled: true
+xpack.security.transport.ssl.enabled
+</code></pre>
+<p>然后重启es服务</p>
+<h2 id="生成证书配置node间ssl通信">生成证书，配置Node间SSL通信</h2>
+<h3 id="创建ca证书">创建ca证书</h3>
+<pre><code>$ bin/elasticsearch-certutil ca -v
+</code></pre>
+<p>一路回车即可</p>
+<p>默认的CA证书存放在$ES_HOME 目录中</p>
+<p>这个命令生成格式为PKCS#12名称为 elastic-stack-ca.p12 的keystore文件，包含CA证书和私钥。</p>
+<h3 id="创建节点间认证用的证书">创建节点间认证用的证书</h3>
+<pre><code>$ ./bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12 
+</code></pre>
+<p>一路回车即可</p>
+<h3 id="配置es节点使用这个证书">配置ES节点使用这个证书</h3>
+<pre><code>$ mkdir config/certs
+$ mv elastic-* config/certs/
+ll config/certs/
+
+-rw------- 1 elasticsearch root 3443 Jun  9 15:22 elastic-certificates.p12
+-rw------- 1 elasticsearch root 2527 Jun  9 15:22 elastic-stack-ca.p12
+</code></pre>
+<p>拷贝这个目录到所有的ES节点中<br>
+config/certs 目录中不需要拷贝CA证书文件，只拷贝cert文件即可</p>
+<p>配置elasticsearch.yml配置文件，注意所有的node节点都需要配置，这里的配置是使用PKCS#12格式的证书。</p>
+<pre><code>$ vim  config/elasticsearch.yml
+xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate #认证方式使用证书
+xpack.security.transport.ssl.keystore.path: certs/elastic-certificates.p12
+xpack.security.transport.ssl.truststore.path: certs/elastic-certificates.p12
+</code></pre>
+<h2 id="测试能够正常启动了-好了我们再来继续之前的生成密码在随意一台节点即可">测试能够正常启动了。好了，我们再来继续之前的生成密码：在随意一台节点即可。</h2>
+<p>生成密码有两个命令，一个为自动生成，一个为手动生成</p>
+<p>自动<br>
+<code>bin/elasticsearch-setup-passwords auto</code><br>
+手动<br>
+<code>bin/elasticsearch-setup-passwords interactive</code></p>
+<p>这里我们选择自动</p>
+<pre><code>[root@elasticsearch1 elasticsearch]# bin/elasticsearch-setup-passwords auto
+Initiating the setup of passwords for reserved users elastic,apm_system,kibana,logstash_system,beats_system,remote_monitoring_user.
+The passwords will be randomly generated and printed to the console.
+Please confirm that you would like to continue [y/N]y
+
+
+Changed password for user apm_system
+PASSWORD apm_system = EKPbqziKu4v3P0MYoYIJ
+
+Changed password for user kibana
+PASSWORD kibana = 48Sf7tIFArn4rmyMW2x4
+
+Changed password for user logstash_system
+PASSWORD logstash_system = O09XtxP495uNRxHRZxtC
+
+Changed password for user beats_system
+PASSWORD beats_system = ULC810uP0sVCAKhbwxvE
+
+Changed password for user remote_monitoring_user
+PASSWORD remote_monitoring_user = zqnO9YBFsoRu5QIsgOi6
+
+Changed password for user elastic
+PASSWORD elastic = d27DuDQjTChIdv3sE8oI
+
+</code></pre>
+<p>查看集群节点数量：</p>
+<pre><code>[root@test-1 conf]# curl -u elastic 192.168.154.6:9200/_cat/nodes
+Enter host password for user 'elastic':
+10.0.0.67 32 88 1 0.12 0.08 0.43 ilmr   - node-1
+10.0.0.92 14 80 1 0.12 0.07 0.22 dilmrt * node-2
+10.0.0.93 12 79 1 0.00 0.03 0.24 dilmrt - node-3
+</code></pre>
+<h2 id="kibana的安装配置">kibana的安装配置</h2>
+<h3 id="编辑配置文件">编辑配置文件</h3>
+<pre><code>$ cat kibana/config/kibana.yml |grep -Ev &quot;^$|^#&quot;
+server.port: 5601
+server.host: &quot;0.0.0.0&quot;
+server.name: &quot;mykibana&quot;
+elasticsearch.hosts: [&quot;http://localhost:9200&quot;]
+kibana.index: &quot;.kibana&quot;
+elasticsearch.username: &quot;kibana&quot;
+elasticsearch.password: &quot;UKuHceHWudloJk9NvHlX&quot;
+# i18n.locale: &quot;en&quot;
+i18n.locale: &quot;zh-CN&quot;
+xpack.security.encryptionKey: Hz*9yFFaPejHvCkhT*ddNx%WsBgxVSCQ
+</code></pre>
+<h3 id="页面访问kibana">页面访问kibana</h3>
+<figure data-type="image" tabindex="1"><img src="/images/elk%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/kibana-login.jpg" alt="" loading="lazy"></figure>
+<p>输入上面生成的管理员elastic的用户和密码，就可以登陆了，我们查看一下license许可吧：<br>
+<img src="/images/elk%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/kibana-basic.jpg" alt="" loading="lazy"></p>
+<p>一个使用永不过期的Basic许可的免费License，开启了基本的Auth认证和集群间SSL/TLS 认证的Elasticsearch集群就创建完毕了。</p>
+<p>等等，你有没有想过Kibana的配置文件中使用着明文的用户名密码，这里只能通过LInux的权限进行控制了，有没有更安全的方式呢，有的，就是keystore。</p>
+<h3 id="kibana-keystore-安全配置">kibana keystore 安全配置</h3>
+<p><a href="https://www.elastic.co/guide/en/kibana/7.7/secure-settings.html">参考官方</a></p>
+<p>查看<code>kibana-keystore</code>命令帮助：</p>
+<pre><code>$ ./bin/kibana-keystore --help
+Usage: bin/kibana-keystore [options] [command]
+
+A tool for managing settings stored in the Kibana keystore
+
+Options:
+  -V, --version           output the version number
+  -h, --help              output usage information
+
+Commands:
+  create [options]        Creates a new Kibana keystore
+  list [options]          List entries in the keystore
+  add [options] &lt;key&gt;     Add a string setting to the keystore
+  remove [options] &lt;key&gt;  Remove a setting from the keystore
+
+</code></pre>
+<p>首先我们创建keystore：</p>
+<pre><code>$ bin/kibana-keystore create
+Created Kibana keystore in /opt/elk74/kibana-7.4.2-linux-x86_64/data/kibana.keystore # 默认存放位置
+</code></pre>
+<p>增加配置：</p>
+<p>我们要吧kibana.yml 配置文件中的敏感信息，比如：elasticsearch.username 和 elasticsearch.password，给隐藏掉，或者直接去掉；</p>
+<p>所以这里我们增加两个配置：分别是elasticsearch.password 和 elasticsearch.username:</p>
+<pre><code># 查看add的命令帮助：
+$ ./bin/kibana-keystore add --help
+Usage: add [options] &lt;key&gt;
+
+Add a string setting to the keystore
+
+Options:
+  -f, --force   overwrite existing setting without prompting
+  -x, --stdin   read setting value from stdin
+  -s, --silent  prevent all logging
+  -h, --help    output usage information
+
+# 创建elasticsearch.username这个key：注意名字必须是kibana.yml中的key
+$ ./bin/kibana-keystore add elasticsearch.username
+Enter value for elasticsearch.username: ******  # 输入key对应的value，这里是kibana连接es的账号：kibana
+
+# 创建elasticsearch.password这个key
+$ ./bin/kibana-keystore add elasticsearch.password
+Enter value for elasticsearch.password: ******************** # 输入对应的密码：UKuHceHWudloJk9NvHlX
+</code></pre>
+<p>好了，我们把kibana.yml配置文件中的这两项配置删除即可，然后直接启动kibana，kibana会自动已用这两个配置的。</p>
+<p>最终的kibana.yml配置如下：</p>
+<pre><code>server.port: 5601
+server.host: &quot;0.0.0.0&quot;
+server.name: &quot;mykibana&quot;
+elasticsearch.hosts: [&quot;http://localhost:9200&quot;]
+kibana.index: &quot;.kibana&quot;
+# i18n.locale: &quot;en&quot;
+i18n.locale: &quot;zh-CN&quot;
+xpack.security.encryptionKey: Hz*9yFFaPejHvCkhT*ddNx%WsBgxVSCQ
+</code></pre>
+<p>这样配置文件中就不会出现敏感信息了，达到了更高的安全性。</p>
+<p>类似的Keystore方式不只是Kibana支持，ELK的产品都是支持的。</p>
+<p><strong>注意：两个证书文件属主须是启动用户，certs权限为744即可，权限不够会报错,其他节点权限也一样</strong></p>
+<pre><code>elk_elasticsearch1.1.rqtnwnm1sqzw@test-1    | uncaught exception in thread [main]
+elk_elasticsearch1.1.rqtnwnm1sqzw@test-1    | ElasticsearchSecurityException[failed to load SSL configuration [xpack.security.transport.ssl]]; nested: ElasticsearchException[failed to initialize SSL TrustManager - not permitted to read truststore file [/usr/share/elasticsearch/config/certs/elastic-certificates.p12]]; nested: AccessDeniedException[/usr/share/elasticsearch/config/certs/elastic-certificates.p12];
+elk_elasticsearch1.1.jp9k598g34hq@test-1    | &quot;... 6 more&quot;] }
+elk_elasticsearch1.1.yk71h6aom47z@test-1    | &quot;at org.elasticsearch.node.Node.&lt;init&gt;(Node.java:481) ~[elasticsearch-7.7.0.jar:7.7.0]&quot;,
+elk_elasticsearch1.1.w26656n32a86@test-1    | &quot;... 6 more&quot;] }
+elk_elasticsearch1.1.w26656n32a86@test-1    | ElasticsearchSecurityException[failed to load SSL configuration [xpack.security.transport.ssl]]; nested: ElasticsearchException[failed to initialize SSL TrustManager - not permitted to read truststore file [/usr/share/elasticsearch/config/certs/elastic-certificates.p12]]; nested: AccessDeniedException[/usr/share/elasticsearch/config/certs/elastic-certificates.p12];
+elk_elasticsearch1.1.rqtnwnm1sqzw@test-1    | Likely root cause: java.nio.file.AccessDeniedException: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
+elk_elasticsearch1.1.jp9k598g34hq@test-1    | ElasticsearchSecurityException[failed to load SSL configuration [xpack.security.transport.ssl]]; nested: ElasticsearchException[failed to initialize SSL TrustManager - not permitted to read truststore file [/usr/share/elasticsearch/config/certs/elastic-certificates.p12]]; nested: AccessDeniedException[/usr/share/elasticsearch/config/certs/elastic-certificates.p12];
+</code></pre>
+<p><a href="https://knner.wang/2019/11/26/install-elasticsearch-cluster-7-4.html">参考自</a></p>
+<h2 id="logstash配置">logstash配置</h2>
+<p><a href="https://www.elastic.co/cn/blog/configuring-ssl-tls-and-https-to-secure-elasticsearch-kibana-beats-and-logstash">参考</a></p>
+
+<span id="footnote"></span>
+<div id = "warn"></div>
+</div>
+<div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%BC%80%E5%90%AF%E5%AE%89%E5%85%A8%E5%8A%9F%E8%83%BD">开启安全功能</a></li>
+<li><a href="#%E7%94%9F%E6%88%90%E8%AF%81%E4%B9%A6%E9%85%8D%E7%BD%AEnode%E9%97%B4ssl%E9%80%9A%E4%BF%A1">生成证书，配置Node间SSL通信</a>
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BAca%E8%AF%81%E4%B9%A6">创建ca证书</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E8%8A%82%E7%82%B9%E9%97%B4%E8%AE%A4%E8%AF%81%E7%94%A8%E7%9A%84%E8%AF%81%E4%B9%A6">创建节点间认证用的证书</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEes%E8%8A%82%E7%82%B9%E4%BD%BF%E7%94%A8%E8%BF%99%E4%B8%AA%E8%AF%81%E4%B9%A6">配置ES节点使用这个证书</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E8%83%BD%E5%A4%9F%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8%E4%BA%86-%E5%A5%BD%E4%BA%86%E6%88%91%E4%BB%AC%E5%86%8D%E6%9D%A5%E7%BB%A7%E7%BB%AD%E4%B9%8B%E5%89%8D%E7%9A%84%E7%94%9F%E6%88%90%E5%AF%86%E7%A0%81%E5%9C%A8%E9%9A%8F%E6%84%8F%E4%B8%80%E5%8F%B0%E8%8A%82%E7%82%B9%E5%8D%B3%E5%8F%AF">测试能够正常启动了。好了，我们再来继续之前的生成密码：在随意一台节点即可。</a></li>
+<li><a href="#kibana%E7%9A%84%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE">kibana的安装配置</a>
+<ul>
+<li><a href="#%E7%BC%96%E8%BE%91%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">编辑配置文件</a></li>
+<li><a href="#%E9%A1%B5%E9%9D%A2%E8%AE%BF%E9%97%AEkibana">页面访问kibana</a></li>
+<li><a href="#kibana-keystore-%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE">kibana keystore 安全配置</a></li>
+</ul>
+</li>
+<li><a href="#logstash%E9%85%8D%E7%BD%AE">logstash配置</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="fullPage"><canvas id="canvas"></canvas></div>
+</article>
+<div id="eof"><span>EOF</span></div><div class="round-shape-one"></div>
+<section>
+<div class="doc_comments">
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+            appKey: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+			placeholder: '唠两块钱儿'
+        })
+    </script>
+
+</div></section>
+</div></div></div><script>
+"use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){n[s].innerHTML='<span class="line-number"></span>'+n[s].innerHTML+'<span class="cl"></span>';for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+content="本文最后更新于2020-08-27，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-08-27 13:52:58";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+</script>
+<style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
+<a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>
+<span style="display: inline;margin-right:15px;">👁<strong><span id="busuanzi_value_site_uv"></span></strong></span><span id="busuanzi_container_page_pv" style="display: inline;"><span>📚<strong>20</strong> posts</span></div></div>
+<script>
+console.log("\n %c \u26a1Theme: Bitcron-pro Author's Blog:https://blog.blinkstar.cn  Writen By Serence  \n\n", "color: #ffffff; background: rgba(49, 49, 49, 0.85); padding:5px 0;border-radius:5px;", );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/instant.page@3.0.0/instantpage.min.js" type="module" defer></script>
+<script type="text/javascript" async src="https://chriswsq.github.io/media/js/prism.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-27T05:50:07.495Z</updated>
+    <updated>2020-08-27T06:24:09.551Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,1041 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[k8s 如何关联pvc到特定的pv?]]></title>
+        <id>https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/</id>
+        <link href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/">
+        </link>
+        <updated>2020-08-27T05:59:30.000Z</updated>
+        <summary type="html"><![CDATA[<p>部署有状态的应用时需要挂载相应的配置文件，了解下最常用的pv（nfs）和pvc绑定关系</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>部署有状态的应用时需要挂载相应的配置文件，了解下最常用的pv（nfs）和pvc绑定关系</p>
+<!-- more -->
+<p>首先肯定要在放置配置文件的地方配置nfs服务</p>
+<p>如何关联pvc到特定的pv?</p>
+<p>我们可以使用对 pv 打 label 的方式，具体如下：</p>
+<p>创建 pv，指定 label</p>
+<p><code>cat nfs-test-pv.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-test-pv
+#  namespace: test-pv-test
+  labels:
+    pv: nfs-test-pv
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    # FIXME: use the right IP
+    server: 192.168.40.6
+    path: &quot;/test/&quot;
+</code></pre>
+<p>然后创建 pvc，使用 matchLabel 来关联刚创建的 pv:nfs-test-pv</p>
+<p><code>cat nfs-test-pvc.yaml</code></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-test-pvc
+#  namespace: test-pv-test
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: &quot;&quot;
+  resources:
+    requests:
+      storage: 90Mi
+  selector:
+    matchLabels:
+      pv: nfs-test-pv
+</code></pre>
+<p>下面开始测试：</p>
+<p><strong>创建pv</strong></p>
+<p><code>kubectl apply -f nfs-test-pv.yaml</code></p>
+<p><strong>查看pv</strong></p>
+<pre><code>kubectl get pv
+[root@test-1 ~]# kubectl get pv
+NAME         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                    STORAGECLASS   REASON   AGE
+ca-service   100Mi      RWX            Retain           Bound    default/ca-service-pvc                           30m
+
+</code></pre>
+<p><strong>然后创建 pvc</strong><br>
+<code>kubectl apply -f nfs-test-pvc.yaml</code></p>
+<p><strong>查看pvc</strong></p>
+<pre><code>[root@test-1 ~]# kubectl get pvc
+NAME             STATUS   VOLUME       CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+ca-service-pvc   Bound    ca-service   100Mi      RWX                           30m
+</code></pre>
+<p>已都正确绑定</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[k8s pv,pvc无法删除问题]]></title>
+        <id>https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/</id>
+        <link href="https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/">
+        </link>
+        <updated>2020-08-27T05:58:37.000Z</updated>
+        <summary type="html"><![CDATA[<p>解决k8s pv,pvc无法删除问题</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>解决k8s pv,pvc无法删除问题</p>
+<!-- more -->
+<p>一般删除步骤为：先删pod再删pvc最后删pv</p>
+<p>但是遇到pv始终处于“Terminating”状态，而且delete不掉。如下：</p>
+<pre><code class="language-bash">[root@test-1 pv]# kubectl get pv
+NAME         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS        CLAIM                    STORAGECLASS   REASON   AGE
+ca-service   100Mi      RWX            Retain           Terminating   default/ca-service-pvc                           17h
+
+</code></pre>
+<p>解决方法：</p>
+<p>直接删除k8s中的记录：</p>
+<pre><code class="language-bash">kubectl patch pv ca-service  -p '{&quot;metadata&quot;:{&quot;finalizers&quot;:null}}'
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[kubeadm部署k8s]]></title>
+        <id>https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/</id>
+        <link href="https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/">
+        </link>
+        <updated>2020-08-27T05:56:13.000Z</updated>
+        <content type="html"><![CDATA[<!-- more -->
+<h1 id="部署环境">部署环境</h1>
+<table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>centos版本</th>
+<th>IP</th>
+<th>docker-version</th>
+<th>flanel-version</th>
+<th>keepalived-version</th>
+<th>主机配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>k8s-master1</td>
+<td>7.4</td>
+<td>192.168.40.6</td>
+<td>18.09.9</td>
+<td>v0.11.0</td>
+<td>v1.3.5</td>
+<td>2C4G</td>
+</tr>
+<tr>
+<td>k8s-node1</td>
+<td>7.4</td>
+<td>192.168.40.7</td>
+<td>18.09.9</td>
+<td>v0.11.0</td>
+<td>v1.3.5</td>
+<td>2C4G</td>
+</tr>
+<tr>
+<td>k8s-node2</td>
+<td>7.4</td>
+<td>192.168.40.8</td>
+<td>18.09.9</td>
+<td>v0.11.0</td>
+<td>v1.3.5</td>
+<td>2C4G</td>
+</tr>
+</tbody>
+</table>
+<p>二、高可用架构</p>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1598507860493.jpg" alt="" loading="lazy"></figure>
+<p>注：此图为负载为loadbanacer为云上的负载方案</p>
+<p>在此就说下本人在这里犯的小错误</p>
+<p>1.拉镜像时各个节点都要拉取</p>
+<p>2.部署flannel时因为网络的原因可以先down下载，在执行   kubectl apply -f   kube-flannel.yml<br>
+wget https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml</p>
+<p>3.部署后会发现主节点Ready 而从节点都是NotReady，这是因为master节点的这个文件 /etc/cni/net.d/10-flannel.conflist 是因为安装flannel生成的，而node节点是通过master分配生成的所以少一个参数<br>
+&quot;cniVersion&quot;: &quot;0.3.1&quot;,</p>
+<p>直接把maser推过去到node节点，或者手动改下就可以了</p>
+<h2 id=""></h2>
+<p>kubeadm部署</p>
+<p>kubeadm join 192.168.154.6:6443 --token hum394.uf5ehv9ye6w661bz <br>
+--discovery-token-ca-cert-hash sha256:6bd3388a191ae0afb2ca86102e655a2ced4c6e6b6bef82afebbdef8154a57b61</p>
+<p>node</p>
+<p>{<br>
+&quot;name&quot;: &quot;cbr0&quot;,<br>
+&quot;plugins&quot;: [<br>
+{<br>
+&quot;type&quot;: &quot;flannel&quot;,<br>
+&quot;delegate&quot;: {<br>
+&quot;hairpinMode&quot;: true,<br>
+&quot;isDefaultGateway&quot;: true<br>
+}<br>
+},<br>
+{<br>
+&quot;type&quot;: &quot;portmap&quot;,<br>
+&quot;capabilities&quot;: {<br>
+&quot;portMappings&quot;: true<br>
+}<br>
+}<br>
+]<br>
+}</p>
+<p>master</p>
+<p>{<br>
+&quot;name&quot;: &quot;cbr0&quot;,<br>
+&quot;cniVersion&quot;: &quot;0.3.1&quot;,<br>
+&quot;plugins&quot;: [<br>
+{<br>
+&quot;type&quot;: &quot;flannel&quot;,<br>
+&quot;delegate&quot;: {<br>
+&quot;hairpinMode&quot;: true,<br>
+&quot;isDefaultGateway&quot;: true<br>
+}<br>
+},<br>
+{<br>
+&quot;type&quot;: &quot;portmap&quot;,<br>
+&quot;capabilities&quot;: {<br>
+&quot;portMappings&quot;: true<br>
+}<br>
+}<br>
+]<br>
+}</p>
+<p>参考<br>
+https://www.kubernetes.org.cn/6632.html</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[logstash配置]]></title>
+        <id>https://chriswsq.github.io/post/logstash-pei-zhi/</id>
+        <link href="https://chriswsq.github.io/post/logstash-pei-zhi/">
+        </link>
+        <updated>2020-08-27T05:54:19.000Z</updated>
+        <summary type="html"><![CDATA[<p>补上一份自己在工作中用的一份logstash的配置文件，万变不离其宗，可以参看此内容</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>补上一份自己在工作中用的一份logstash的配置文件，万变不离其宗，可以参看此内容</p>
+<!-- more -->
+<h2 id="这一份匹配的日志是前部分是字符串后一部分是json格式的日志">这一份匹配的日志是，前部分是字符串，后一部分是json格式的日志</h2>
+<pre><code class="language-yml">input {
+    kafka {
+        bootstrap_servers =&gt; &quot;kafka1:9092, kafka2:9092, kafka3:9092&quot;
+        topics =&gt; [&quot;tomcat&quot;]
+        type =&gt; &quot;tomcat&quot;
+        codec =&gt; json {
+           charset =&gt; &quot;UTF-8&quot;
+        }
+    }
+}
+
+filter {     
+   if [type] == &quot;tomcat&quot; {
+   grok {
+            match =&gt; { 'message' =&gt; '%{TIMESTAMP_ISO8601:access_time}  %{LOGLEVEL:loglevel} %{INT:number} --- \[%{DATA:thread_name}\] %{URIHOST:
+type_name}  %{SPACE}*  : %{HOSTNAME:status} %{HOSTNAME:action} %{URIHOST:usetime}((?&lt;request&gt;(.*)(?=Creating)/?)|)(%{GREEDYDATA:sql}|)'}
+}
+   json {
+        source =&gt; &quot;request&quot;
+        #target =&gt; &quot;parsedJson&quot;
+        remove_field=&gt;[&quot;request&quot;]
+}      
+    mutate {
+        remove_field =&gt; [&quot;agent&quot;]
+        remove_field =&gt; [&quot;[ecs][version]&quot;,&quot;[fields][log_topics]&quot;,&quot;[fields][registry_file]&quot;,&quot;[host][name]&quot;,&quot;[input][type]&quot;,&quot;[@version]&quot;,&quot;[tag]&quot;,&quot;[id]&quot;,&quot;[score]&quot;]
+          }
+     }
+}
+output {
+  if [type] == &quot;tomcat&quot; {
+  elasticsearch {
+    hosts =&gt; [&quot;elasticsearch1:9200&quot;,&quot;elasticsearch2:9200&quot;,&quot;elasticsearch3:9200&quot;]
+    index =&gt; &quot;tomcat-%{+YYYY.MM.dd}&quot;
+    user =&gt; 'elastic'
+    password =&gt; 'd27DuDQjTChIdv3sE8oI'
+   }
+ }
+}
+</code></pre>
+<h2 id="这一份是整个的日志都是json格式">这一份是整个的日志都是json格式</h2>
+<pre><code class="language-yml">input {
+    kafka {
+        bootstrap_servers =&gt; &quot;kafka1:9092, kafka2:9092, kafka3:9092&quot;
+        topics =&gt; [&quot;gateway&quot;]
+        type =&gt; &quot;gateway&quot;
+        codec =&gt; json {
+           charset =&gt; &quot;UTF-8&quot;
+        }
+    }
+}
+filter {
+   if [type] == &quot;gateway&quot; {
+    json {
+        source =&gt; &quot;message&quot;
+        #target =&gt; &quot;doc&quot;
+        remove_field =&gt; [&quot;message&quot;]
+    }        
+    mutate {
+        remove_field =&gt; [&quot;agent&quot;]
+        remove_field =&gt; [&quot;[ecs][version]&quot;,&quot;[fields][log_topics]&quot;,&quot;[fields][registry_file]&quot;,&quot;[host][name]&quot;,&quot;[input][type]&quot;,&quot;[@version]&quot;,&quot;[tag]&quot;,&quot;[id]&quot;,&quot;[score]&quot;]
+      } 
+   }
+}
+output {
+   if [type] == &quot;gateway&quot; {
+    elasticsearch {
+    hosts =&gt; [&quot;elasticsearch1:9200&quot;,&quot;elasticsearch2:9200&quot;,&quot;elasticsearch3:9200&quot;]
+    index =&gt; &quot;gateway-%{+YYYY.MM.dd}&quot;
+    user =&gt; 'elastic'
+    password =&gt; 'd27DuDQjTChIdv3sE8oI'
+        } 
+    }
+}
+</code></pre>
+<h2 id="这是一份整个日志都是字符串的格式">这是一份整个日志都是字符串的格式</h2>
+<pre><code class="language-yml">input {
+    kafka {
+        bootstrap_servers =&gt; &quot;kafka1:9092, kafka2:9092, kafka3:9092&quot;
+        topics =&gt; [&quot;gb_core_ngx&quot;]
+        type =&gt; &quot;gb_core_ngx&quot;
+        codec =&gt; json {
+           charset =&gt; &quot;UTF-8&quot;
+        }
+    }
+}
+filter {
+    if [type] == &quot;gb_core_ngx&quot; {
+
+    grok {
+       match =&gt; {
+              &quot;message&quot; =&gt; &quot;%{URIHOST:hostname}: \[%{TIMESTAMP_ISO8601:local_time}\] (%{NUMBER:status}|-) %{NUMBER:siteid}-%{WORD:idc_num}-%{HOSTNAME:Random_value} (%{HOSTNAME:X_system}|-) *(%{URIHOST:remote_hostname}|-),%{URIHOST:outsite_hostname} \[(%{URIHOST:upstream_addr}|-)] %{NUMBER:request_time} (%{NUMBER:upstraem_response_time}|-) (%{WORD:request_method}|-) (%{HOSTNAME:http_host}|-) (%{GREEDYDATA:uri}|-) (%{NUMBER:body_bytes_sent}|-) \| (%{IPORHOST:client_ip}|-)&quot;
+       }
+}
+    mutate {
+        remove_field =&gt; &quot;tags&quot;
+        remove_field =&gt; &quot;port&quot;
+        remove_field =&gt; &quot;prospector&quot;
+        remove_field =&gt; &quot;beat&quot;
+        remove_field =&gt; &quot;source&quot;
+        remove_field =&gt; &quot;offset&quot;
+        remove_field =&gt; &quot;fields&quot;
+        remove_field =&gt; &quot;host&quot;
+        remove_field =&gt; &quot;@version&quot;
+        remove_field =&gt; &quot;message&quot;
+        remove_field =&gt; &quot;input&quot;
+        convert =&gt; [&quot;body_bytes_sent&quot;, &quot;float&quot;]
+        convert =&gt; [&quot;request_time&quot;, &quot;float&quot;]
+        convert =&gt; [&quot;upstream_response_time&quot;, &quot;float&quot;]
+        add_field =&gt; { &quot;uuid&quot; =&gt; &quot;%{siteid}-%{idc_num}-%{Random_value}&quot; }
+    }
+
+#    date {
+#        match =&gt; [&quot;local__time&quot;, &quot;yyyy-MM-dd HH:mm:ss&quot;]
+#}
+   
+   geoip {
+        source =&gt; &quot;client_ip&quot;
+        target =&gt; &quot;geoip&quot;
+        database =&gt; &quot;/opt/GeoLite2-City.mmdb&quot;
+        add_field =&gt; [&quot;[geoip][coordinates]&quot;,&quot;%{[geoip][longitude]}&quot;]
+        add_field =&gt; [&quot;[geoip][coordinates]&quot;,&quot;%{[geoip][latitude]}&quot;]
+                }
+   mutate {
+                 convert =&gt; [ &quot;[geoip][coordinates]&quot;, &quot;float&quot;]
+        }
+   }
+}
+output {
+       if [type] == &quot;gb_core_ngx&quot; {
+       elasticsearch { 
+       hosts =&gt; [&quot;elasticsearch1:9200&quot; ,&quot;elasticsearch2:9200&quot;, &quot;elasticsearch3:9200&quot;]
+       index =&gt; &quot;logstash-gb_core_ngx-%{+YYYY.MM.dd}&quot;
+       user =&gt; 'elastic'
+       password =&gt; 'd27DuDQjTChIdv3sE8oI'
+   }
+ }
+}
+</code></pre>
+<h2 id="添加组合字段">添加&amp;组合字段</h2>
+<pre><code class="language-yml">filter {
+ grok {
+    match =&gt; { &quot;message&quot; =&gt; '&quot;(%{GREEDYDATA:cust_date})&quot;,&quot;(%{TIME:cust_time})&quot;,&quot;(%{NUMBER:author})&quot;'}
+    add_field =&gt; {
+            &quot;date_time&quot; =&gt; &quot;%{cust_date};%{cust_time}&quot;
+    }
+}
+
+date {
+  match =&gt; [&quot;date_time&quot;, &quot;yyyy-MM-dd;hh:mm:ss&quot;]
+  target =&gt; &quot;@timestamp&quot;
+  add_field =&gt; { &quot;debug&quot; =&gt; &quot;timestampMatched&quot;}
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[elk用户认证问题]]></title>
+        <id>https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/</id>
+        <link href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/">
+        </link>
+        <updated>2020-08-27T05:52:58.000Z</updated>
+        <summary type="html"><![CDATA[<p>elk7+的用户认证免费了，不过没有集成在安装包里，还需要自己再进行一些操作，在此记录下自己再配置用户认证时遇到的问题</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>elk7+的用户认证免费了，不过没有集成在安装包里，还需要自己再进行一些操作，在此记录下自己再配置用户认证时遇到的问题</p>
+<!-- more -->
+<h2 id="开启安全功能">开启安全功能</h2>
+<p>首先在es配置文件中开启安全功能</p>
+<pre><code>.....
+
+xpack.security.enabled: true
+xpack.security.transport.ssl.enabled
+</code></pre>
+<p>然后重启es服务</p>
+<h2 id="生成证书配置node间ssl通信">生成证书，配置Node间SSL通信</h2>
+<h3 id="创建ca证书">创建ca证书</h3>
+<pre><code>$ bin/elasticsearch-certutil ca -v
+</code></pre>
+<p>一路回车即可</p>
+<p>默认的CA证书存放在$ES_HOME 目录中</p>
+<p>这个命令生成格式为PKCS#12名称为 elastic-stack-ca.p12 的keystore文件，包含CA证书和私钥。</p>
+<h3 id="创建节点间认证用的证书">创建节点间认证用的证书</h3>
+<pre><code>$ ./bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12 
+</code></pre>
+<p>一路回车即可</p>
+<h3 id="配置es节点使用这个证书">配置ES节点使用这个证书</h3>
+<pre><code>$ mkdir config/certs
+$ mv elastic-* config/certs/
+ll config/certs/
+
+-rw------- 1 elasticsearch root 3443 Jun  9 15:22 elastic-certificates.p12
+-rw------- 1 elasticsearch root 2527 Jun  9 15:22 elastic-stack-ca.p12
+</code></pre>
+<p>拷贝这个目录到所有的ES节点中<br>
+config/certs 目录中不需要拷贝CA证书文件，只拷贝cert文件即可</p>
+<p>配置elasticsearch.yml配置文件，注意所有的node节点都需要配置，这里的配置是使用PKCS#12格式的证书。</p>
+<pre><code>$ vim  config/elasticsearch.yml
+xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate #认证方式使用证书
+xpack.security.transport.ssl.keystore.path: certs/elastic-certificates.p12
+xpack.security.transport.ssl.truststore.path: certs/elastic-certificates.p12
+</code></pre>
+<h2 id="测试能够正常启动了-好了我们再来继续之前的生成密码在随意一台节点即可">测试能够正常启动了。好了，我们再来继续之前的生成密码：在随意一台节点即可。</h2>
+<p>生成密码有两个命令，一个为自动生成，一个为手动生成</p>
+<p>自动<br>
+<code>bin/elasticsearch-setup-passwords auto</code><br>
+手动<br>
+<code>bin/elasticsearch-setup-passwords interactive</code></p>
+<p>这里我们选择自动</p>
+<pre><code>[root@elasticsearch1 elasticsearch]# bin/elasticsearch-setup-passwords auto
+Initiating the setup of passwords for reserved users elastic,apm_system,kibana,logstash_system,beats_system,remote_monitoring_user.
+The passwords will be randomly generated and printed to the console.
+Please confirm that you would like to continue [y/N]y
+
+
+Changed password for user apm_system
+PASSWORD apm_system = EKPbqziKu4v3P0MYoYIJ
+
+Changed password for user kibana
+PASSWORD kibana = 48Sf7tIFArn4rmyMW2x4
+
+Changed password for user logstash_system
+PASSWORD logstash_system = O09XtxP495uNRxHRZxtC
+
+Changed password for user beats_system
+PASSWORD beats_system = ULC810uP0sVCAKhbwxvE
+
+Changed password for user remote_monitoring_user
+PASSWORD remote_monitoring_user = zqnO9YBFsoRu5QIsgOi6
+
+Changed password for user elastic
+PASSWORD elastic = d27DuDQjTChIdv3sE8oI
+
+</code></pre>
+<p>查看集群节点数量：</p>
+<pre><code>[root@test-1 conf]# curl -u elastic 192.168.154.6:9200/_cat/nodes
+Enter host password for user 'elastic':
+10.0.0.67 32 88 1 0.12 0.08 0.43 ilmr   - node-1
+10.0.0.92 14 80 1 0.12 0.07 0.22 dilmrt * node-2
+10.0.0.93 12 79 1 0.00 0.03 0.24 dilmrt - node-3
+</code></pre>
+<h2 id="kibana的安装配置">kibana的安装配置</h2>
+<h3 id="编辑配置文件">编辑配置文件</h3>
+<pre><code>$ cat kibana/config/kibana.yml |grep -Ev &quot;^$|^#&quot;
+server.port: 5601
+server.host: &quot;0.0.0.0&quot;
+server.name: &quot;mykibana&quot;
+elasticsearch.hosts: [&quot;http://localhost:9200&quot;]
+kibana.index: &quot;.kibana&quot;
+elasticsearch.username: &quot;kibana&quot;
+elasticsearch.password: &quot;UKuHceHWudloJk9NvHlX&quot;
+# i18n.locale: &quot;en&quot;
+i18n.locale: &quot;zh-CN&quot;
+xpack.security.encryptionKey: Hz*9yFFaPejHvCkhT*ddNx%WsBgxVSCQ
+</code></pre>
+<h3 id="页面访问kibana">页面访问kibana</h3>
+<figure data-type="image" tabindex="1"><img src="/images/elk%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/kibana-login.jpg" alt="" loading="lazy"></figure>
+<p>输入上面生成的管理员elastic的用户和密码，就可以登陆了，我们查看一下license许可吧：<br>
+<img src="/images/elk%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/kibana-basic.jpg" alt="" loading="lazy"></p>
+<p>一个使用永不过期的Basic许可的免费License，开启了基本的Auth认证和集群间SSL/TLS 认证的Elasticsearch集群就创建完毕了。</p>
+<p>等等，你有没有想过Kibana的配置文件中使用着明文的用户名密码，这里只能通过LInux的权限进行控制了，有没有更安全的方式呢，有的，就是keystore。</p>
+<h3 id="kibana-keystore-安全配置">kibana keystore 安全配置</h3>
+<p><a href="https://www.elastic.co/guide/en/kibana/7.7/secure-settings.html">参考官方</a></p>
+<p>查看<code>kibana-keystore</code>命令帮助：</p>
+<pre><code>$ ./bin/kibana-keystore --help
+Usage: bin/kibana-keystore [options] [command]
+
+A tool for managing settings stored in the Kibana keystore
+
+Options:
+  -V, --version           output the version number
+  -h, --help              output usage information
+
+Commands:
+  create [options]        Creates a new Kibana keystore
+  list [options]          List entries in the keystore
+  add [options] &lt;key&gt;     Add a string setting to the keystore
+  remove [options] &lt;key&gt;  Remove a setting from the keystore
+
+</code></pre>
+<p>首先我们创建keystore：</p>
+<pre><code>$ bin/kibana-keystore create
+Created Kibana keystore in /opt/elk74/kibana-7.4.2-linux-x86_64/data/kibana.keystore # 默认存放位置
+</code></pre>
+<p>增加配置：</p>
+<p>我们要吧kibana.yml 配置文件中的敏感信息，比如：elasticsearch.username 和 elasticsearch.password，给隐藏掉，或者直接去掉；</p>
+<p>所以这里我们增加两个配置：分别是elasticsearch.password 和 elasticsearch.username:</p>
+<pre><code># 查看add的命令帮助：
+$ ./bin/kibana-keystore add --help
+Usage: add [options] &lt;key&gt;
+
+Add a string setting to the keystore
+
+Options:
+  -f, --force   overwrite existing setting without prompting
+  -x, --stdin   read setting value from stdin
+  -s, --silent  prevent all logging
+  -h, --help    output usage information
+
+# 创建elasticsearch.username这个key：注意名字必须是kibana.yml中的key
+$ ./bin/kibana-keystore add elasticsearch.username
+Enter value for elasticsearch.username: ******  # 输入key对应的value，这里是kibana连接es的账号：kibana
+
+# 创建elasticsearch.password这个key
+$ ./bin/kibana-keystore add elasticsearch.password
+Enter value for elasticsearch.password: ******************** # 输入对应的密码：UKuHceHWudloJk9NvHlX
+</code></pre>
+<p>好了，我们把kibana.yml配置文件中的这两项配置删除即可，然后直接启动kibana，kibana会自动已用这两个配置的。</p>
+<p>最终的kibana.yml配置如下：</p>
+<pre><code>server.port: 5601
+server.host: &quot;0.0.0.0&quot;
+server.name: &quot;mykibana&quot;
+elasticsearch.hosts: [&quot;http://localhost:9200&quot;]
+kibana.index: &quot;.kibana&quot;
+# i18n.locale: &quot;en&quot;
+i18n.locale: &quot;zh-CN&quot;
+xpack.security.encryptionKey: Hz*9yFFaPejHvCkhT*ddNx%WsBgxVSCQ
+</code></pre>
+<p>这样配置文件中就不会出现敏感信息了，达到了更高的安全性。</p>
+<p>类似的Keystore方式不只是Kibana支持，ELK的产品都是支持的。</p>
+<p><strong>注意：两个证书文件属主须是启动用户，certs权限为744即可，权限不够会报错,其他节点权限也一样</strong></p>
+<pre><code>elk_elasticsearch1.1.rqtnwnm1sqzw@test-1    | uncaught exception in thread [main]
+elk_elasticsearch1.1.rqtnwnm1sqzw@test-1    | ElasticsearchSecurityException[failed to load SSL configuration [xpack.security.transport.ssl]]; nested: ElasticsearchException[failed to initialize SSL TrustManager - not permitted to read truststore file [/usr/share/elasticsearch/config/certs/elastic-certificates.p12]]; nested: AccessDeniedException[/usr/share/elasticsearch/config/certs/elastic-certificates.p12];
+elk_elasticsearch1.1.jp9k598g34hq@test-1    | &quot;... 6 more&quot;] }
+elk_elasticsearch1.1.yk71h6aom47z@test-1    | &quot;at org.elasticsearch.node.Node.&lt;init&gt;(Node.java:481) ~[elasticsearch-7.7.0.jar:7.7.0]&quot;,
+elk_elasticsearch1.1.w26656n32a86@test-1    | &quot;... 6 more&quot;] }
+elk_elasticsearch1.1.w26656n32a86@test-1    | ElasticsearchSecurityException[failed to load SSL configuration [xpack.security.transport.ssl]]; nested: ElasticsearchException[failed to initialize SSL TrustManager - not permitted to read truststore file [/usr/share/elasticsearch/config/certs/elastic-certificates.p12]]; nested: AccessDeniedException[/usr/share/elasticsearch/config/certs/elastic-certificates.p12];
+elk_elasticsearch1.1.rqtnwnm1sqzw@test-1    | Likely root cause: java.nio.file.AccessDeniedException: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
+elk_elasticsearch1.1.jp9k598g34hq@test-1    | ElasticsearchSecurityException[failed to load SSL configuration [xpack.security.transport.ssl]]; nested: ElasticsearchException[failed to initialize SSL TrustManager - not permitted to read truststore file [/usr/share/elasticsearch/config/certs/elastic-certificates.p12]]; nested: AccessDeniedException[/usr/share/elasticsearch/config/certs/elastic-certificates.p12];
+</code></pre>
+<p><a href="https://knner.wang/2019/11/26/install-elasticsearch-cluster-7-4.html">参考自</a></p>
+<h2 id="logstash配置">logstash配置</h2>
+<p><a href="https://www.elastic.co/cn/blog/configuring-ssl-tls-and-https-to-secure-elasticsearch-kibana-beats-and-logstash">参考</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[ELK告警之elastalert部署及配置]]></title>
+        <id>https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/</id>
+        <link href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/">
+        </link>
+        <updated>2020-08-27T05:51:57.000Z</updated>
+        <summary type="html"><![CDATA[<p>ELK7版本的日志告警Elastalert配置</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>ELK7版本的日志告警Elastalert配置</p>
+<!-- more -->
+<h1 id="安装elastalert">安装Elastalert</h1>
+<h2 id="环境">环境</h2>
+<ul>
+<li>CentOS：7.6</li>
+<li>Python：3.6.9</li>
+<li>pip：19.3</li>
+<li>elastalert：0.2.0</li>
+<li>elk：7.7.0</li>
+</ul>
+<h2 id="配置python369环境">配置Python3.6.9环境</h2>
+<p>安装依赖包<br>
+<code>yum -y install wget openssl openssl-devel gcc gcc-c++</code></p>
+<p>下载包<br>
+<code>wget https://www.python.org/ftp/python/3.6.9/Python-3.6.9.tgz</code></p>
+<p>安装</p>
+<pre><code>tar xf Python-3.6.9.tgz
+cd Python-3.6.9./configure --prefix=/usr/local/python --with-openssl
+make &amp;&amp; make install
+</code></pre>
+<p>配置</p>
+<pre><code>mv /usr/bin/python /usr/bin/python_old
+ln -s /usr/local/python/bin/python3 /usr/bin/python
+ln -s /usr/local/python/bin/pip3 /usr/bin/pip
+pip install --upgrade pip
+</code></pre>
+<p><strong>注意,所有依赖python2的脚本或者命令,需要更改为python2.7,因为现在默认的python版本为3.6,例如</strong></p>
+<pre><code>sed -i '1s/python/python2.7/g' /usr/bin/yum
+sed -i '1s/python/python2.7/g' /usr/libexec/urlgrabber-ext-down
+</code></pre>
+<p>验证</p>
+<pre><code>$ python -V
+    Python 3.6.9
+$ pip -V 
+	pip 19.3 from /usr/local/python/lib/python3.6/site-packages/pip (python 3.6).
+</code></pre>
+<h2 id="安装elastalert-2">安装elastalert</h2>
+<p>下载包</p>
+<pre><code>git clone https://github.com/Yelp/elastalert.git
+cd elastalert
+</code></pre>
+<p>安装</p>
+<pre><code>pip install &quot;elasticsearch&lt;7,&gt;6&quot;
+pip install -r requirements.txt
+python setup.py install
+</code></pre>
+<p>安装成功后可以看到四个命令</p>
+<pre><code>ll /usr/local/python/bin/elastalert*
+	/usr/local/python/bin/elastalert
+	/usr/local/python/bin/elastalert-create-index
+	/usr/local/python/bin/elastalert-rule-from-kibana
+	/usr/local/python/bin/elastalert-test-rule
+</code></pre>
+<p>软连接到/usr/bin下,方便使用<br>
+<code>ln -s /usr/local/python/bin/elastalert* /usr/bin</code></p>
+<ul>
+<li>elastalert 报警执行的命令,会根据报警规则执行相应操作。</li>
+<li>elastalert-create-index会创建一个索引，ElastAlert会把执行记录存放到这个索引中，默认情况下，索引名叫elastalert_status。其中有4个_type，都有自己的@timestamp字段，所以同样也可以用kibana来查看这个索引的日志记录情况。</li>
+<li>elastalert-rule-from-kibana从Kibana3已保存的仪表盘中读取Filtering设置，帮助生成config.yaml里的配置。不过注意，它只会读取filtering，不包括queries。</li>
+<li>elastalert-test-rule测试自定义配置中的rule设置。</li>
+</ul>
+<h1 id="使用">使用</h1>
+<p>官方文档：https://elastalert.readthedocs.io</p>
+<p>规则文档：https://elastalert.readthedocs.io/en/latest/ruletypes.html</p>
+<h2 id="主配置文件">主配置文件</h2>
+<p>首先是主配置文件的模板为config.yaml.example,生成全局配置</p>
+<pre><code>cp config.yaml.example  config.yaml
+vim config.yaml
+</code></pre>
+<pre><code># 用来加载rule的目录，默认是example_rules
+rules_folder: rules
+# 用来设置定时向elasticsearch发送请求，也就是告警执行的频率
+run_every:
+  seconds: 30
+# 用来设置请求里时间字段的范围
+buffer_time:
+  seconds: 30
+# elasticsearch的host地址,端口
+es_host: node01
+es_port: 9200
+es_username: elastic  elasticsearch认证用户
+es_password: d27DuDQjTChIdv3sE8oI
+# elastalert产生的日志在elasticsearch中的创建的索引
+writeback_index: elastalert_status
+writeback_alias: elastalert_alerts
+# 失败重试的时间限制
+alert_time_limit:
+  days: 2
+</code></pre>
+<h2 id="创建告警索引">创建告警索引</h2>
+<p>执行elastalert-create-index命令在ES创建索引，这不是必须的步骤，但是强烈建议创建。因为对于审计和测试很有用，并且重启ES不影响计数和发送alert</p>
+<pre><code>[root@test-1 elastalert]# elastalert-create-index
+Elastic Version: 7.7.0
+Reading Elastic 6 index mappings:
+Reading index mapping 'es_mappings/6/silence.json'
+Reading index mapping 'es_mappings/6/elastalert_status.json'
+Reading index mapping 'es_mappings/6/elastalert.json'
+Reading index mapping 'es_mappings/6/past_elastalert.json'
+Reading index mapping 'es_mappings/6/elastalert_error.json'
+New index elastalert_status created
+Done!
+</code></pre>
+<p>看到这个输出，就说明创建成功了，也可以请求一下看看：</p>
+<pre><code>[root@test-1 elastalert]# curl -u elastic 127.0.0.1:9200/_cat/indices?v
+Enter host password for user 'elastic':
+health status index                     uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   elastalert_status_status  x-ewAZWNR0-vKhvO1gMCnA   1   1          0            0       416b           208b
+green  open   elastalert_status         wsOzkDHnT-G0TOzMowBuDQ   1   1          0            0       416b           208b
+green  open   .apm-agent-configuration  adCDI2foQaybW_GKiexeFg   1   1          0            0       416b           208b
+green  open   elastalert_status_past    1f6xlhtEQvqZSj6Tmyi0pw   1   1          0            0       416b           208b
+green  open   elastalert_status_silence Rxi1GdubRdq94cgNShsm_A   1   1          0            0       416b           208b
+green  open   .kibana_2                 pXVkkt3aS6CxT0k83AM8Ag   1   1         69           16    254.5kb        127.2kb
+green  open   ca-db-2020.06.11          Mh7Yk1XcQb2T7ACTBzKHbQ   1   1         59            0     59.3kb         34.9kb
+green  open   .kibana_1                 lCyb8DQqRZ2PxexfMxAmTQ   1   1          1            0     13.7kb          6.8kb
+green  open   tomcat-2020.06.10         0M34ANeqSxerM-BYj0-O_A   1   1          3            0     35.6kb         17.8kb
+green  open   gateway-2020.06.10        fKGjgXg-QiCsCRHT6XxuRw   1   1       1443            0    808.8kb        404.4kb
+green  open   .tasks                    XDOZG-L5TNOeHHCR7hcd4w   1   1          1            0     12.8kb          6.4kb
+green  open   .security-7               aPEpVA4eSXSZYWowWT_LZw   1   1         43            1    158.7kb         79.3kb
+green  open   ca-server-2020.06.11      Ue3C6cSvR4-6LoUdEiLI4A   1   1         26            0     48.3kb         27.3kb
+green  open   .apm-custom-link          rvjLGExARVattrRQnFSH2A   1   1          0            0       416b           208b
+green  open   .kibana_task_manager_1    amwNW3LbT2eat9fZTAPdyw   1   1          5           15    102.7kb         56.3kb
+green  open   peer_test-2020.06.10      9ig45KJcQwy2y4YYFwVKGA   1   1       1285            0    920.7kb        460.3kb
+green  open   .async-search             AcrUB2uUSGueXXr_ueHHzw   1   1          1            1     19.1kb          9.5kb
+green  open   elastalert_status_error   wtpRUid1S5CA3Oa6_wAOpg   1   1          0            0       416b           208b
+</code></pre>
+<h2 id="rule配置">Rule配置</h2>
+<p>所有的告警规则，通过在rule目下创建配置文件进行定义，这里简单创建一个来作为演示。</p>
+<p>首先我已经在elk集群中配置了一个NGINX日志采集的流水线，现在去kibana中利用检索规则，过滤出我想要的告警内容，比如我想让状态码是404的请求，触发告警通知，就用如下语句进行查询：</p>
+<p><code>response: 404</code></p>
+<p>其中group是kafka里边定义的组，后边是状态码，还可以写更多条件进行匹配。</p>
+<p>然后来到服务器添加一条规则：</p>
+<p><code>vim nginx_404.yaml</code></p>
+<pre><code class="language-yaml">name: Nginx_err
+use_strftine_index: true
+index: nginx_info*
+type: any
+aggregation:
+ seconds: 10
+filter:
+- query:
+    query_string:
+      query: &quot;response: 404&quot;
+alert:
+- &quot;email&quot;
+email:
+ - &quot;test@qq.com&quot;
+smtp_host: smtp.163.com
+smtp_port: 25
+smtp_auth_file: /opt/elastalert/smtp_auth_file.yaml
+from_addr: test01@163.com
+email_reply_to: teast02@163.com
+</code></pre>
+<p>注意里边在配置邮件通知的时候，还需要引用外部的一个文件，这个文件里用于存放对应邮箱的用户名密码。</p>
+<p><code>vim /opt/elastalert/smtp_auth_file.yaml</code></p>
+<pre><code>15726632807@163.com
+ZSMIKAVFCLTASBHXV
+</code></pre>
+<h2 id="规则测试">规则测试</h2>
+<p>刚刚已经添加了一条规则，现在可以用自身的命令测试一下刚刚添加的规则。<br>
+elastalert-test-rule --config config.yaml nginx_404.yaml</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于Logstash中grok插件的正则表达式例子]]></title>
+        <id>https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/</id>
+        <link href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">
+        </link>
+        <updated>2020-08-27T05:51:06.000Z</updated>
+        <summary type="html"><![CDATA[<p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
+<!-- more -->
+<h2 id="grok提供的常用patterns说明及举例">Grok提供的常用Patterns说明及举例</h2>
+<p>大多数Linux使用人员都有过用正则表达式来查询机器中相关文件或文件里内容的经历，在Grok里，我们也是使用正则表达式来识别日志里的相关数据块。</p>
+<p>有两种方式来使用正则表达式：</p>
+<p>直接写正则来匹配<br>
+用Grok表达式映射正则来匹配</p>
+<h3 id="常用表达式">常用表达式</h3>
+<ul>
+<li>
+<p>GREEDYDATA<br>
+<strong>匹配任意字符</strong></p>
+</li>
+<li>
+<p>USERNAME 或 USER<br>
+<strong>用户名</strong>，由数字、大小写及特殊字符(._-)组成的字符串</p>
+</li>
+</ul>
+<blockquote>
+<p>比如：1234、Bob、Alex.Wong等</p>
+</blockquote>
+<ul>
+<li>EMAILLOCALPART<br>
+<strong>电子邮件用户名部分</strong>，首位由大小写字母组成，其他位由数字、大小写及特殊字符(_.+-=:)组成的字符串。注意，国内的QQ纯数字邮箱账号是无法匹配的，需要修改正则</li>
+</ul>
+<blockquote>
+<p>比如：stone、Gary_Lu、abc-123等</p>
+</blockquote>
+<ul>
+<li>EMAILADDRESS<br>
+<strong>电子邮件</strong></li>
+</ul>
+<blockquote>
+<p>比如：wwwwaf@abc.com、Gadf_adf@gmail.com、abc-123@163.com等</p>
+</blockquote>
+<ul>
+<li>
+<p>HTTPDUSER<br>
+Apache服务器的用户，可以是EMAILADDRESS或USERNAME</p>
+</li>
+<li>
+<p>INT<br>
+<strong>整数，包括0和正负整数</strong></p>
+</li>
+</ul>
+<blockquote>
+<p>比如：0、-123、43987等</p>
+</blockquote>
+<ul>
+<li>BASE10NUM 或 NUMBER<br>
+<strong>十进制数字，包括整数和小数</strong></li>
+</ul>
+<blockquote>
+<p>比如：0、18、5.23等</p>
+</blockquote>
+<ul>
+<li>BASE16NUM<br>
+<strong>十六进制数字，整数</strong></li>
+</ul>
+<blockquote>
+<p>比如：0x0045fa2d、-0x3F8709等</p>
+</blockquote>
+<ul>
+<li>WORD<br>
+<strong>字符串，包括数字和大小写字母</strong></li>
+</ul>
+<blockquote>
+<p>比如：String、3529345、ILoveYou等</p>
+</blockquote>
+<ul>
+<li>
+<p>NOTSPACE<br>
+<strong>不带任何空格的字符串</strong></p>
+</li>
+<li>
+<p>SPACE<br>
+<strong>空格字符串</strong></p>
+</li>
+<li>
+<p>{SPACE}*<br>
+**匹配任意连续空格</p>
+</li>
+<li>
+<p>QUOTEDSTRING 或 QS<br>
+带引号的字符串</p>
+</li>
+</ul>
+<blockquote>
+<p>比如：&quot;This is an apple&quot;、'What is your name?'等</p>
+</blockquote>
+<ul>
+<li>UUID<br>
+<strong>标准UUID</strong></li>
+</ul>
+<blockquote>
+<p>比如：550E8400-E29B-11D4-A716-446655440000</p>
+</blockquote>
+<ul>
+<li>
+<p>MAC<br>
+<strong>MAC地址</strong>，可以是Cisco设备里的MAC地址，也可以是通用或者Windows系统的MAC地址</p>
+</li>
+<li>
+<p>IP<br>
+<strong>IP地址</strong>，IPv4或IPv6地址</p>
+</li>
+</ul>
+<blockquote>
+<p>比如：127.0.0.1、FE80:0000:0000:0000:AAAA:0000:00C2:0002等</p>
+</blockquote>
+<ul>
+<li>
+<p>HOSTNAME<br>
+<strong>主机名称</strong></p>
+</li>
+<li>
+<p>IPORHOST<br>
+<strong>IP或者主机名称</strong></p>
+</li>
+<li>
+<p>HOSTPORT<br>
+<strong>主机名(IP)+端口</strong></p>
+</li>
+</ul>
+<blockquote>
+<p>比如：127.0.0.1:3306、api.stozen.net:8000等</p>
+</blockquote>
+<ul>
+<li>PATH<br>
+<strong>路径</strong>，Unix系统或者Windows系统里的路径格式</li>
+</ul>
+<blockquote>
+<p>比如：/usr/local/nginx/sbin/nginx、c:\windows\system32\clr.exe等</p>
+</blockquote>
+<ul>
+<li>URIPROTO<br>
+<strong>URI协议</strong></li>
+</ul>
+<blockquote>
+<p>比如：http、ftp等</p>
+</blockquote>
+<ul>
+<li>URIHOST<br>
+<strong>URI主机</strong></li>
+</ul>
+<blockquote>
+<p>比如：www.baidu.net、10.0.0.1:22等</p>
+</blockquote>
+<ul>
+<li>URIPATH<br>
+<strong>URI路径</strong></li>
+</ul>
+<blockquote>
+<p>比如：<code>//www.baidu.net/abc/、/api.php</code>等</p>
+</blockquote>
+<ul>
+<li>URIPARAM<br>
+<strong>URI里的GET参数</strong></li>
+</ul>
+<blockquote>
+<p>比如：?a=1&amp;b=2&amp;c=3</p>
+</blockquote>
+<ul>
+<li>URIPATHPARAM<br>
+<strong>URI路径+GET参数</strong></li>
+</ul>
+<blockquote>
+<p>比如：<code>//www.google.net/abc/api.php?a=1&amp;b=2&amp;c=3</code></p>
+</blockquote>
+<ul>
+<li>URI<br>
+<strong>完整的URI</strong></li>
+</ul>
+<blockquote>
+<p>比如：<code>http://www.google.net/abc/api.php?a=1&amp;b=2&amp;c=3</code></p>
+</blockquote>
+<h3 id="日期时间表达式">日期时间表达式</h3>
+<ul>
+<li>MONTH<br>
+<strong>月份名称</strong></li>
+</ul>
+<blockquote>
+<p>比如：Jan、January等</p>
+</blockquote>
+<ul>
+<li>MONTHNUM<br>
+<strong>月份数字</strong></li>
+</ul>
+<blockquote>
+<p>比如：03、9、12等</p>
+</blockquote>
+<ul>
+<li>MONTHDAY<br>
+<strong>日期数字</strong></li>
+</ul>
+<blockquote>
+<p>比如：03、9、31等</p>
+</blockquote>
+<ul>
+<li>DAY<br>
+<strong>星期几名称</strong></li>
+</ul>
+<blockquote>
+<p>比如：Mon、Monday等</p>
+</blockquote>
+<ul>
+<li>YEAR<br>
+<strong>年份数字</strong></li>
+<li>HOUR<br>
+<strong>小时数字</strong></li>
+<li>MINUTE<br>
+<strong>分钟数字</strong></li>
+<li>SECOND<br>
+<strong>秒数字</strong></li>
+<li>TIME<br>
+<strong>时间</strong></li>
+</ul>
+<blockquote>
+<p>比如：00:01:23</p>
+</blockquote>
+<ul>
+<li>DATE_US<br>
+<strong>美国日期格式</strong></li>
+</ul>
+<blockquote>
+<p>比如：10-15-1982、10/15/1982等</p>
+</blockquote>
+<ul>
+<li>DATE_EU<br>
+<strong>欧洲日期格式</strong></li>
+</ul>
+<blockquote>
+<p>比如：15-10-1982、15/10/1982、15.10.1982等</p>
+</blockquote>
+<ul>
+<li>ISO8601_TIMEZONE<br>
+<strong>ISO8601时间格式</strong></li>
+</ul>
+<blockquote>
+<p>比如：+10:23、-1023等</p>
+</blockquote>
+<ul>
+<li>TIMESTAMP_ISO8601<br>
+<strong>ISO8601时间戳格式</strong></li>
+</ul>
+<blockquote>
+<p>比如：2016-07-03T00:34:06+08:00</p>
+</blockquote>
+<ul>
+<li>
+<p>DATE<br>
+<strong>日期</strong>，美国日期%{DATE_US}或者欧洲日期%{DATE_EU}</p>
+</li>
+<li>
+<p>DATESTAMP<br>
+<strong>完整日期+时间</strong></p>
+</li>
+</ul>
+<blockquote>
+<p>比如：07-03-2016 00:34:06</p>
+</blockquote>
+<ul>
+<li>HTTPDATE<br>
+<strong>http默认日期格式</strong></li>
+</ul>
+<blockquote>
+<p>比如：03/Jul/2016:00:36:53 +0800</p>
+</blockquote>
+<h3 id="log表达式">Log表达式</h3>
+<ul>
+<li>LOGLEVEL<br>
+<strong>日志等级</strong></li>
+</ul>
+<blockquote>
+<p>比如：Alert、alert、ALERT、Error等</p>
+</blockquote>
+<h2 id="创建自己的grok表达式">创建自己的Grok表达式</h2>
+<p>在业务领域中，可能会有越来越多的日志格式出现在我们眼前，而Grok的默认表达式显然已无法满足我们的需求（比如用户身份证号、手机号等信息），所以，我们需要自己动手添加些表达式。</p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>正则表达式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DATE_CHS</td>
+<td>%{YEAR}[./-]%{MONTHNUM}[./-]%{MONTHDAY}</td>
+<td>中国人习惯的日期格式</td>
+</tr>
+<tr>
+<td>ZIPCODE_CHS</td>
+<td>[1-9]\d{5}</td>
+<td>国内邮政编码</td>
+</tr>
+<tr>
+<td>GAME_ACCOUNT</td>
+<td>[a-zA-Z][a-zA-Z0-9_]{4,15}</td>
+<td>游戏账号，首字符为字母，4-15位字母、数字、下划线组成</td>
+</tr>
+</tbody>
+</table>
+<h2 id="其他">其他</h2>
+<p>grok正则表达式：(?<temMsg>(.<em>)(?=Report)/?) 获取Report之前的字符<br>
+grok正则表达式：(?<temMsg>(?=Report)(.</em>)/?) 获取Report之后的字符</p>
+<p><a href="https://www.cnblogs.com/stozen/p/5638369.html">参考</a></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[生产环境部署fabric]]></title>
         <id>https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/</id>
@@ -614,1265 +1649,6 @@ root       2053   2042  0 Aug25 ?        00:05:40 cita-network -c network.toml
 cita-network.log日志会有<br>
 <code>ERROR - [NodeManager] Can not get node status from known_addr, this should ·not happen!</code><br>
 忽略即可</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Kubernetes 基礎教學（三）Helm 介紹與建立 Chart]]></title>
-        <id>https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/</id>
-        <link href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/">
-        </link>
-        <updated>2020-08-21T01:27:02.000Z</updated>
-        <summary type="html"><![CDATA[<p>接下來在這篇文章中，我們會介紹一個建立 Kubernetes 應用變得輕鬆簡單的好幫手：Helm</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>接下來在這篇文章中，我們會介紹一個建立 Kubernetes 應用變得輕鬆簡單的好幫手：Helm</p>
-<!-- more -->
-<h2 id="helm">Helm</h2>
-<p>在如何建立一個 Pod 以及 Kubernetes 進階三元件我們介紹了多個 Kubernetes 的元件與他們所對應到的 yaml 設定檔。假設我們今天有一個複雜的服務，裡面同時包含了很多種設定檔時，如何同時做好版本控制、管理、更新這些設定檔就變得不太容易，且要快速部署這個含有多個設定檔的服務也變得困難。因此 Helm 就是一個用來解決上述問題的工具。</p>
-<p>簡單來說，Helm 就是一個管理設定檔的工具。他會把 Kubernetes 一個服務中各種元件裡的 yaml 檔統一打包成一個叫做 chart 的集合，然後透過給參數的方式，去同時管理與設定這些 yaml 檔案。</p>
-<h2 id="使用一個現有-helm-chart">使用一個現有 Helm Chart</h2>
-<p>接下來我們要來示範用一個現有的 Helm Chart 來嘗試部署一個 Wordpress 的服務。首先，我們的第一步當然就是要下載 Helm。MacOS 中我們可以直接使用 Homebrew 安裝，其他環境可以參考 Helm 的 Github。</p>
-<p><code>brew install kubernetes-helm</code></p>
-<p>下載完後，我們記得要 Helm 把 Cluster 配置初始化</p>
-<p><code>helm init</code></p>
-<p>接下來讓我們安裝 Wordpress 的 Chart，我們可以直接透過指令</p>
-<p><code>helm install stable/wordpress</code></p>
-<p>這個指令會讓我們直接到 Chart Repository 去載入 Chart 檔並將它部署到我們的 Kubernetes Cluster 上，我們現在可以透過指令檢查我們的 Cluster</p>
-<pre><code class="language-bash">kubectl get all
-NAME                                    READY   STATUS    RESTARTS
-pod/peddling-hog-mariadb-0              1/1     Running   0
-pod/peddling-hog-wordpress-7bf6d69c8b   1/1     Running   1          
- ​
-NAME                             TYPE           CLUSTER-IP                           
-service/peddling-hog-mariadb     ClusterIP      10.109.96.113
-service/peddling-hog-wordpress   LoadBalancer   10.101.157.184
-EXTERNAL-IP   PORT(S)
-&lt;none&gt;        3306/TCP                     
-&lt;pending&gt;     80:30439/TCP,443:31824/TCP
- ​
-NAME                                   READY UP-TO-DATE AVAILABLE
-deployment.apps/peddling-hog-wordpress 1/1   1          1           
- ​
-NAME                                                DESIRED
-replicaset.apps/peddling-hog-wordpress-7bf6d69c8b   1      
- ​
-NAME                                    READY   AGE
-statefulset.apps/peddling-hog-mariadb   1/1     60s
-
-</code></pre>
-<p>可以看到我們透過 Chart 一次就安裝與部署了兩個 Pod、兩個 Service 以及其他各種元件。如果要一次把所有 Chart 所安裝的元件刪除，我們可以先透過 helm list 列出我們所有的 Chart。</p>
-<pre><code class="language-bash">NAME         REVISION UPDATED                  STATUS   CHART
-peddling-hog 1        Fri Apr 26 16:08:30 2019 DEPLOYED wordpress
-</code></pre>
-<p>然後輸入 helm delete peddling-hog 就可以一次把所有元件刪除。</p>
-<h2 id="chart-的運作方式">Chart 的運作方式</h2>
-<p>嘗試完從 Chart 部署元件後，我們可以進一步來暸解 Chart 是如何運作的。我們可以到 Wordpress chart 的 Github 上觀察這個 Chart 的檔案結構，或是透過指令來建立一個最簡單的 Chart</p>
-<p><code>helm create helm-demo</code></p>
-<p>接下來我們來看看 ./helm-demo 的資料夾</p>
-<pre><code class="language-bash">.
-├── Chart.yaml
-├── charts
-├── templates
-│   ├── deployment.yaml
-│   ├── ingress.yaml
-│   └── service.yaml
-└── values.yaml
-</code></pre>
-<p>把這個 Chart 的檔案結構化簡後就如上所見。</p>
-<p><code>Chart.yaml</code></p>
-<ul>
-<li>
-<p>定義了這個 Chart 的 Metadata，包括 Chart 的版本、名稱、敘述等</p>
-<p><code>charts</code></p>
-</li>
-<li>
-<p>在這個資料夾裡可以放其他的 Chart，這裡稱作 SubCha</p>
-</li>
-</ul>
-<p><code>templates</code></p>
-<ul>
-<li>定義這個 Chart 服務需要的 Kubernetes 元件。但我們並不會把各元件的參數寫死在裡面，而是會用參數的方式代入</li>
-</ul>
-<p><code>values.yaml</code></p>
-<ul>
-<li>定義這個 Chart 的所有參數，這些參數都會被代入在 templates 中的元件。例如我們會在這邊定義 nodePorts 給 service.yaml 、定義 replicaCount 給 deployment.yaml、定義 hosts 給 ingress.yaml 等等</li>
-</ul>
-<p>從上面的檔案結構可以看到，我們透過編輯 values.yaml，就可以對所有的 yaml 設定檔做到版本控制與管理。並透過 install / delete 的方式一鍵部署 / 刪除。</p>
-<h2 id="如何建立自己的-chart">如何建立自己的 Chart</h2>
-<p>了解了 Chart 大致上是如何運作後，我們就可以來實際建立一個簡單的 Chart。我們的目標是要透過 deployment、service、ingress 來讓使用者在輸入 blue.demo.com 時可以得到一隻小鯨魚。而首先，我們一樣輸入指令</p>
-<p><code>helm create helm-demo</code></p>
-<p>之後我們就先借看一下在 ingress 章節有使用過的 yaml 檔們。</p>
-<p><code>deployment.yaml</code></p>
-<pre><code class="language-yaml">apiVersion: extensions/v1beta1
- kind: Deployment
- metadata:
-   name: blue-nginx
- spec:
-   replicas: 2
-   template:
-     metadata:
-       labels:
-         app: blue-nginx
-     spec:
-       containers:
-         - name: nginx
-           image: hcwxd/blue-whale
-           ports:
-             - containerPort: 3000
-</code></pre>
-<p><code>service.yaml</code></p>
-<pre><code class="language-yaml">apiVersion: v1
- kind: Service
- metadata:
-   name: blue-service
- spec:
-   type: NodePort
-   selector:
-     app: blue-nginx
-   ports:
-     - protocol: TCP
-       port: 80
-       targetPort: 3000
-</code></pre>
-<p><code>ingress.yaml</code></p>
-<pre><code class="language-yaml">
-apiVersion: extensions/v1beta1
- kind: Ingress
- metadata:
-   name: web
- spec:
-   rules:
-     - host: blue.demo.com
-       http:
-         paths:
-           - backend:
-               serviceName: blue-service
-               servicePort: 80
-</code></pre>
-<p>然後我們就可以嘗試來把上述 yaml 檔中可以作為參數的部分抽取出來，在這邊為了降低複雜度，我們只簡單挑幾個參數出來，然後我們就可以把這些參數寫到 values.yaml 中。</p>
-<p><code>values.yaml</code></p>
-<pre><code class="language-yaml">replicaCount: 2
- ​
- image:
-   repository: hcwxd/blue-whale
- ​
- service:
-   type: NodePort
-   port: 80
- ​
- ingress:
-   enabled: true
- ​
-   hosts:
-     - host: blue.demo.com
-       paths: [/]
-</code></pre>
-<p>把參數提取出來後，我們就來依樣畫葫蘆地把 template 中其他三個 yaml 檔寫成可以接受參數的方式：</p>
-<p><code>deployment.yaml</code></p>
-<pre><code class="language-yaml">apiVersion: apps/v1
- kind: Deployment
- metadata:
-   name: {{ include &quot;value-helm-demo.fullname&quot; . }}
- spec:
-   replicas: {{ .Values.replicaCount }}
-   selector:
-     matchLabels:
-       app: {{ include &quot;value-helm-demo.fullname&quot; . }}
-   template:
-     metadata:
-       labels:
-         app: {{ include &quot;value-helm-demo.fullname&quot; . }}
-     spec:
-       containers:
-         - name: {{ .Chart.Name }}
-           image: '{{ .Values.image.repository }}'
-           ports:
-             - containerPort: 3000
-</code></pre>
-<p><code>service.yaml</code></p>
-<pre><code class="language-yaml">apiVersion: v1
- kind: Service
- metadata:
-   name: {{ include &quot;value-helm-demo.fullname&quot; . }}
- spec:
-   type: {{ .Values.service.type }}
-   ports:
-     - port: {{ .Values.service.port }}
-       targetPort: 3000
-       protocol: TCP
-   selector:
-     app: {{ include &quot;value-helm-demo.fullname&quot; . }}
-</code></pre>
-<p><code>ingress.yaml</code></p>
-<pre><code class="language-yaml">{{- if .Values.ingress.enabled -}}
- {{- $fullName := include &quot;value-helm-demo.fullname&quot; . -}}
- apiVersion: extensions/v1beta1
- kind: Ingress
- metadata:
-   name: {{ $fullName }}
- spec:
-   rules:
-   {{- range .Values.ingress.hosts }}
-     - host: {{ .host | quote }}
-       http:
-         paths:
-         {{- range .paths }}
-           - backend:
-               serviceName: {{ $fullName }}
-               servicePort: 80
-         {{- end }}
-   {{- end }}
- {{- end }}
-</code></pre>
-<p>寫好後，我們就可以來一鍵部署我們的這三份檔案囉。我們可以直接在 /helm-demo 資料夾下輸入指令</p>
-<p><code>helm install .</code></p>
-<pre><code class="language-bash">NAME:   gilded-peacock
-LAST DEPLOYED: Mon May  6 16:31:27 2019
-NAMESPACE: default
-STATUS: DEPLOYED
-</code></pre>
-<p>部署成功後顯示的 NAME: gilded-peacock 就是這個 Chart 部署後的名稱囉（在 Helm 中稱部署出去的這個實體為 release）。我們可以再透過指令</p>
-<p><code>helm list</code></p>
-<p>列出我們目前所有的 releases。接下來我們可以用 kubectl get all 來看到我們目前的 kubernetes 狀況</p>
-<pre><code class="language-bash">NAME                                    READY STATUS  RESTARTS   
-pod/gilded-peacock-helm-demo-5fc5964759 1/1   Running 0          
-pod/gilded-peacock-helm-demo-5fc5964759 1/1   Running 0      
- ​
-NAME                               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     
-service/gilded-peacock-helm-demo   NodePort    10.106.164.53   &lt;none&gt;        80:30333/TCP 
- ​
-NAME                                     READY UP-TO-DATE AVAILABLE
-deployment.apps/gilded-peacock-helm-demo 2/2   2          2           
- ​
-NAME                                                DESIRED CURRENT     
-replicaset.apps/gilded-peacock-helm-demo-5fc5964759 2       2      
-</code></pre>
-<p>這邊就可以看到我們所指定的資源都有按照 chart 的配置建立起來囉，所以打開 blue.demo.com 就可以看到一隻我們透過 Helm 實際部署出的小鯨魚。</p>
-<p>以上，我們就完成 Helm 的實際部署囉！</p>
-<p>而其他常用的 Helm 指令還有</p>
-<p><code>helm delete --purge RELEASE_NAME</code></p>
-<p>刪除一個 release（--purge 這個 flag 可以把該 RELEASE_NAME 釋放出來供之後重複使用）。</p>
-<p><code>helm upgrade RELEASE_NAME CHART_PATH</code></p>
-<p>如果有更新 Chart 的檔案時，可以透過 upgrade 去更新對應的 Release。</p>
-<p><code>helm lint CHART_PATH</code></p>
-<p>檢查你的 Chart 檔案有沒有錯誤的語法。</p>
-<p><code>helm package CHART_PATH</code></p>
-<p>打包並壓縮整個 Chart 資料夾的檔案。</p>
-<h2 id="kubectl-額外補充">kubectl 額外補充</h2>
-<h3 id="簡寫">簡寫</h3>
-<p>覺得每次下指令都要打 kubectl 很花時間的話，可以透過 alias 來節省時間，例如設定 alias kbs=kubectl 。</p>
-<p>kubectl 中的各項資源的名稱其實也都有內建的簡寫，可以透過指令</p>
-<p><code>kubectl api-resources</code></p>
-<p>去看到各個資源的簡寫，例如 deployments 可以簡寫成 deploy、services 簡寫成 svc 等。</p>
-<p><strong>auto-complete</strong></p>
-<p>覺得 kubectl 的指令沒有 auto-complete 很痛苦的話可以參考官網的教學。像是如果使用 zsh 的話，就可以透過指令</p>
-<pre><code class="language-bash">echo &quot;if [ $commands[kubectl] ]; then source &lt;(kubectl completion zsh); fi&quot; &gt;&gt; ~/.zshrc
-</code></pre>
-<p>來啟用 kubectl 的 auto-complete</p>
-<p><strong>create vs apply</strong></p>
-<p>在之前提到透過 yaml 建立資源時，我們都用了 kubectl create -f。但其實也可以使用 kubectl apply -f 達成建立與更新資源，雖然在單純建立的使用情景上沒有差別，但其它用法上的差別可見 kubectl apply vs kubectl create。</p>
-<h2 id="小結">小結</h2>
-<p>呼！希望這三篇 Kubernetes 基礎教學能對你有幫助！再次溫故知新一下：<br>
-在系列文的第一篇文章中，我們了解了構成 Kubernetes 的四個重要元素：Pod、Node、Master、Cluster，並安裝好了我們要實際動手玩 Kubernetes 前需要的套件與工具。<br>
-而在第二篇文章中，我們實際動手操作了 Kubernetes 中的 Pod、Service、Deployment、Ingress。<br>
-在最後的這篇文章中，我們了解了讓 Kubernetes 部署變得好輕鬆好棒棒的工具 Helm，並實際透過 Helm 部署了一個 Helm。<br>
-在學會了上述的各個基礎後，如果想要實際在各個雲端服務上操作 Kubernetes 的話，歡迎接下來可以進一步去了解 Kops！</p>
-<p><a href="https://medium.com/@C.W.Hu/kubernetes-helm-chart-tutorial-fbdad62a8b61">原文链接</a></p>
-<h2 id="參考資料">參考資料：</h2>
-<ul>
-<li>Helm Official Document<br>
-https://helm.sh/docs/</li>
-<li>Kubernetes Official Document<br>
-https://kubernetes.io/docs/home/</li>
-<li>Kubernetes 30天學習筆記 by zxcvbnius https://ithelp.ithome.com.tw/articles/10192401</li>
-<li>五分鐘 Kubernetes 有感<br>
-https://medium.com/@evenchange4/%E4%BA%94%E5%88%86%E9%90%98-kubernetes-%E6%9C%89%E6%84%9F-e51f093cb10b</li>
-<li>十分鐘帶你理解Kubernetes核心概念<br>
-http://dockone.io/article/932</li>
-<li>Kubernetes 學習筆記<br>
-https://gcpug-tw.gitbook.io/kuberbetes-in-action/</li>
-<li>[教學] 用Drone, Kubernetes跟Helm，以及RBAC來建置你的CI/CD流程<br>
-https://medium.com/@cloudsanchen/ci-cd-with-drone-kubernetes-and-helm-part-1-69c147046ffa</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress]]></title>
-        <id>https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/</id>
-        <link href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">
-        </link>
-        <updated>2020-08-20T10:02:28.000Z</updated>
-        <summary type="html"><![CDATA[<p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
-<!-- more -->
-<p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。简单来说，他可以做到：</p>
-<ul>
-<li>同时部署多个容器到多台机器上（Deployment）</li>
-<li>服务的乘载量有变化时，可以对容器做自动扩展（Scaling）</li>
-<li>管理多个容器的状态，自动侦测并重启故障的容器（Management）</li>
-</ul>
-<p>在系列文的上一篇文章中，我们了解了构成 Kubernetes 的四个重要元素：Pod、Node、Master、Cluster，并安装好了我们要实际动手玩 Kubernetes 前需要的套件与工具。接下来在这篇文章中，我们会透过例子来实际建立那些在 Kubernetes 中常见的元件们。</p>
-<h2 id="如何建立一个-pod">如何建立一个 Pod</h2>
-<h2 id="撰写-pod-的身分证">撰写 Pod 的身分证</h2>
-<p>还记得我们在介绍 Kubernetes 时有提到，每个 Pod 都有一个身分证，也就是属于这个 Pod 的 .yaml 档。我们透过撰写下面的这个 .yaml 档就可以建立出 Pod。</p>
-<p>kubernetes-demo.yaml</p>
-<pre><code class="language-yaml">apiVersion: v1
- kind: Pod
- metadata:
-   name: kubernetes-demo-pod
-   labels:
-     app: demoApp
- spec:
-   containers:
-     - name: kubernetes-demo-container
-       image: hcwxd/kubernetes-demo
-       ports:
-         - containerPort: 3000
-</code></pre>
-<p>apiVersion</p>
-<ul>
-<li>该元件版本号</li>
-</ul>
-<p>kind</p>
-<ul>
-<li>该元件是什么属性，常见有 Pod、Node、Service、Namespace、ReplicationController 等</li>
-</ul>
-<p>metadata</p>
-<p>name</p>
-<ul>
-<li>指定该 Pod 的名称<br>
-labels</li>
-<li>指定该 Pod 的标签，这里我们暂时帮它上标签为 app: demoApp</li>
-</ul>
-<p>spec</p>
-<p>container.name</p>
-<ul>
-<li>指定运行出的 Container 的名称</li>
-</ul>
-<p>container.image</p>
-<ul>
-<li>指定 Container 要使用哪个 Image，这里会从 DockerHub 上搜寻</li>
-</ul>
-<p>container.ports</p>
-<ul>
-<li>指定该 Container 有哪些 port number 是允许外部资源存取</li>
-</ul>
-<h2 id="透过-kubectl-建立-pod">透过 kubectl 建立 Pod</h2>
-<p>有了身份证后，我们就可以透过 kubectl 指令来建立 Pod</p>
-<p><code>kubectl create -f kubernetes-demo.yaml</code></p>
-<p>看到 <code>pod/kubernetes-demo-pod created</code> 的字样就代表我们建立成功我们的第一个 Pod 了。我们可以再透过指令</p>
-<p><code>kubectl get pods</code></p>
-<p>看到我们运行中的 Pod：</p>
-<pre><code class="language-bash">NAME                  READY   STATUS    RESTARTS   AGE
-kubernetes-demo-pod   1/1     Running   0          60s
-</code></pre>
-<h2 id="连线到我们-pod-的服务资源">连线到我们 Pod 的服务资源</h2>
-<p>建立好我们的 Pod 之后，打开浏览器的 <code>localhost:3000</code> 我们会发现怎么什么都看不到。这是因为在 Pod 中所指定的 port，跟我们本机端的 port 是不相通的。因此，我们必须还要透过 <code>kubectl port-forward</code>，把我们两端的 port 做 mapping。</p>
-<p><code>kubectl port-forward kubernetes-demo-pod 3000:3000</code></p>
-<p>做好 mapping 后，再打开浏览器的 localhost:3000 ，我们就可以迎接一只可爱的小鲸鱼啰！</p>
-<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1597918423758.png" alt="" loading="lazy"></figure>
-<h2 id="kubernetes-进阶三元件">Kubernetes 进阶三元件</h2>
-<p>了解完如何从无到有建立一个 Kubernetes Cluster 并产生一个 Pod 后，接下来我们要认识在现实应用中，我们还会搭配到哪些 Kubernetes 的进阶元件。其中最重要的三个进阶元件就是：Service、Ingress、Deployment。</p>
-<p><strong>Service</strong></p>
-<p>还记得上面提到我们在连线到一个 Pod 的服务资源时，会使用到 port-forward 的指令。但如果我们有多个 Pods 想要同时被连线时，我们就可以用到 Service 这个进阶元件。简单来说，Service 就是 Kubernetes 中用来定义「一群 Pod 要如何被连线及存取」的元件。</p>
-<p>要建立一个 Service，一样要撰写属于他的身分证。</p>
-<p>service.yaml</p>
-<pre><code class="language-yaml">apiVersion: v1
- kind: Service
- metadata:
-   name: my-service
- spec:
-   selector:
-     app: demoApp
-   type: NodePort
-   ports:
-     - protocol: TCP
-       port: 3001
-       targetPort: 3000
-       nodePort: 30390
-</code></pre>
-<p>apiVersion</p>
-<ul>
-<li>该元件的版本号</li>
-</ul>
-<p>kind</p>
-<ul>
-<li>该元件是什么属性，常见有 Pod、Node、Service、Namespace、ReplicationController 等</li>
-</ul>
-<p>metadata</p>
-<ul>
-<li>name<br>
-指定该 Pod 的名称</li>
-</ul>
-<p>spec</p>
-<ul>
-<li>
-<p>selector<br>
-该 Service 的连线规则适用在哪一群 Pods，还记得我们在建立 Pod 的时候，会帮它上 label，这时就可以透过 app: demoApp，去找到那群 label 的 app 属性是 demoApp 的 Pods 们</p>
-</li>
-<li>
-<p>ports</p>
-<ul>
-<li>targetPort<br>
-指定我们 Pod 上允许外部资源存取 Port Number</li>
-<li>port<br>
-指定我们 Pod 上的 targetPort 要 mapping 到 Service 中 ClusterIP 中的哪个 port</li>
-<li>nodePort<br>
-指定我们 Pod 上的 targetPort 要 mapping 到 Node 上的哪个 port</li>
-</ul>
-</li>
-</ul>
-<p>接下来我们先重新建立我们的 Pod</p>
-<p><code>kubectl create -f kubernetes-demo.yaml</code></p>
-<p>接下来我们透过 service.yaml 来建立我们的 Service 元件</p>
-<p><code>kubectl create -f service.yaml</code></p>
-<p>然后我们可以透过</p>
-<p><code>kubectl get services</code></p>
-<p>取得我们新建立 Service 的资料</p>
-<pre><code class="language-bash">NAME       TYPE      CLUSTER-IP     EXTERNAL-IP PORT(S)          AGE
-my-service NodePort  10.110.237.205 &lt;none&gt;      3001:30391/TCP   60s
-</code></pre>
-<p>有了建立好的 Service 后，我们可以透过两种方式连线我们的 Pod 的服务资源。首先，要从外部连线到我们的 Pod 资源服务，我们必须要先有我们的 Kubernetes Cluster（在这边是 minikube）对外开放的 IP。我们先透过指令</p>
-<p><code>minikube ip</code></p>
-<p>得到我们 minikube 的 ip</p>
-<p><code>192.168.99.100</code></p>
-<p>接着打开我们的浏览器，输入上面的 ip 加上我们在 yaml 档指定的 nodePort，在这边是 192.168.99.100:30390，就会得到我们的小鲸鱼了。</p>
-<p>而如果不从浏览器，而是直接从 minikube 里面连线到我们的 Pod 则要先透过指令</p>
-<p><code>minikube ssh</code></p>
-<p>ssh 进入我们的 minikube cluster，接着输入指令</p>
-<p><code>curl &lt;CLUSTER-IP&gt;:&lt;port&gt;</code></p>
-<p>其中 CLUSTER-IP 就是我们用 kubectl get services 得到我们 Service 的 IP，而 port 就是我们在 yaml 档指定的 port，在这边合起来就是 10.110.237.205:3001，于是我们</p>
-<p><code>curl 10.110.237.205:3001</code></p>
-<p>就可以在 minikube 里面得到我们的小鲸鱼啰！</p>
-<p><strong>Deployment</strong></p>
-<p>了解了 Service 后，接下来要来了解第二个进阶元件：Deployment。今天当我们同时要把一个Pod 做横向扩展，也就是复制多个相同的Pod 在Cluster 中同时提供服务，并监控如果有Pod 当机我们就要重新把它启动时，如果我们要一个Pod 一个Pod透过指令建立并监控是很花时间的。因此，我们可以透过 Deployment 这个特殊元件帮我们达成上述的要求。</p>
-<p>同样要建立一个 Deployment，要先撰写属于他的身分证。</p>
-<p>deployment.yaml</p>
-<pre><code class="language-yaml">apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-deployment
-spec:
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: demoApp
-    spec:
-      containers:
-        - name: kubernetes-demo-container
-          image: hcwxd/kubernetes-demo
-          ports:
-            - containerPort: 3000
-  selector:
-    matchLabels:
-      app: demoApp
-</code></pre>
-<p>apiVersion</p>
-<ul>
-<li>该元件的版本号</li>
-</ul>
-<p>kind</p>
-<ul>
-<li>该元件是什么属性，常见有 Pod、Node、Service、Namespace、ReplicationController 等</li>
-</ul>
-<p>metadata</p>
-<ul>
-<li>name<br>
-指定该 Pod 的名称</li>
-</ul>
-<p>spec</p>
-<ul>
-<li>
-<p>replicas<br>
-指定要建立多少个相同的 Pod，在这边给的数字是所谓的 Desire State，当 Cluster 运行时如果 Pod 数量低于此数字，Kubernetes 就会自动帮我们增加 pod，反之就会帮我们关掉 Pod</p>
-</li>
-<li>
-<p>template<br>
-指定这个 Deployment 建立的 Pod 们统一的设定，包括 metadata 以及这些 Pod 的 Containers，这边我们就沿用之前建立 Pod 的设定</p>
-</li>
-<li>
-<p>selector<br>
-指定这个 Deployment 的规则要适用到哪些 Pod，在这边就是指定我们在 template 中指定的 labels</p>
-</li>
-</ul>
-<p>接下来我们就可以透过指令</p>
-<p><code>kubectl create -f deployment.yaml</code></p>
-<p>建立好我们的 Deployment，这时我们可以查看我们的 Deployment 有没有被建立好</p>
-<pre><code class="language-bash">kubectl get deploy
-NAME            READY   UP-TO-DATE   AVAILABLE   AGE
-my-deployment   3/3     3            3           60s
-</code></pre>
-<p>接着我们在看 Pod 们有没有乖乖按照 Deployment 建立</p>
-<pre><code class="language-bash">kubectl get pods
-NAME                             READY   STATUS    RESTARTS   AGE
-my-deployment-5454f687cd-bxjfz   1/1     Running   0          60s
-my-deployment-5454f687cd-gszbr   1/1     Running   0          60s
-my-deployment-5454f687cd-k6zfv   1/1     Running   0          60s
-</code></pre>
-<p>这边我们可以看到三个 Pod 都被建立好了，我们就成功做到了 Pod 的横向扩展。而除了 Pod 的横向扩展外，Deployment 的另外一个好处就是可以帮我们做到无停机的系统升级（Zero Downtime Rollout）。也就是说，当我们要更新我们的 Pod 时，Kubernetes 并不会直接砍掉我们所有的 Pod，而是会建立新的 Pod，等新的 Pod 开始正常运行后，再来取代旧的 Pod。</p>
-<p>举例来说，假设我们现在想要更新我们 Pod 对外的 Port，我们可以先透过指令</p>
-<p><code>kubectl edit deployments my-deployment</code></p>
-<p>接着我们会看到我们的 Yaml 档</p>
-<pre><code class="language-yaml">apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  annotations:
-    deployment.kubernetes.io/revision: '2'
-  creationTimestamp: '2019-04-26T04:18:26Z'
-  generation: 2
-  labels:
-    app: demoApp
-  name: my-deployment
-  namespace: default
-  resourceVersion: '328692'
-  selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/my-deployment
-  uid: 56608fb5-67da-11e9-933f-08002789461f
-spec:
-  progressDeadlineSeconds: 600
-  replicas: 3
-  revisionHistoryLimit: 10
-  selector:
-    matchLabels:
-      app: demoApp
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      creationTimestamp: null
-      labels:
-        app: demoApp
-    spec:
-      containers:
-        - image: hcwxd/kubernetes-demo
-          imagePullPolicy: Always
-          name: kubernetes-demo-container
-          ports:
-            - containerPort: 3000
-              protocol: TCP
-          resources: {}
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
-</code></pre>
-<p>我们把其中 containerPort: 3000 改成 3001 后储存，Kubernetes 就会开始帮我们进行更新。这时我们继续用指令 kubectl get pods 就会看到</p>
-<pre><code class="language-bash">NAME                          READY STATUS            RESTARTS   AGE
-my-deployment-5454f687cd-bxjf 1/1   Running           0          60s
-my-deployment-5454f687cd-gszb 1/1   Terminating       0          60s
-my-deployment-5454f687cd-k6zf 1/1   Running           0          60s
-my-deployment-78dc8dcb89-5927 0/1   ContainerCreating 0          1s
-my-deployment-78dc8dcb89-dwtl 1/1   Running           0          5s
-</code></pre>
-<p>从上面可以看到，Kubernetes 会永远保持有 3 个 Pods 在正常运作，如果有新的 Pod 还在 ContainerCreating 的阶段时，他还不会关掉对应要被取代的 Pod。而在过一段时间我们输入同样指令可以看到</p>
-<p><code>kubectl rollout history deployment my-deployment</code></p>
-<p>看到我们目前更改过的版本</p>
-<pre><code class="language-bash">deployment.extensions/my-deployment
-REVISION  CHANGE-CAUSE
-1         &lt;none&gt;
-2         &lt;none&gt;
-</code></pre>
-<p>从上面可以看出来，我们目前有两个版本，如果我们发现版本 2 的程式有问题，想要先让服务先恢复成版本 1 的程式（Rollback）时，我们还可以透过指令</p>
-<p><code>kubectl rollout undo deploy my-deployment</code></p>
-<p>让我们的 Pod 都恢复成版本 1。甚至之后如果版本变的较多后，我们也可以指定要 Rollback 到的版本</p>
-<p><code>kubectl rollout undo deploy my-deployment --to-revision=2</code></p>
-<p><strong>Ingress</strong><br>
-了解完了 Service 跟 Deployment 後，接下來就輪到概ㄓ念稍微複雜的 Ingress 元件了。 在上面有提到 Service 就是 Kubernetes 中用來定義「一群 Pod 要如何被連線及存取」的元件。 但在 Service 中，我們是將每個 Service 元件對外的 port number 跟 Node 上的 port number 做 mapping，這樣在我們的 Service 變多時，port number 以及分流規則的管理變得相當困難。</p>
-<p>而 Ingress 可以透過 HTTP/HTTPS，在我們眾多的 Service 前搭建一個 reverse-proxy。這樣 Ingress 可以幫助我們統一一個對外的 port number，並且根據 hostname 或是 pathname 決定封包要轉發到哪個 Service 上，如同下圖的比較：</p>
-<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1597919286278.jpg" alt="" loading="lazy"></figure>
-<p>在 Kubernetes 中，Ingress 这项服务其实是由 Ingress Resources、Ingress Server、Ingress Controller 构成。其中 Ingress Resources 就是定义 Ingress 的身分证，而 Ingress Server 则是实体化用来接收 HTTP/HTTPS 连线的网路伺服器。但实际上，Ingress Server 有各式各样的实作，就如同市面上的 Web Server 琳琅满目一样。因此，Ingress Controller 就是一个可以把定义好的 Ingress Resources 设定转换成特定 Ingress Server 实作的角色。</p>
-<p>举例来说，Kubernetes 由官方维护的两种 Ingress Controller 就有 ingress-gce 跟 ingress-nginx，分别可以对应转换成 GCE 与 Nginx。也有其他非官方在维护的 Controller，详细的列表可见官网的 additional-controllers。</p>
-<p>接下来我们要来试着建立一个 Ingress 物件去根据 hostname 转发封包到不同的 Pod 上面。所以第一步，我们要用 Deployment 建立好几个不同的 Pod。在这边我们直接透过准备好的两个Image 来建立其中的Container，blue-whale 这个Image 里的程式会监听3000 port 然后在浏览器上被存取时会吐出蓝色的鲸鱼，purple-whale 则会吐出紫色的鲸鱼。</p>
-<p>deployment.yaml</p>
-<pre><code class="language-yaml">apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: blue-nginx
-spec:
-  replicas: 2
-  template:
-    metadata:
-      labels:
-        app: blue-nginx
-    spec:
-      containers:
-        - name: nginx
-          image: hcwxd/blue-whale
-          ports:
-            - containerPort: 3000
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: purple-nginx
-spec:
-  replicas: 2
-  template:
-    metadata:
-      labels:
-        app: purple-nginx
-    spec:
-      containers:
-        - name: nginx
-          image: hcwxd/purple-whale
-          ports:
-            - containerPort: 3000
-</code></pre>
-<p>接着我们就可以透过 kubectl create -f deployment.yaml 建立好我们的 Pod。</p>
-<pre><code class="language-yaml">AME                            READY   STATUS    RESTARTS  AGE
-blue-nginx-6b68c797c7-28tkz    1/1     Running   0         60s
-blue-nginx-6b68c797c7-8ww8l    1/1     Running   0         60s
-purple-nginx-84854fd7c-8g4nl   1/1     Running   0         60s
-purple-nginx-84854fd7c-tmrbs   1/1     Running   0         60s
-</code></pre>
-<p>建立好了 Pod 们后，接下来我们就要建立这些 Pod 对外的各自 Service，在这边我们会把各至 Container 上的 3000 port 全部都转到 80 port 上。</p>
-<p>service.yaml</p>
-<pre><code class="language-yaml">apiVersion: v1
-kind: Service
-metadata:
-  name: blue-service
-spec:
-  type: NodePort
-  selector:
-    app: blue-nginx
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 3000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: purple-service
-spec:
-  type: NodePort
-  selector:
-    app: purple-nginx
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 3000
-</code></pre>
-<p>透过 kubectl create -f service.yaml 建立好我们的 service。</p>
-<pre><code class="language-yaml">NAME            TYPE      CLUSTER-IP      EXTERNAL-IP  PORT(S)        
-blue-service    NodePort  10.111.192.164  &lt;none&gt;       80:30492/TCP
-purple-service  NodePort  0.107.21.77     &lt;none&gt;       80:32086/TCP
-</code></pre>
-<p>最后，我们就可以来建立我们的主角 Ingress 了！在这边我们的Ingress 只有很简单的规则，他会把所有发送到blue.demo.com 的封包交给service blue-service 负责，而根据上面service.yaml 的定义，他会再转交给blue-nginx这个Pod。而发送给 purple.demo.com 则会转交给 purple-nginx。<br>
-在这边，我们要先记得使用指令 minikube addons enable ingress 来启用 minikube 的 ingress 功能。接着，我们就来撰写 ingress 的身分证。</p>
-<p>ingress.yaml</p>
-<pre><code class="language-yaml">apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: web
-spec:
-  rules:
-    - host: blue.demo.com
-      http:
-        paths:
-          - backend:
-              serviceName: blue-service
-              servicePort: 80
-    - host: purple.demo.com
-      http:
-        paths:
-          - backend:
-              serviceName: purple-service
-              servicePort: 80
-</code></pre>
-<p>我们一样透过 kubectl create -f ingress.yaml 来建立我们的 ingress 物件。并使用 kubectl get ingress 来查看我们的 ingress 状况：</p>
-<pre><code class="language-bash">NAME   HOSTS                           ADDRESS     PORTS   AGE
-web    blue.demo.com,purple.demo.com   10.0.2.15   80      60s
-</code></pre>
-<p>接下来我们要来测试 ingress 有没有乖乖帮我们转发。因为我们的Cluster 实际上对外的ip 都是我们透过指令minikube ip 会看到的192.168.99.100，这样我们要怎么同时让这个ip 可以是我们设定规则中的blue.demo.com 以及purple.demo.com呢？</p>
-<p>因为我们知道在 DNS 解析网址时，会先查找本机上 /etc/hosts 后才会到其他 DNS Server 上寻找。所以我们可以透过一个小技巧，在本机上把 blue.demo.com 以及 purple.demo.com 都指向 192.168.99.100。透过指令</p>
-<pre><code class="language-bash">echo 192.168.99.100   blue.demo.com  &gt;&gt; /etc/hosts
-echo 192.168.99.100   purple.demo.com &gt;&gt; /etc/hosts
-</code></pre>
-<p>或是透过 sudo vim /etc/hosts 手动加上这两条规则，我们就成功搞定 DNS 可以来测试了。接下来我们打开浏览器，输入 blue.demo.com 就可以得到熟悉的蓝色小鲸鱼</p>
-<figure data-type="image" tabindex="3"><img src="https://chriswsq.github.io/post-images/1597919547364.png" alt="" loading="lazy"></figure>
-<p>然后输入 purple.demo.com 就可以得到紫色小鲸鱼啰！</p>
-<figure data-type="image" tabindex="4"><img src="https://chriswsq.github.io/post-images/1597919583300.png" alt="" loading="lazy"></figure>
-<p>在实际建立过 Pod、Service、Deployment 还有 Ingress 后，在接下来的文章，我们要来介绍一个可以让这个建立流程变得更简单的工具，也就是 Kubernetes 中的 Package Manager：Helm！</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[kubernetes基础教学（一）原理]]></title>
-        <id>https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/</id>
-        <link href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">
-        </link>
-        <updated>2020-08-20T09:32:13.000Z</updated>
-        <summary type="html"><![CDATA[<p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。<br>
-更进一步地说，Kubernetes 想解决的问题是：「手动部署多个容器到多台机器上并监测管理这些容器的状态非常麻烦。」而Kubernetes 要提供的解法： 提供一个平台以较高层次的抽象化去自动化操作与管理容器们。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。<br>
-更进一步地说，Kubernetes 想解决的问题是：「手动部署多个容器到多台机器上并监测管理这些容器的状态非常麻烦。」而Kubernetes 要提供的解法： 提供一个平台以较高层次的抽象化去自动化操作与管理容器们。</p>
-<!-- more -->
-<p>打开 Kubernetes 的官网，我们可以看到关于 Kubernetes 服务的描述为：</p>
-<blockquote>
-<p>Automated container deployment, scaling, and management</p>
-</blockquote>
-<p>而白话来说，上面的描述表示他可以做到：</p>
-<ul>
-<li>同时部署多个容器到多台机器上（Deployment）</li>
-<li>服务的乘载量有变化时，可以对容器做自动扩展（Scaling）</li>
-<li>管理多个容器的状态，自动侦测并重启故障的容器（Management）</li>
-</ul>
-<h2 id="kubernetes-四元件">Kubernetes 四元件</h2>
-<p>在了解 Kubernetes 如何帮助我们管理容器们前，我们先要由小到大依序了解组成 Kubernetes 的四种最基本的元件：Pod、Worker Node、Master Node、Cluster。</p>
-<p><strong>Pod</strong></p>
-<p>Kubernetes 运作的最小单位，一个 Pod 对应到一个应用服务（Application） ，举例来说一个 Pod 可能会对应到一个 API Server。</p>
-<ul>
-<li>每个 Pod 都有一个身分证，也就是属于这个 Pod 的 yaml 档</li>
-<li>一个 Pod 里面可以有一个或是多个 Container，但一般情况一个 Pod 最好只有一个 Container</li>
-<li>同一个 Pod 中的 Containers 共享相同资源及网路，彼此透过 local port number 沟通</li>
-</ul>
-<p><strong>Worker Node</strong></p>
-<p>Kubernetes 运作的最小硬体单位，一个Worker Node（简称Node）对应到一台机器，可以是实体机如你的笔电、或是虚拟机如AWS 上的一台EC2 或GCP 上的一台Computer Engine 。</p>
-<p>每个 Node 中都有三个组件：kubelet、kube-proxy、Container Runtime。</p>
-<blockquote>
-<p>小提醒：在 Worker Node 与 Master Node 的组件部分，因为 Kubernetes 本身其实都抽象的很好，所以在 Kubernetes 「基础的」使用上如何不了解这些组建也不会有非常大的影响。</p>
-</blockquote>
-<p><strong>kubelet</strong></p>
-<ul>
-<li>该 Node 的管理员，负责管理该 Node 上的所有 Pods 的状态并负责与 Master 沟通</li>
-</ul>
-<p><strong>kube-proxy</strong></p>
-<ul>
-<li>该 Node 的传讯员，负责更新 Node 的 iptables，让 Kubernetes 中不在该 Node 的其他物件可以得知该 Node 上所有 Pods 的最新状态</li>
-</ul>
-<p><strong>kube-apiserver</strong></p>
-<ul>
-<li>
-<p>管理整个 Kubernetes 所需 API 的接口（Endpoint），例如从 Command Line 下 kubectl 指令就会把指令送到这里</p>
-</li>
-<li>
-<p>负责 Node 之间的沟通桥梁，每个 Node 彼此不能直接沟通，必须要透过 apiserver 转介<br>
-负责 Kubernetes 中的请求的身份认证与授权</p>
-</li>
-</ul>
-<p><strong>etcd</strong></p>
-<ul>
-<li>用来存放 Kubernetes Cluster 的资料作为备份，当 Master 因为某些原因而故障时，我们可以透过 etcd 帮我们还原 Kubernetes 的状态</li>
-</ul>
-<p><strong>kube-controller-manager</strong></p>
-<ul>
-<li>负责管理并运行 Kubernetes controller 的组件，简单来说 controller 就是 Kubernetes 里一个个负责监视 Cluster 状态的 Process，例如：Node Controller、Replication Controller</li>
-<li>这些 Process 会在 Cluster 与预期状态（desire state）不符时尝试更新现有状态（current state）。例如：现在要多开一台机器以应付突然增加的流量，那我的预期状态就会更新成 N+1，现有状态为 N，这时相对应的 controller 就会想办法多开一台机器</li>
-<li>controller-manager 的监视与尝试更新也都需要透过访问 kube-apiserver 达成</li>
-</ul>
-<p><strong>kube-scheduler</strong></p>
-<p>整个Kubernetes 的Pods 调度员，scheduler 会监视新建立但还没有被指定要跑在哪个Node 上的Pod，并根据每个Node 上面资源规定、硬体限制等条件去协调出一个最适合放置的Node 让该Pod 跑</p>
-<p><strong>Cluster</strong></p>
-<p>Kubernetes 中多个 Node 与 Master 的集合。基本上可以想成在同一个环境里所有 Node 集合在一起的单位。</p>
-<h2 id="基本运作与安装">基本运作与安装</h2>
-<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1597917479477.jpg" alt="" loading="lazy"></figure>
-<p>因原文为外网才能访问所以转载<br>
-<a href="https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0">原文链接</a></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[k8s——apiVersion对照表]]></title>
-        <id>https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/</id>
-        <link href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">
-        </link>
-        <updated>2020-08-20T07:10:24.000Z</updated>
-        <content type="html"><![CDATA[<!-- more -->
-<p>不同的控制器选用不同的apiVersion</p>
-<!-- more -->
-<h2 id="对照表">对照表</h2>
-<table>
-<thead>
-<tr>
-<th>kind</th>
-<th>apiVersion</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CertificateSigningRequest</td>
-<td>certificates.k8s.io/v1beta1</td>
-</tr>
-<tr>
-<td>ClusterRoleBinding</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>ClusterRole</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>ComponentStatus</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ConfigMap</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ControllerRevision</td>
-<td>apps/v1</td>
-</tr>
-<tr>
-<td>CronJob</td>
-<td>batch/v1beta1</td>
-</tr>
-<tr>
-<td>DaemonSet</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Deployment</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Endpoints</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>Event</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>HorizontalPodAutoscaler</td>
-<td>autoscaling/v1</td>
-</tr>
-<tr>
-<td>Ingress</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Job</td>
-<td>batch/v1</td>
-</tr>
-<tr>
-<td>LimitRange</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>Namespace</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>NetworkPolicy</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Node</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PersistentVolumeClaim</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PersistentVolume</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PodDisruptionBudget</td>
-<td>policy/v1beta1</td>
-</tr>
-<tr>
-<td>Pod</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PodSecurityPolicy</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>PodTemplate</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ReplicaSet</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>ReplicationController</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ResourceQuota</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>RoleBinding</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>Role</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>Secret</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ServiceAccount</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>Service</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>StatefulSet</td>
-<td>apps/v1</td>
-</tr>
-</tbody>
-</table>
-<h2 id="apiversion分别是什么意思">apiVersion分别是什么意思？</h2>
-<p>名称中带有'alpha'的alpha API版本是Kubernetes中新功能的早期候选者。这些可能包含错误，并且不能保证将来能够正常工作。</p>
-<p><strong>测试</strong><br>
-在API版本名称意味着测试已取得进展过去的阿尔法水平，并且该功能最终将被列入Kubernetes“测试”。尽管其工作方式可能会发生变化，并且对象的定义方式可能会发生完全变化，但功能本身很有可能以某种形式将其纳入Kubernetes。</p>
-<p><strong>稳定名称中</strong><br>
-不包含“ alpha”或“ beta”。它们是安全使用的。</p>
-<hr>
-<p><strong>v1</strong><br>
-这是Kubernetes API的第一个稳定版本。它包含许多核心对象。</p>
-<p><strong>apps / v1</strong><br>
-apps是Kubernetes中最常见的API组，其中许多核心对象均来自v1。它包括与在Kubernetes上运行应用程序相关的功能，例如Deployments，RollingUpdates和ReplicaSets。</p>
-<p><strong>autoscaling / v1</strong><br>
-此API版本允许根据不同的资源使用量指标对pod进行自动缩放。此稳定版本仅支持CPU扩展，但是将来的alpha和beta版本将允许您根据内存使用情况和自定义指标进行扩展。</p>
-<p><strong>batch/v1</strong><br>
-的batchAPI组包含与批处理和作业样的任务（而不是应用类一样无限期运行Web服务器的任务）的对象。该apiVersion是这些API对象的第一个稳定版本。</p>
-<p><strong>batch / v1beta1</strong><br>
-Beta版本，用于Kubernetes中批处理对象的新功能，特别是包括CronJobs，它使您可以在特定的时间或周期性地运行Jobs。</p>
-<p><strong>certificate.k8s.io/v1beta1</strong><br>
-此API版本增加了用于验证网络证书以在群集中进行安全通信的功能。您可以阅读更多有关官方文档的信息。</p>
-<p><strong>extensions / v1beta1</strong><br>
-此版本的API包括Kubernetes的许多常用新功能。在此版本中，部署，DaemonSet，副本集和Ingress都进行了重大更改。</p>
-<p>请注意，在Kubernetes 1.6中，其中一些对象已从重新定位extensions到特定的API组（例如apps）。当这些对象移出测试版时，应将它们归入特定的API组，例如apps/v1。使用extensions/v1beta1正变得过时，尝试用在可能情况下，根据您的Kubernetes集群版本的特定API组。</p>
-<p><strong>policy / v1beta1</strong><br>
-此apiVersion增加了设置容器中断预算和有关容器安全性的新规则的功能。</p>
-<p><strong>rbac.authorization.k8s.io/v1</strong><br>
-此apiVersion包含用于Kubernetes基于角色的访问控制的附加功能。这可以帮助您保护群集。查看官方博客文章。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[NFS网络文件系统部署]]></title>
-        <id>https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/</id>
-        <link href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">
-        </link>
-        <updated>2020-08-20T06:58:24.000Z</updated>
-        <summary type="html"><![CDATA[<p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
-<!-- more -->
-<h2 id="系统环境">系统环境</h2>
-<table>
-<thead>
-<tr>
-<th>主机名称</th>
-<th>操作系统</th>
-<th>IP地址</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>NFS服务器</td>
-<td>Centos 7 64位</td>
-<td>192.168.40.6</td>
-</tr>
-<tr>
-<td>NFS客户端</td>
-<td>Centos 7 64位</td>
-<td>192.168.40.7</td>
-</tr>
-</tbody>
-</table>
-<h2 id="nfs服务配置文件的参数">NFS服务配置文件的参数</h2>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ro</td>
-<td></td>
-</tr>
-<tr>
-<td>rw</td>
-<td>读写</td>
-</tr>
-<tr>
-<td>root_squash</td>
-<td>当NFS客户端以root管理员访问时，映射为NFS服务器的匿名用户</td>
-</tr>
-<tr>
-<td>no_root_squash</td>
-<td>当NFS客户端以root管理员访问时，映射为NFS服务器的root管理员</td>
-</tr>
-<tr>
-<td>all_squash</td>
-<td>无论NFS客户端使用什么账户访问，均映射为NFS服务器的匿名用户</td>
-</tr>
-<tr>
-<td>sync</td>
-<td>同时将数据写入到内存与硬盘中，保证不丢失数据</td>
-</tr>
-<tr>
-<td>async</td>
-<td>优先将数据写入到内存，然后再写入硬盘；这样效率更高，但可能会丢失数据</td>
-</tr>
-</tbody>
-</table>
-<h2 id="nfs服务器操作">NFS服务器操作</h2>
-<h3 id="1-安装nfs">1、安装NFS</h3>
-<p><code>yum -y install nfs-utils</code></p>
-<h3 id="2-创建用于nfs共享的目录">2、创建用于NFS共享的目录</h3>
-<pre><code class="language-bash">mkdir /test
-chown -R nfsnobody /nfsdata
-</code></pre>
-<h3 id="3-编辑nfs的配置文件添加如下内容">3、编辑NFS的配置文件，添加如下内容</h3>
-<p><em>注：NFS的配置文件默认是没有内容的</em></p>
-<pre><code class="language-conf">vim /etc/exports
-/nfsdata 192.168.40.*(rw,sync,root_squash)
-</code></pre>
-<h3 id="4-启动nfs服务并加入开机启动项">4、启动NFS服务，并加入开机启动项</h3>
-<p>NFS服务需要使用RPC（Remote Procedure Call，远程过程调用）服务将NFS服务器的IP地址和端口号等信息发送给客户端，因此，在启动NFS服务之前，还需要顺带启动rpcbind服务。</p>
-<pre><code class="language-shell">systemctl start rpcbind
-systemctl enable rpcbind
-systemctl start nfs-server
-systemctl enable nfs-server
-</code></pre>
-<h3 id="5-查看nfs向rpc注册的端口信息">5、查看nfs向rpc注册的端口信息</h3>
-<p><code>rpcinfo -p localhost</code><br>
-<em>注：下图中用红框括起来的端口号需要防火墙允许</em><br>
-<img src="/images/nfs/nfs.jpg" alt="" loading="lazy"></p>
-<h3 id="6-配置firewalld防火墙允许nfs和rpc端口">6、配置firewalld防火墙，允许nfs和rpc端口</h3>
-<pre><code class="language-bash">firewall-cmd --permanent --add-service=nfs
-firewall-cmd --permanent --add-service=mountd
-firewall-cmd --permanent --add-port=111/tcp
-firewall-cmd --permanent --add-port=111/udp
-firewall-cmd --reload
-</code></pre>
-<h2 id="nfs客户端操作">NFS客户端操作</h2>
-<h3 id="1-使用showmount命令查询nfs服务器的远程共享信息">1、使用showmount命令查询NFS服务器的远程共享信息</h3>
-<p><strong>表3：showmount命令可用的参数以及作用</strong></p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>-e</td>
-<td>显示NFS服务器的共享列表</td>
-</tr>
-<tr>
-<td>-a</td>
-<td>显示本机挂载的文件资源的情况</td>
-</tr>
-<tr>
-<td>-v</td>
-<td>显示版本号</td>
-</tr>
-</tbody>
-</table>
-<p>查看能否连接到nfs服务</p>
-<pre><code>showmount -e 192.168.40.6
-</code></pre>
-<h3 id="2-创建挂载目录并挂载">2、创建挂载目录，并挂载</h3>
-<pre><code class="language-bash">mkdir /nfsdata
-mount -t nfs 192.168.40.6:/nfsdata /nfsdata
-df -h
-</code></pre>
-<h3 id="3-将挂载信息写入etcfstab文件中以便开机自动挂载">3、将挂载信息写入/etc/fstab文件中，以便开机自动挂载</h3>
-<pre><code class="language-bash">vim /etc/fstab
-192.168.40.6:/nfsdata /nfsdata nfs defaults 0 0
-</code></pre>
-<p>4、测试<br>
-往/nfsdata目录下写入一个文件</p>
-<pre><code>echo &quot;welcome to xuad.com&quot; &gt; /nfsdata/xuad.txt
-</code></pre>
-<p>在NFS服务器上查看/nfsdata目录下是否生成了此文件</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[sed&awk笔记]]></title>
-        <id>https://chriswsq.github.io/post/sedandawk-bi-ji/</id>
-        <link href="https://chriswsq.github.io/post/sedandawk-bi-ji/">
-        </link>
-        <updated>2020-08-20T06:49:30.000Z</updated>
-        <summary type="html"><![CDATA[<p>sed&amp;awk 提升工作效率的小工具</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>sed&amp;awk 提升工作效率的小工具</p>
-<!-- more -->
-<h2 id="删除行首空格或者tab">删除行首空格或者tab</h2>
-<p><code>sed -i 's/^[ \t]*//g' file</code></p>
-<p>删除行尾空格或者tab<br>
-<code>sed -i 's/[ \t]*$//g' file</code></p>
-<h2 id="注释特定行">注释特定行</h2>
-<pre><code>sed -i '/swapfile/s/^/#/' /etc/fstab
-sed -i '/xvdb/s/^/#/g' /etc/fstab
-sed -i '/vdb/s/^/#/g' /etc/fstab
-</code></pre>
-<h2 id="取消注释">取消注释</h2>
-<pre><code>sed -i '/swapfile/s/^#//' /etc/fstab
-sed -i '/xvdb/s/^#//g' /etc/fstab
-sed -i '/vdb/s/^#//g' /etc/fstab
-</code></pre>
-<h2 id="注释未注释行">注释未注释行</h2>
-<p><code>sed -i 's/^[^#]/#&amp;/' /var/spool/cron/root</code></p>
-<h2 id="首字母大写">首字母大写</h2>
-<p><code>sed 's/\b[a-z]/\U&amp;/g' file</code></p>
-<h2 id="首字母小写">首字母小写</h2>
-<p><code>sed 's/\b[a-Z]/\L&amp;/g' file</code></p>
-<h2 id="在包含某个字符的上一行或者下一行插入内容">在包含某个字符的上一行或者下一行插入内容</h2>
-<pre><code>[root@RedHat test]# cat testfile 
-hello
-[root@RedHat test]# sed -i '/hello/i\\up' testfile 
-[root@RedHat test]# cat testfile 
-up
-hello
-[root@RedHat test]# sed -i '/hello/a\\down' testfile 
-[root@RedHat test]# cat testfile 
-up
-hello
-down
-[root@RedHat test]#
-</code></pre>
-<p><strong>假如有两个关键字hello，那么在每一行上面或者下面都插入内容</strong></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[xuperchain添加旷工节点]]></title>
-        <id>https://chriswsq.github.io/post/xuperchain-tian-jia-kuang-gong-jie-dian/</id>
-        <link href="https://chriswsq.github.io/post/xuperchain-tian-jia-kuang-gong-jie-dian/">
-        </link>
-        <updated>2020-08-20T06:39:53.000Z</updated>
-        <summary type="html"><![CDATA[<p>xuperchain通过提案动态添加旷工节点</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>xuperchain通过提案动态添加旷工节点</p>
-<!-- more -->
-<h2 id="因为创建链是一次性的操作那么后续需要改动关于xuperjson里面的参数则要通过进行提案来进行修改">因为创建链是一次性的操作，那么后续需要改动关于xuper.json里面的参数则要通过进行提案来进行修改</h2>
-<p>一共两个步骤</p>
-<ul>
-<li>发起提案</li>
-<li>投票</li>
-</ul>
-<h3 id="编写提案文件">编写提案文件</h3>
-<p>首先查看当前块高度，因为提案文件的 投票截止高度和生效高度是根据目前高度来写的</p>
-<pre><code class="language-bash">./xchain-cli status -H 192.168.40.6:37101 | jq '.blockchains[] | {&quot;name&quot;:.name,&quot;height&quot;:.ledger.trunkHeight}'
-
-{
-  &quot;name&quot;: &quot;xuper&quot;,
-  &quot;height&quot;: 26505
-}
-
-</code></pre>
-<p>首先需要准备一个提案的文件，json格式</p>
-<p>proposal.json</p>
-<pre><code class="language-json">
-{
-    &quot;module&quot;: &quot;proposal&quot;,
-    &quot;method&quot;: &quot;Propose&quot;,
-    &quot;args&quot; : {
-        &quot;min_vote_percent&quot;: 51,
-        &quot;stop_vote_height&quot;: 26600
-    },
-    &quot;trigger&quot;: {
-        &quot;height&quot;: 26630,
-        &quot;module&quot;: &quot;consensus&quot;,
-        &quot;method&quot;: &quot;update_consensus&quot;,
-        &quot;args&quot; : {
-            &quot;name&quot;: &quot;tdpos&quot;,
-            &quot;config&quot;: {
-                &quot;version&quot;:&quot;21&quot;,
-                &quot;proposer_num&quot;:&quot;3&quot;,
-                &quot;period&quot;:&quot;3000&quot;,
-                &quot;alternate_interval&quot;:&quot;6000&quot;,
-                &quot;term_interval&quot;:&quot;9000&quot;,
-                &quot;block_num&quot;:&quot;20&quot;,
-                &quot;vote_unit_price&quot;:&quot;1&quot;,
-                &quot;init_proposer&quot;: {
-                    &quot;1&quot;:[&quot;2B1rDQhq7W4TStSHoD88N1SUYXrCDV821v&quot;, &quot;rwGpYwpkcpMgxdGJ9KX9xSvJPiCyPsFVQ&quot;,&quot;262G4VuXBmFg6W486XqY4bj2iMotHG5ypb&quot;]
-                }
-            }
-        }
-    }
-}
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="/images/xuperchain/proposal.jpg" alt="" loading="lazy"></figure>
-<blockquote>
-<p>注意：</p>
-<ul>
-<li>提案文件里不能有注释</li>
-<li>需要注意的是当前的区块高度，来设置合理的截至计票高度和生效高度</li>
-</ul>
-</blockquote>
-<h3 id="转账">转账</h3>
-<p>然后在矿工节点下，执行给自己转账的操作，并在 --desc 参数里传入提案</p>
-<pre><code class="language-bash">./xchain-cli transfer --to dpzuVdosQrF2kmzumhVeFQZa1aYcdgFpN --desc proposal.json --amount 1
-
-</code></pre>
-<p>运行后会得到本次提案的交易id，需要记录下来供投票使用</p>
-<blockquote>
-<p>转账地址写当前天的节点就可以，这里的交易金额写 1 也行，官方是100</p>
-</blockquote>
-<h3 id="投票">投票</h3>
-<p>对提案进行投票操作由如下命令执行：</p>
-<h4 id="查看当前总金额">查看当前总金额</h4>
-<pre><code class="language-bash">./xchain-cli  status  | grep utxoTotal
-10000000523
-</code></pre>
-<pre><code class="language-bash">./xchain-cli vote f26d670b695d9fd5da503a34d130ef19e738b35e031b18b70ad4cbbf6dfe2656 --frozen 26650 --amount 100002825031900000000
-
-</code></pre>
-<blockquote>
-<p>注意：</p>
-<ul>
-<li>
-<p>--frozen 参数的冻结高度大于提案生效的高度，也就是大于26630。</p>
-</li>
-<li>
-<p>这里需要注意进行投票的节点需要有矿工账号的密钥对</p>
-</li>
-<li>
-<p>因为最终通过的规则是投票资源大于总资源的51%，所以需要初始token量最多的矿工账号来进行投票，并保证token数符合要求。</p>
-</li>
-<li>
-<p>--amount 金额为大于总金额的51%</p>
-</li>
-</ul>
-</blockquote>
-<h3 id="查看状态">查看状态</h3>
-<p>待到当前块到生效高度时查看当前tdpos算法的状态</p>
-<pre><code class="language-bash">[root@test-1 output]# ./xchain-cli tdpos status
-{
-  &quot;term&quot;: 21,
-  &quot;block_num&quot;: 4,
-  &quot;proposer&quot;: &quot;rwGpYwpkcpMgxdGJ9KX9xSvJPiCyPsFVQ&quot;,
-  &quot;proposer_num&quot;: 3,
-  &quot;checkResult&quot;: [
-    &quot;2B1rDQhq7W4TStSHoD88N1SUYXrCDV821v&quot;,
-    &quot;rwGpYwpkcpMgxdGJ9KX9xSvJPiCyPsFVQ&quot;,
-    &quot;262G4VuXBmFg6W486XqY4bj2iMotHG5ypb&quot;
-  ]
-}
-
-</code></pre>
-<blockquote>
-<p>注意：</p>
-<p>刚到投票生效的时间执行此命令查看的时候可能会有报错情况</p>
-<p>[root@test-1 output]# ./xchain-cli  tdpos status<br>
-rpc error: code = Unknown desc = leveldb: not found</p>
-<p>等一会就好了</p>
-</blockquote>
 ]]></content>
     </entry>
 </feed>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-08-28T01:26:05.323Z</updated>
+    <updated>2020-08-28T06:05:47.195Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -1675,6 +1675,160 @@ root       2053   2042  0 Aug25 ?        00:05:40 cita-network -c network.toml
 cita-network.log日志会有<br>
 <code>ERROR - [NodeManager] Can not get node status from known_addr, this should ·not happen!</code><br>
 忽略即可</p>
+<h2 id="基本命">基本命</h2>
+<h3 id="查看块高度">查看块高度</h3>
+<pre><code class="language-bash">cita-cli rpc blockNumber
+
+{
+  &quot;id&quot;: 1,
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;result&quot;: &quot;0x13678&quot;
+}
+
+其中 result 表示本次查询时的块高度为 0x13678。 CITA 默认 3s 出一个块，重复执行查询命令，可以观察到 result 在持续的增长。
+</code></pre>
+<h3 id="部署合约">部署合约</h3>
+<p>执行命令</p>
+<pre><code class="language-bash">cita-cli rpc sendRawTransaction \
+    --code 0x608060405234801561001057600080fd5b5060df8061001f6000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a0565b005b348015608357600080fd5b50608a60aa565b6040518082815260200191505060405180910390f35b8060008190555050565b600080549050905600a165627a7a723058205aed214856a5c433292a354261c9eb88eed1396c83dabbe105bde142e49838ac0029 \
+    --private-key 0x3ef2627393529fed043c7dbfd9358a4ae47a88a59949b07e7631722fd6959002
+</code></pre>
+<p>该命令将合约的字节码部署到区块链上。</p>
+<p>命令返回：</p>
+<pre><code class="language-bash">{
+  &quot;id&quot;: 4,
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;result&quot;: {
+    &quot;hash&quot;: &quot;0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e&quot;,
+    &quot;status&quot;: &quot;OK&quot;
+  }
+}
+</code></pre>
+<h3 id="查看回执">查看回执</h3>
+<p>执行命令：</p>
+<pre><code class="language-bash">cita-cli rpc getTransactionReceipt --hash 0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e
+</code></pre>
+<p>其中的 hash 为部署合约的交易 hash，所查询的结果为部署合约的交易回执。<br>
+命令返回：</p>
+<pre><code class="language-bash">{
+  &quot;id&quot;: 1,
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;result&quot;: {
+    &quot;blockHash&quot;: &quot;0xb9e2167e07550c55406acc22f8d3d83fa81cfd29430c9b5ffb5a7e58fbf130c0&quot;,
+    &quot;blockNumber&quot;: &quot;0x136b3&quot;,
+    &quot;contractAddress&quot;: &quot;0xb701924639d802dc8093d1a43dffa9939a4506de&quot;,
+    &quot;cumulativeQuotaUsed&quot;: &quot;0x17d9d&quot;,
+    &quot;errorMessage&quot;: null,
+    &quot;logs&quot;: [
+    ],
+    &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;quotaUsed&quot;: &quot;0x17d9d&quot;,
+    &quot;root&quot;: null,
+    &quot;transactionHash&quot;: &quot;0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e&quot;,
+    &quot;transactionIndex&quot;: &quot;0x0&quot;
+  }
+}
+</code></pre>
+<h3 id="查看交易">查看交易</h3>
+<p>执行命令：</p>
+<pre><code class="language-bash">cita-cli rpc getTransaction --hash  0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e
+</code></pre>
+<p>其中的 hash 为部署合约的交易 hash，所查询的结果为部署合约的交易信息。<br>
+命令返回：</p>
+<pre><code class="language-bash">{
+  &quot;id&quot;: 1,
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;result&quot;: {
+    &quot;blockHash&quot;: &quot;0xb9e2167e07550c55406acc22f8d3d83fa81cfd29430c9b5ffb5a7e58fbf130c0&quot;,
+    &quot;blockNumber&quot;: &quot;0x136b3&quot;,
+    &quot;content&quot;: &quot;0x0af202122032343532366161336362383834626164626166656261313437623932663939661880ade2042089ee042afe01608060405234801561001057600080fd5b5060df8061001f6000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a0565b005b348015608357600080fd5b50608a60aa565b6040518082815260200191505060405180910390f35b8060008190555050565b600080549050905600a165627a7a723058205aed214856a5c433292a354261c9eb88eed1396c83dabbe105bde142e49838ac00293220000000000000000000000000000000000000000000000000000000000000000040025220000000000000000000000000000000000000000000000000000000000000000112413fd75865ad692e8903d05c4cadcca4b52621c5b6a4798c9300c2927f6c1b915210d5be6956d0cac8dea79b6a9ac0f1de09dee275eeb4bf871e08ad5a920f8fbb01&quot;,
+    &quot;from&quot;: &quot;0x37d1c7449bfe76fe9c445e626da06265e9377601&quot;,
+    &quot;hash&quot;: &quot;0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e&quot;,
+    &quot;index&quot;: &quot;0x0&quot;
+  }
+}
+</code></pre>
+<p>其中 content 为交易数据。由于数据经过了签名处理，所以与部署合约时指定的 --code 不一致。可以使用 cita-cli 提供的 decode-unverifiedTransaction 命令来解码。</p>
+<p>执行命令：</p>
+<pre><code class="language-bash">cita-cli tx decode-unverifiedTransaction --content   0x0af202122032343532366161336362383834626164626166656261313437623932663939661880ade2042089ee042afe01608060405234801561001057600080fd5b5060df8061001f6000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a0565b005b348015608357600080fd5b50608a60aa565b6040518082815260200191505060405180910390f35b8060008190555050565b600080549050905600a165627a7a723058205aed214856a5c433292a354261c9eb88eed1396c83dabbe105bde142e49838ac00293220000000000000000000000000000000000000000000000000000000000000000040025220000000000000000000000000000000000000000000000000000000000000000112413fd75865ad692e8903d05c4cadcca4b52621c5b6a4798c9300c2927f6c1b915210d5be6956d0cac8dea79b6a9ac0f1de09dee275eeb4bf871e08ad5a920f8fbb01
+</code></pre>
+<p>命令返回：</p>
+<pre><code class="language-bash">{
+  &quot;crypto&quot;: 0,
+  &quot;signature&quot;: &quot;0x3fd75865ad692e8903d05c4cadcca4b52621c5b6a4798c9300c2927f6c1b915210d5be6956d0cac8dea79b6a9ac0f1de09dee275eeb4bf871e08ad5a920f8fbb01&quot;,
+  &quot;transaction&quot;: {
+    &quot;chain_id&quot;: 0,
+    &quot;chain_id_v1&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000001&quot;,
+    &quot;data&quot;: &quot;0x608060405234801561001057600080fd5b5060df8061001f6000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a0565b005b348015608357600080fd5b50608a60aa565b6040518082815260200191505060405180910390f35b8060008190555050565b600080549050905600a165627a7a723058205aed214856a5c433292a354261c9eb88eed1396c83dabbe105bde142e49838ac0029&quot;,
+    &quot;encrypted_hash&quot;: &quot;0x8d434bd11a8f94f6fb128b1b941daa573daa21d795858f366fed1593f6eb30ff&quot;,
+    &quot;nonce&quot;: &quot;24526aa3cb884badbafeba147b92f99f&quot;,
+    &quot;pub_key&quot;: &quot;0x9dc6fc7856f5271e6e8c45e5c5fe22d2ff699ac3b24497599be77803d3c25fb4e2fe7da616c65a291910c947c89923009f354634421bddd0a25cd0a509bcf6a9&quot;,
+    &quot;quota&quot;: 10000000,
+    &quot;sender&quot;: &quot;0x37d1c7449bfe76fe9c445e626da06265e9377601&quot;,
+    &quot;to&quot;: &quot;&quot;,
+    &quot;to_v1&quot;: &quot;0x0000000000000000000000000000000000000000&quot;,
+    &quot;valid_until_block&quot;: 79625,
+    &quot;value&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;version&quot;: 2
+  }
+}
+</code></pre>
+<p>其中的 data 数据便与部署合约中指定的 code 相一致。</p>
+<h3 id="调用合约">调用合约</h3>
+<p>执行命令，调用 set 函数：</p>
+<pre><code class="language-bash">cita-cli rpc sendRawTransaction \
+    --code 0x60fe47b10000000000000000000000000000000000000000000000000000000000000001 \
+    --private-key 0x3ef2627393529fed043c7dbfd9358a4ae47a88a59949b07e7631722fd6959002 \
+    --address 0xb701924639d802dc8093d1a43dffa9939a4506de
+</code></pre>
+<p>注意：这里的 address 要与部署合约回执中的 contractAddress 相一致。</p>
+<p>命令返回：</p>
+<pre><code class="language-bash">{
+  &quot;id&quot;: 4,
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;result&quot;: {
+    &quot;hash&quot;: &quot;0xd68853e6df7893b5b2299abaf8cb2631e37b4047dbab55511c96c459efd2242b&quot;,
+    &quot;status&quot;: &quot;OK&quot;
+  }
+}
+</code></pre>
+<h2 id="修改个别配置操作示例">修改个别配置操作示例</h2>
+<p>起链后，也就是说创世块一旦生成，除 chainName、operator、website 三项可以在运行时更改，其他配置均无法修改。接下来我们用 cita-cli 来进行演示，以超级管理员修改 chainName 作为示例：</p>
+<p>确保你的链正常运行，进入 cita-cli 交互式模式，输入命令：</p>
+<pre><code class="language-bash">$ scm SysConfig setChainName --chain-name &quot;AAA&quot; --admin-private \ 0x5f0258a4778057a8a7d97809bd209055b2fbafa654ce7d31ec7191066b9225e6
+</code></pre>
+<p>查询交易回执无误后，我们成功的把链名称从默认的 test-chain 更改为 AAA。</p>
+<p>我们可以通过 getMeta 查询更改后的结果，示例如下：</p>
+<p><code>rpc getMetaData</code></p>
+<p>输出：</p>
+<pre><code class="language-bash">{
+  &quot;id&quot;: 1,
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;result&quot;: {
+    &quot;blockInterval&quot;: 3000,
+    &quot;chainId&quot;: 1,
+    &quot;chainName&quot;: &quot;AAA&quot;,
+    &quot;economicalModel&quot;: 1,
+    &quot;genesisTimestamp&quot;: 1538101178583,
+    &quot;operator&quot;: &quot;test-operator&quot;,
+    &quot;tokenAvatar&quot;: &quot;https://cdn.citahub.com/icon_cita.png&quot;,
+    &quot;tokenName&quot;: &quot;CITA Test Token&quot;,
+    &quot;tokenSymbol&quot;: &quot;CTT&quot;,
+    &quot;validators&quot;: [
+      &quot;0x185e7072f53574666cf8ed8ec080e09b7e39c98f&quot;
+    ],
+    &quot;version&quot;: 1,
+    &quot;website&quot;: &quot;https://www.example.com&quot;
+  }
+}
+</code></pre>
+<h2 id="节点管理">节点管理</h2>
+<h3 id="节点分类">节点分类</h3>
+<p>CITA区块链分为两大类节点：</p>
+<ul>
+<li>共识节点：共识节点具有出块和投票权限，交易由共识节点排序并打包成块，共识完成后即被确认为合法区块。</li>
+<li>普通节点：普通节点没有出块和投票权限，其他方面和共识节点相同。可以同步和验证链上所有的原始数据，接受交易数据并向其他节点广播。</li>
+</ul>
 ]]></content>
     </entry>
 </feed>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-01T02:48:02.129Z</updated>
+    <updated>2020-09-01T02:49:01.165Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -1130,6 +1130,10 @@ docker-compose -v
 或
 ansible fz  -m copy -a &quot;src=/application/ansible-playbook/common/iso/docker-compose dest=/usr/bin/docker-compose mode=0755&quot;
 </code></pre>
+<blockquote>
+<p>注： 如果是手动安装docker 需要调整docker的数据目录<br>
+/usr/lib/systemd/system/docker.service</p>
+</blockquote>
 <h4 id="挂载数据盘">挂载数据盘</h4>
 <pre><code class="language-bash">#查看数据盘
 fdisk -l

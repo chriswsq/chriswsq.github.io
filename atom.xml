@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-01T02:07:07.421Z</updated>
+    <updated>2020-09-01T02:48:02.129Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -1101,6 +1101,9 @@ ansible-playbook -e host=fz  changepw.yaml
 
 </code></pre>
 <h4 id="安装docker">安装docker</h4>
+<p>playbook 地址：<br>
+/application/ansible-playbook/optimization</p>
+<p><code>ansible-playbook -e host=fz install-docker.yaml</code></p>
 <p><strong>安装docker</strong></p>
 <pre><code class="language-bash">#安装依赖
 ansible     fz  -m shell -a    &quot;yum install -y yum-utils ;yum-config-manager --add-repo   https://download.docker.com/linux/centos/docker-ce.repo&quot;

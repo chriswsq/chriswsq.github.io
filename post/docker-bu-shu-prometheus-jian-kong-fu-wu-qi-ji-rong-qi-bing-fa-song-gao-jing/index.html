@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>docker部署Prometheus监控服务器及容器并发送告警 | chris&#39;wang</title>
+<link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+<script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
+
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+
+<link rel="canonical" href="https://chriswsq.github.io/post/docker-bu-shu-prometheus-jian-kong-fu-wu-qi-ji-rong-qi-bing-fa-song-gao-jing/" />
+</head>
+<body>
+<div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
+<noscript><p class="warn" >本页面需要浏览器支持（启用）JavaScript</p></noscript><div class="header"><div class="logo_title"><div class="title animated fadeInDown"><a href="https://chriswsq.github.io"><img alt="logo" style="display:inline-block;" src="https://chriswsq.github.io/images/avatar.png"/></a><h1 title="chris&#39;wang" class="weaklink"><a  href="/">chris&#39;wang</a></h1>
+
+<div class="navbar weaklink">
+<div class="normal_nav">
+<div class="bitcron_nav_container"><div class="bitcron_nav"><div class="bitcron_nav"><div style="display:flex;justify-content:center;"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul></nav>
+<div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
+<div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1599122423037" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+</div></div>
+<script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
+
+<div class="main"><div class="main-inner"><div class="content">
+<article class="post">
+<h2 class="post_title sm_margin"><a>docker部署Prometheus监控服务器及容器并发送告警</a></h2>
+<script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-09-03</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/GF9B9x5r8/" class="tag">monitor</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">3931字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">22 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+</section>
+
+<div style="display:flex">
+<div class="md_block" id="md_block">
+<div class="round-shape-one"></div>
+<p>记录一下利用prometheus监控服务器信息和容器服务并发送邮件告警</p>
+<!-- more -->
+<h2 id="基本原理">基本原理</h2>
+<p>Prometheus的基本原理是通过HTTP协议周期性抓取被监控组件的状态，任意组件只要提供对应的HTTP接口就可以接入监控。不需要任何SDK或者其他的集成过程。这样做非常适合做虚拟化环境监控系统，比如VM、Docker、Kubernetes等。输出被监控组件信息的HTTP接口被叫做exporter 。目前互联网公司常用的组件大部分都有exporter可以直接使用，比如Varnish、Haproxy、Nginx、MySQL、Linux系统信息(包括磁盘、内存、CPU、网络等等)。</p>
+<h2 id="相关组件">相关组件</h2>
+<ul>
+<li>Prometheus: Prometheus Daemon负责定时去目标上抓取metrics(指标)数据，每个抓取目标需要暴露一个http服务的接口给它定时抓取。</li>
+<li>Grafana: 接入prometheus数据，图形化展示监控信息</li>
+<li>Node-exporter: 负责收集 host 硬件和操作系统数据。它将以容器方式运行在所有 host 上。</li>
+<li>Cadvisor: 负责收集容器数据。它将以容器方式运行在所有 host 上。</li>
+<li>Alertmanager: 警告管理器，用来进行报警。</li>
+</ul>
+<p>|服务|IP|</p>
+<h2 id="安装docker-docker-compose">安装docker、docker-compose</h2>
+<h3 id="安装docker">安装docker</h3>
+<pre><code class="language-bash"># 安装依赖包
+yum install -y yum-utils device-mapper-persistent-data lvm2
+# 添加Docker软件包源
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+# 安装Docker CE
+yum install docker-ce -y
+# 启动
+systemctl start docker
+# 开机启动
+systemctl enable docker
+# 查看Docker信息
+docker info
+</code></pre>
+<h3 id="安装docker-compose">安装docker-compose</h3>
+<pre><code class="language-bash">curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+</code></pre>
+<h2 id="添加配置文件">添加配置文件</h2>
+<pre><code class="language-bash">mkdir -p /usr/local/src/config
+cd /usr/local/src/config
+</code></pre>
+<h3 id="添加prometheusyml配置文件">添加prometheus.yml配置文件</h3>
+<p>vim prometheus.yml</p>
+<pre><code class="language-bash"># my global config
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - 192.168.40.6:9093
+
+rule_files:
+  - &quot;/etc/prometheus/config/rule/*rule.yml&quot;
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+        - targets: ['192.168.40.6:9090']
+
+  - job_name: 'cadvisor'
+    scrape_interval: 5s
+    static_configs:
+        - targets: ['192.168.40.6:8080', '192.168.40.7:8080', '192.168.40.8']
+
+  - job_name: 'node-exporter'
+    scrape_interval: 5s
+    static_configs:
+        - targets: ['192.168.40.6:9100']
+          labels:
+            instance: test-1 - 192.168.40.6
+            service: node-service
+        - targets: ['192.168.40.7:9100']
+          labels:
+            instance: test-2 - 192.168.40.7
+            service: node-service
+        - targets: ['192.168.40.8:9100']
+          labels:
+            instance: test-3 - 192.168.40.8
+            service: node-service
+</code></pre>
+<h3 id="添加邮件告警配置文件">添加邮件告警配置文件</h3>
+<p>添加配置文件alertmanager.yml，配置收发邮件邮箱<br>
+vim alertmanager.yml</p>
+<pre><code class="language-bash">global:
+  # The smarthost and SMTP sender used for mail notifications.  用于邮件通知的智能主机和SMTP发件人。
+  smtp_smarthost: 'smtp.163.com:25'
+  smtp_from: 'xxxxxxxxx@163.com'
+  smtp_auth_username: 'xxxxxxxxxxxxxxx@163.com'
+  smtp_auth_password: 'xxxxxxxxxxxxx'
+  # The auth token for Hipchat.    Hipchat的身份验证令牌。
+
+templates:
+  - '/etc/alertmanager/default-monitor.tmpl'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 5m
+  receiver: 'mail'
+
+
+receivers:
+- name: 'mail'
+  email_configs:
+  - to: 'xxxxxxxxxxxxxxxx@163.com, xxxxxxxxxxxxxx@qq.com'
+    send_resolved: true #告警恢复通知
+    html: '{{ template &quot;default-monitor.html&quot; . }}'  #应用那个模板
+    headers: { Subject: &quot;[WARN] 报警邮件&quot; } #邮件主题信息 如果不写headers也可以在模板中定义默认加载email.default.subject这个模板
+</code></pre>
+<h3 id="添加报警规则">添加报警规则</h3>
+<pre><code class="language-bash">mkdir -p /usr/local/src/config/rule
+cd /usr/local/src/config/rule
+</code></pre>
+<p>创建两个文件</p>
+<p>node-exporter-record-rule.yml<br>
+node-exporter-alert-rule.yml</p>
+<p>第一个文件用于记录规则，第二个是报警规则。<br>
+由于之前我们在prometheus.yml中已经引用了所有已rule结尾的文件，所以我们不用在修改prometheus.yml配置文件。</p>
+<p>创建node-exporter-record-rule.yml</p>
+<pre><code class="language-bash">groups:
+  - name: node-exporter-record
+    rules:
+    - expr: up{job=~&quot;node-exporter&quot;}
+      record: node_exporter:up
+      labels:
+        desc: &quot;节点是否在线, 在线1,不在线0&quot;
+        unit: &quot; &quot;
+        job: &quot;node-exporter&quot;
+    - expr: time() - node_boot_time_seconds{}
+      record: node_exporter:node_uptime
+      labels:
+        desc: &quot;节点的运行时间&quot;
+        unit: &quot;s&quot;
+        job: &quot;node-exporter&quot;
+##############################################################################################
+#                              cpu                                                           #
+    - expr: (1 - avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;idle&quot;}[5m])))  * 100
+      record: node_exporter:cpu:total:percent
+      labels:
+        desc: &quot;节点的cpu总消耗百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;idle&quot;}[5m])))  * 100
+      record: node_exporter:cpu:idle:percent
+      labels:
+        desc: &quot;节点的cpu idle百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;iowait&quot;}[5m])))  * 100
+      record: node_exporter:cpu:iowait:percent
+      labels:
+        desc: &quot;节点的cpu iowait百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;system&quot;}[5m])))  * 100
+      record: node_exporter:cpu:system:percent
+      labels:
+        desc: &quot;节点的cpu system百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;user&quot;}[5m])))  * 100
+      record: node_exporter:cpu:user:percent
+      labels:
+        desc: &quot;节点的cpu user百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=~&quot;softirq|nice|irq|steal&quot;}[5m])))  * 100
+      record: node_exporter:cpu:other:percent
+      labels:
+        desc: &quot;节点的cpu 其他的百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+##############################################################################################
+
+
+##############################################################################################
+#                                    memory                                                  #
+    - expr: node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;}
+      record: node_exporter:memory:total
+      labels:
+        desc: &quot;节点的内存总量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_memory_MemFree_bytes{job=&quot;node-exporter&quot;}
+      record: node_exporter:memory:free
+      labels:
+        desc: &quot;节点的剩余内存量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;} - node_memory_MemFree_bytes{job=&quot;node-exporter&quot;}
+      record: node_exporter:memory:used
+      labels:
+        desc: &quot;节点的已使用内存量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;} - node_memory_MemAvailable_bytes{job=&quot;node-exporter&quot;}
+      record: node_exporter:memory:actualused
+      labels:
+        desc: &quot;节点用户实际使用的内存量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: (1-(node_memory_MemAvailable_bytes{job=&quot;node-exporter&quot;} / (node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;})))* 100
+      record: node_exporter:memory:used:percent
+      labels:
+        desc: &quot;节点的内存使用百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: ((node_memory_MemAvailable_bytes{job=&quot;node-exporter&quot;} / (node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;})))* 100
+      record: node_exporter:memory:free:percent
+      labels:
+        desc: &quot;节点的内存剩余百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+##############################################################################################
+#                                   load                                                     #
+    - expr: sum by (instance) (node_load1{job=&quot;node-exporter&quot;})
+      record: node_exporter:load:load1
+      labels:
+        desc: &quot;系统1分钟负载&quot;
+        unit: &quot; &quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: sum by (instance) (node_load5{job=&quot;node-exporter&quot;})
+      record: node_exporter:load:load5
+      labels:
+        desc: &quot;系统5分钟负载&quot;
+        unit: &quot; &quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: sum by (instance) (node_load15{job=&quot;node-exporter&quot;})
+      record: node_exporter:load:load15
+      labels:
+        desc: &quot;系统15分钟负载&quot;
+        unit: &quot; &quot;
+        job: &quot;node-exporter&quot;
+
+##############################################################################################
+#                                 disk                                                       #
+    - expr: node_filesystem_size_bytes{job=&quot;node-exporter&quot; ,fstype=~&quot;ext4|xfs&quot;}
+      record: node_exporter:disk:usage:total
+      labels:
+        desc: &quot;节点的磁盘总量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_filesystem_avail_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;}
+      record: node_exporter:disk:usage:free
+      labels:
+        desc: &quot;节点的磁盘剩余空间&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_filesystem_size_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;} - node_filesystem_avail_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;}
+      record: node_exporter:disk:usage:used
+      labels:
+        desc: &quot;节点的磁盘使用的空间&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr:  (1 - node_filesystem_avail_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;} / node_filesystem_size_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;}) * 100
+      record: node_exporter:disk:used:percent
+      labels:
+        desc: &quot;节点的磁盘的使用百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: irate(node_disk_reads_completed_total{job=&quot;node-exporter&quot;}[1m])
+      record: node_exporter:disk:read:count:rate
+      labels:
+        desc: &quot;节点的磁盘读取速率&quot;
+        unit: &quot;次/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: irate(node_disk_writes_completed_total{job=&quot;node-exporter&quot;}[1m])
+      record: node_exporter:disk:write:count:rate
+      labels:
+        desc: &quot;节点的磁盘写入速率&quot;
+        unit: &quot;次/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (irate(node_disk_written_bytes_total{job=&quot;node-exporter&quot;}[1m]))/1024/1024
+      record: node_exporter:disk:read:mb:rate
+      labels:
+        desc: &quot;节点的设备读取MB速率&quot;
+        unit: &quot;MB/s&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (irate(node_disk_read_bytes_total{job=&quot;node-exporter&quot;}[1m]))/1024/1024
+      record: node_exporter:disk:write:mb:rate
+      labels:
+        desc: &quot;节点的设备写入MB速率&quot;
+        unit: &quot;MB/s&quot;
+        job: &quot;node-exporter&quot;
+
+##############################################################################################
+#                                filesystem                                                  #
+    - expr:   (1 -node_filesystem_files_free{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;} / node_filesystem_files{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;}) * 100
+      record: node_exporter:filesystem:used:percent
+      labels:
+        desc: &quot;节点的inode的剩余可用的百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+#############################################################################################
+#                                filefd                                                     #
+    - expr: node_filefd_allocated{job=&quot;node-exporter&quot;}
+      record: node_exporter:filefd_allocated:count
+      labels:
+        desc: &quot;节点的文件描述符打开个数&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: node_filefd_allocated{job=&quot;node-exporter&quot;}/node_filefd_maximum{job=&quot;node-exporter&quot;} * 100
+      record: node_exporter:filefd_allocated:percent
+      labels:
+        desc: &quot;节点的文件描述符打开百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+#############################################################################################
+#                                network                                                    #
+    - expr: avg by (environment,instance,device) (irate(node_network_receive_bytes_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netin:bit:rate
+      labels:
+        desc: &quot;节点网卡eth0每秒接收的比特数&quot;
+        unit: &quot;bit/s&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_transmit_bytes_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netout:bit:rate
+      labels:
+        desc: &quot;节点网卡eth0每秒发送的比特数&quot;
+        unit: &quot;bit/s&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_receive_packets_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netin:packet:rate
+      labels:
+        desc: &quot;节点网卡每秒接收的数据包个数&quot;
+        unit: &quot;个/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_transmit_packets_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netout:packet:rate
+      labels:
+        desc: &quot;节点网卡发送的数据包个数&quot;
+        unit: &quot;个/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_receive_errs_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netin:error:rate
+      labels:
+        desc: &quot;节点设备驱动器检测到的接收错误包的数量&quot;
+        unit: &quot;个/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_transmit_errs_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netout:error:rate
+      labels:
+        desc: &quot;节点设备驱动器检测到的发送错误包的数量&quot;
+        unit: &quot;个/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: node_tcp_connection_states{job=&quot;node-exporter&quot;, state=&quot;established&quot;}
+      record: node_exporter:network:tcp:established:count
+      labels:
+        desc: &quot;节点当前established的个数&quot;
+        unit: &quot;个&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: node_tcp_connection_states{job=&quot;node-exporter&quot;, state=&quot;time_wait&quot;}
+      record: node_exporter:network:tcp:timewait:count
+      labels:
+        desc: &quot;节点timewait的连接数&quot;
+        unit: &quot;个&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: sum by (environment,instance) (node_tcp_connection_states{job=&quot;node-exporter&quot;})
+      record: node_exporter:network:tcp:total:count
+      labels:
+        desc: &quot;节点tcp连接总数&quot;
+        unit: &quot;个&quot;
+        job: &quot;node-exporter&quot;
+
+#############################################################################################
+#                                process                                                    #
+    - expr: node_processes_state{state=&quot;Z&quot;}
+      record: node_exporter:process:zoom:total:count
+      labels:
+        desc: &quot;节点当前状态为zoom的个数&quot;
+        unit: &quot;个&quot;
+        job: &quot;node-exporter&quot;
+#############################################################################################
+#                                other                                                    #
+    - expr: abs(node_timex_offset_seconds{job=&quot;node-exporter&quot;})
+      record: node_exporter:time:offset
+      labels:
+        desc: &quot;节点的时间偏差&quot;
+        unit: &quot;s&quot;
+        job: &quot;node-exporter&quot;
+
+#############################################################################################
+
+    - expr: count by (instance) ( count by (instance,cpu) (node_cpu_seconds_total{ mode='system'}) )
+      record: node_exporter:cpu:count
+</code></pre>
+<p>创建node-exporter-alert-rule.yml</p>
+<pre><code class="language-bash">groups:
+  - name: node-exporter-alert
+    rules:
+    - alert: node-exporter-down
+      expr: node_exporter:up == 0
+      for: 1m
+      labels:
+        severity: 'critical'
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 宕机了&quot;
+        description: &quot;instance: {{ $labels.instance }} \n- job: {{ $labels.job }} 关机了， 时间已经1分钟了。&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+
+    - alert: node-exporter-cpu-high
+      expr:  node_exporter:cpu:total:percent &gt; 80
+      for: 3m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} cpu 使用率高于 {{ $value }}&quot;
+        description: &quot;instance: {{ $labels.instance }} \n- job: {{ $labels.job }} CPU使用率已经持续三分钟高过80% 。&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+    - alert: node-exporter-cpu-iowait-high
+      expr:  node_exporter:cpu:iowait:percent &gt;= 12
+      for: 3m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} cpu iowait 使用率高于 {{ $value }}&quot;
+        description: &quot;instance: {{ $labels.instance }} \n- job: {{ $labels.job }} cpu iowait使用率已经持续三分钟高过12%&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-load-load1-high
+      expr:  (node_exporter:load:load1) &gt; (node_exporter:cpu:count) * 1.2
+      for: 3m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} load1 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-memory-high
+      expr:  node_exporter:memory:used:percent &gt; 85
+      for: 3m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} memory 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-disk-high
+      expr:  node_exporter:disk:used:percent &gt; 88
+      for: 10m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} disk 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-disk-read:count-high
+      expr:  node_exporter:disk:read:count:rate &gt; 3000
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} iops read 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-disk-write-count-high
+      expr:  node_exporter:disk:write:count:rate &gt; 3000
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} iops write 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+
+
+
+    - alert: node-exporter-disk-read-mb-high
+      expr:  node_exporter:disk:read:mb:rate &gt; 60
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 读取字节数 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+        value: &quot;{{ $value }}&quot;
+
+
+    - alert: node-exporter-disk-write-mb-high
+      expr:  node_exporter:disk:write:mb:rate &gt; 60
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 写入字节数 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-filefd-allocated-percent-high
+      expr:  node_exporter:filefd_allocated:percent &gt; 80
+      for: 10m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 打开文件描述符 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-network-netin-error-rate-high
+      expr:  node_exporter:network:netin:error:rate &gt; 4
+      for: 1m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 包进入的错误速率 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+    - alert: node-exporter-network-netin-packet-rate-high
+      expr:  node_exporter:network:netin:packet:rate &gt; 35000
+      for: 1m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 包进入速率 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-network-netout-packet-rate-high
+      expr:  node_exporter:network:netout:packet:rate &gt; 35000
+      for: 1m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 包流出速率 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-network-tcp-total-count-high
+      expr:  node_exporter:network:tcp:total:count &gt; 40000
+      for: 1m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} tcp连接数量 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-process-zoom-total-count-high
+      expr:  node_exporter:process:zoom:total:count &gt; 10
+      for: 10m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 僵死进程数量 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-time-offset-high
+      expr:  node_exporter:time:offset &gt; 0.03
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} {{ $labels.desc }}  {{ $value }} {{ $labels.unit }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+</code></pre>
+<h3 id="添加告警模板">添加告警模板</h3>
+<pre><code class="language-bash">mkdir  template
+vim template/default-monitor.tmpl
+</code></pre>
+<pre><code class="language-tmpl">{{ define &quot;default-monitor.html&quot; }}
+{{ range .Alerts }}
+=========start==========&lt;br&gt;
+告警程序: prometheus_alert &lt;br&gt;
+告警级别: {{ .Labels.severity }} 级 &lt;br&gt;
+告警类型: {{ .Labels.alertname }} &lt;br&gt;
+故障主机: {{ .Labels.instance }} &lt;br&gt;
+告警主题: {{ .Annotations.summary }} &lt;br&gt;
+告警详情: {{ .Annotations.description }} &lt;br&gt;
+触发时间: {{ .StartsAt.Format &quot;2019-08-04 16:58:15&quot; }} &lt;br&gt;
+=========end==========&lt;br&gt;
+{{ end }}
+{{ end }}
+</code></pre>
+<h2 id="编写docker-compose文件">编写docker-compose文件</h2>
+<p>vim    docker-compose-monitor.yml</p>
+<pre><code class="language-yaml">version: '2'
+
+networks:
+    monitor:
+        driver: bridge
+
+services:
+    prometheus:
+        image: prom/prometheus
+        container_name: prometheus
+        hostname: prometheus
+        restart: always
+        volumes:
+            - /usr/local/src/config/prometheus.yml:/etc/prometheus/prometheus.yml
+            - /usr/local/src/config/rule:/etc/prometheus/config/rule
+        ports:
+            - &quot;9090:9090&quot;
+        networks:
+            - monitor
+
+    alertmanager:
+        image: prom/alertmanager
+        container_name: alertmanager
+        hostname: alertmanager
+        restart: always
+        volumes:
+            - /usr/local/src/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+            - /usr/local/src/config/template/default-monitor.tmpl:/etc/alertmanager/default-monitor.tmpl
+        ports:
+            - &quot;9093:9093&quot;
+        networks:
+            - monitor
+
+    grafana:
+        image: grafana/grafana
+        container_name: grafana
+        hostname: grafana
+        restart: always
+        ports:
+            - &quot;3000:3000&quot;
+        networks:
+            - monitor
+
+    node-exporter:
+        image: quay.io/prometheus/node-exporter
+        container_name: node-exporter
+        hostname: $HOSTNAME
+        restart: always
+        ports:
+            - &quot;9100:9100&quot;
+        volumes:
+          - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+          - /proc:/host/proc:ro
+          - /sys:/host/sys:ro
+          - /:/rootfs:ro
+        restart: always
+        command:
+          - '--path.procfs=/host/proc'
+          - '--path.sysfs=/host/sys'
+          - '--path.rootfs=/rootfs'
+        networks:
+            - monitor
+
+    cadvisor:
+        image: google/cadvisor:latest
+        container_name: cadvisor
+        hostname: cadvisor
+        restart: always
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        ports:
+            - &quot;8080:8080&quot;
+        networks:
+            - monitor
+</code></pre>
+<h2 id="启动docker-compose">启动docker-compose</h2>
+<pre><code class="language-bash">#启动容器：
+docker-compose -f /usr/local/src/config/docker-compose-monitor.yml up -d
+#删除容器：
+docker-compose -f /usr/local/src/config/docker-compose-monitor.yml down
+#重启容器：
+docker restart id
+</code></pre>
+<p>在其他节点分别启动cadvisor和node-exporter容器</p>
+<pre><code class="language-yaml">version: '2'
+
+networks:
+    monitor:
+        driver: bridge
+
+services:
+    node-exporter:
+        image: quay.io/prometheus/node-exporter
+        container_name: node-exporter
+        hostname: $HOSTNAME
+        restart: always
+        ports:
+            - &quot;9100:9100&quot;
+        volumes:
+          - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+          - /proc:/host/proc:ro
+          - /sys:/host/sys:ro
+          - /:/rootfs:ro
+        restart: always
+        command:
+          - '--path.procfs=/host/proc'
+          - '--path.sysfs=/host/sys'
+          - '--path.rootfs=/rootfs'
+        networks:
+            - monitor
+    cadvisor:
+        image: google/cadvisor:latest
+        container_name: cadvisor
+        hostname: cadvisor
+        restart: always
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        ports:
+            - &quot;8080:8080&quot;
+        networks:
+            - monitor
+</code></pre>
+<p><strong>容器启动如下：</strong><br>
+<img src="https://chriswsq.github.io/post-images/1599121054830.png" alt="" loading="lazy"></p>
+<p><strong>prometheus targets界面如下：</strong><br>
+<img src="https://chriswsq.github.io/post-images/1599121262766.png" alt="" loading="lazy"></p>
+<blockquote>
+<p>备注：如果State为Down，应该是防火墙问题，参考下面防火墙配置。</p>
+</blockquote>
+<p><strong>prometheus targets界面如下：</strong><br>
+<img src="https://chriswsq.github.io/post-images/1599121408543.png" alt="" loading="lazy"></p>
+<blockquote>
+<p>备注：如果没有数据，同步下时间。</p>
+</blockquote>
+<h2 id="配置grafana">配置grafana</h2>
+<h3 id="添加prometheus数据源">添加Prometheus数据源</h3>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1599121507210.png" alt="" loading="lazy"></figure>
+<h3 id="配置dashboards">配置dashboards</h3>
+<p><strong>说明：可以用自带模板，也可以去https://grafana.com/dashboards，下载对应的模板。</strong></p>
+<p>添加监控服务器模板 此处用的模板id是   8919   也可使用（1860）</p>
+<p><img src="https://chriswsq.github.io/post-images/1599121616143.png" alt="" loading="lazy"><br>
+<img src="https://chriswsq.github.io/post-images/1599121699226.png" alt="" loading="lazy"><br>
+<img src="https://chriswsq.github.io/post-images/1599121761143.png" alt="" loading="lazy"></p>
+<p>添加监控容器模板   此处用  893</p>
+<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1599122084044.png" alt="" loading="lazy"></figure>
+<p>也可用综合的 9276</p>
+<h2 id="告警">告警</h2>
+<p>停止192.168.40.7 的 cadvisor和node-exporter容器<br>
+<img src="https://chriswsq.github.io/post-images/1599122289244.png" alt="" loading="lazy"></p>
+<p>收到告警邮件<br>
+<img src="https://chriswsq.github.io/post-images/1599122330270.png" alt="" loading="lazy"></p>
+<p>日期有问题，目前有点事，先整到这里，后面调整</p>
+
+<span id="footnote"></span>
+<div id = "warn"></div>
+</div>
+<div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86">基本原理</a></li>
+<li><a href="#%E7%9B%B8%E5%85%B3%E7%BB%84%E4%BB%B6">相关组件</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85docker-docker-compose">安装docker、docker-compose</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85docker">安装docker</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85docker-compose">安装docker-compose</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">添加配置文件</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0prometheusyml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">添加prometheus.yml配置文件</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E9%82%AE%E4%BB%B6%E5%91%8A%E8%AD%A6%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">添加邮件告警配置文件</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E6%8A%A5%E8%AD%A6%E8%A7%84%E5%88%99">添加报警规则</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E5%91%8A%E8%AD%A6%E6%A8%A1%E6%9D%BF">添加告警模板</a></li>
+</ul>
+</li>
+<li><a href="#%E7%BC%96%E5%86%99docker-compose%E6%96%87%E4%BB%B6">编写docker-compose文件</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8docker-compose">启动docker-compose</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEgrafana">配置grafana</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0prometheus%E6%95%B0%E6%8D%AE%E6%BA%90">添加Prometheus数据源</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEdashboards">配置dashboards</a></li>
+</ul>
+</li>
+<li><a href="#%E5%91%8A%E8%AD%A6">告警</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="fullPage"><canvas id="canvas"></canvas></div>
+</article>
+<div id="eof"><span>EOF</span></div><div class="round-shape-one"></div>
+<section>
+<div class="doc_comments">
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+            appKey: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+			placeholder: '唠两块钱儿'
+        })
+    </script>
+
+</div></section>
+</div></div></div><script>
+"use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){n[s].innerHTML='<span class="line-number"></span>'+n[s].innerHTML+'<span class="cl"></span>';for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+content="本文最后更新于2020-09-03，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-09-03 10:44:39";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+</script>
+<style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
+<a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>
+<span style="display: inline;margin-right:15px;">👁<strong><span id="busuanzi_value_site_uv"></span></strong></span><span id="busuanzi_container_page_pv" style="display: inline;"><span>📚<strong>21</strong> posts</span></div></div>
+<script>
+console.log("\n %c \u26a1Theme: Bitcron-pro Author's Blog:https://blog.blinkstar.cn  Writen By Serence  \n\n", "color: #ffffff; background: rgba(49, 49, 49, 0.85); padding:5px 0;border-radius:5px;", );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/instant.page@3.0.0/instantpage.min.js" type="module" defer></script>
+<script type="text/javascript" async src="https://chriswsq.github.io/media/js/prism.js"></script>
+</body>
+</html>

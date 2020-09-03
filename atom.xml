@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-01T02:49:01.165Z</updated>
+    <updated>2020-09-03T08:40:25.702Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,819 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[docker部署Prometheus监控服务器及容器并发送告警]]></title>
+        <id>https://chriswsq.github.io/post/docker-bu-shu-prometheus-jian-kong-fu-wu-qi-ji-rong-qi-bing-fa-song-gao-jing/</id>
+        <link href="https://chriswsq.github.io/post/docker-bu-shu-prometheus-jian-kong-fu-wu-qi-ji-rong-qi-bing-fa-song-gao-jing/">
+        </link>
+        <updated>2020-09-03T02:44:39.000Z</updated>
+        <summary type="html"><![CDATA[<p>记录一下利用prometheus监控服务器信息和容器服务并发送邮件告警</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>记录一下利用prometheus监控服务器信息和容器服务并发送邮件告警</p>
+<!-- more -->
+<h2 id="基本原理">基本原理</h2>
+<p>Prometheus的基本原理是通过HTTP协议周期性抓取被监控组件的状态，任意组件只要提供对应的HTTP接口就可以接入监控。不需要任何SDK或者其他的集成过程。这样做非常适合做虚拟化环境监控系统，比如VM、Docker、Kubernetes等。输出被监控组件信息的HTTP接口被叫做exporter 。目前互联网公司常用的组件大部分都有exporter可以直接使用，比如Varnish、Haproxy、Nginx、MySQL、Linux系统信息(包括磁盘、内存、CPU、网络等等)。</p>
+<h2 id="相关组件">相关组件</h2>
+<ul>
+<li>Prometheus: Prometheus Daemon负责定时去目标上抓取metrics(指标)数据，每个抓取目标需要暴露一个http服务的接口给它定时抓取。</li>
+<li>Grafana: 接入prometheus数据，图形化展示监控信息</li>
+<li>Node-exporter: 负责收集 host 硬件和操作系统数据。它将以容器方式运行在所有 host 上。</li>
+<li>Cadvisor: 负责收集容器数据。它将以容器方式运行在所有 host 上。</li>
+<li>Alertmanager: 警告管理器，用来进行报警。</li>
+</ul>
+<p>|服务|IP|</p>
+<h2 id="安装docker-docker-compose">安装docker、docker-compose</h2>
+<h3 id="安装docker">安装docker</h3>
+<pre><code class="language-bash"># 安装依赖包
+yum install -y yum-utils device-mapper-persistent-data lvm2
+# 添加Docker软件包源
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+# 安装Docker CE
+yum install docker-ce -y
+# 启动
+systemctl start docker
+# 开机启动
+systemctl enable docker
+# 查看Docker信息
+docker info
+</code></pre>
+<h3 id="安装docker-compose">安装docker-compose</h3>
+<pre><code class="language-bash">curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+</code></pre>
+<h2 id="添加配置文件">添加配置文件</h2>
+<pre><code class="language-bash">mkdir -p /usr/local/src/config
+cd /usr/local/src/config
+</code></pre>
+<h3 id="添加prometheusyml配置文件">添加prometheus.yml配置文件</h3>
+<p>vim prometheus.yml</p>
+<pre><code class="language-bash"># my global config
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - 192.168.40.6:9093
+
+rule_files:
+  - &quot;/etc/prometheus/config/rule/*rule.yml&quot;
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+        - targets: ['192.168.40.6:9090']
+
+  - job_name: 'cadvisor'
+    scrape_interval: 5s
+    static_configs:
+        - targets: ['192.168.40.6:8080', '192.168.40.7:8080', '192.168.40.8']
+
+  - job_name: 'node-exporter'
+    scrape_interval: 5s
+    static_configs:
+        - targets: ['192.168.40.6:9100']
+          labels:
+            instance: test-1 - 192.168.40.6
+            service: node-service
+        - targets: ['192.168.40.7:9100']
+          labels:
+            instance: test-2 - 192.168.40.7
+            service: node-service
+        - targets: ['192.168.40.8:9100']
+          labels:
+            instance: test-3 - 192.168.40.8
+            service: node-service
+</code></pre>
+<h3 id="添加邮件告警配置文件">添加邮件告警配置文件</h3>
+<p>添加配置文件alertmanager.yml，配置收发邮件邮箱<br>
+vim alertmanager.yml</p>
+<pre><code class="language-bash">global:
+  # The smarthost and SMTP sender used for mail notifications.  用于邮件通知的智能主机和SMTP发件人。
+  smtp_smarthost: 'smtp.163.com:25'
+  smtp_from: 'xxxxxxxxx@163.com'
+  smtp_auth_username: 'xxxxxxxxxxxxxxx@163.com'
+  smtp_auth_password: 'xxxxxxxxxxxxx'
+  # The auth token for Hipchat.    Hipchat的身份验证令牌。
+
+templates:
+  - '/etc/alertmanager/default-monitor.tmpl'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 5m
+  receiver: 'mail'
+
+
+receivers:
+- name: 'mail'
+  email_configs:
+  - to: 'xxxxxxxxxxxxxxxx@163.com, xxxxxxxxxxxxxx@qq.com'
+    send_resolved: true #告警恢复通知
+    html: '{{ template &quot;default-monitor.html&quot; . }}'  #应用那个模板
+    headers: { Subject: &quot;[WARN] 报警邮件&quot; } #邮件主题信息 如果不写headers也可以在模板中定义默认加载email.default.subject这个模板
+</code></pre>
+<h3 id="添加报警规则">添加报警规则</h3>
+<pre><code class="language-bash">mkdir -p /usr/local/src/config/rule
+cd /usr/local/src/config/rule
+</code></pre>
+<p>创建两个文件</p>
+<p>node-exporter-record-rule.yml<br>
+node-exporter-alert-rule.yml</p>
+<p>第一个文件用于记录规则，第二个是报警规则。<br>
+由于之前我们在prometheus.yml中已经引用了所有已rule结尾的文件，所以我们不用在修改prometheus.yml配置文件。</p>
+<p>创建node-exporter-record-rule.yml</p>
+<pre><code class="language-bash">groups:
+  - name: node-exporter-record
+    rules:
+    - expr: up{job=~&quot;node-exporter&quot;}
+      record: node_exporter:up
+      labels:
+        desc: &quot;节点是否在线, 在线1,不在线0&quot;
+        unit: &quot; &quot;
+        job: &quot;node-exporter&quot;
+    - expr: time() - node_boot_time_seconds{}
+      record: node_exporter:node_uptime
+      labels:
+        desc: &quot;节点的运行时间&quot;
+        unit: &quot;s&quot;
+        job: &quot;node-exporter&quot;
+##############################################################################################
+#                              cpu                                                           #
+    - expr: (1 - avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;idle&quot;}[5m])))  * 100
+      record: node_exporter:cpu:total:percent
+      labels:
+        desc: &quot;节点的cpu总消耗百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;idle&quot;}[5m])))  * 100
+      record: node_exporter:cpu:idle:percent
+      labels:
+        desc: &quot;节点的cpu idle百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;iowait&quot;}[5m])))  * 100
+      record: node_exporter:cpu:iowait:percent
+      labels:
+        desc: &quot;节点的cpu iowait百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;system&quot;}[5m])))  * 100
+      record: node_exporter:cpu:system:percent
+      labels:
+        desc: &quot;节点的cpu system百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=&quot;user&quot;}[5m])))  * 100
+      record: node_exporter:cpu:user:percent
+      labels:
+        desc: &quot;节点的cpu user百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (avg by (environment,instance) (irate(node_cpu_seconds_total{job=&quot;node-exporter&quot;,mode=~&quot;softirq|nice|irq|steal&quot;}[5m])))  * 100
+      record: node_exporter:cpu:other:percent
+      labels:
+        desc: &quot;节点的cpu 其他的百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+##############################################################################################
+
+
+##############################################################################################
+#                                    memory                                                  #
+    - expr: node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;}
+      record: node_exporter:memory:total
+      labels:
+        desc: &quot;节点的内存总量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_memory_MemFree_bytes{job=&quot;node-exporter&quot;}
+      record: node_exporter:memory:free
+      labels:
+        desc: &quot;节点的剩余内存量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;} - node_memory_MemFree_bytes{job=&quot;node-exporter&quot;}
+      record: node_exporter:memory:used
+      labels:
+        desc: &quot;节点的已使用内存量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;} - node_memory_MemAvailable_bytes{job=&quot;node-exporter&quot;}
+      record: node_exporter:memory:actualused
+      labels:
+        desc: &quot;节点用户实际使用的内存量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: (1-(node_memory_MemAvailable_bytes{job=&quot;node-exporter&quot;} / (node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;})))* 100
+      record: node_exporter:memory:used:percent
+      labels:
+        desc: &quot;节点的内存使用百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: ((node_memory_MemAvailable_bytes{job=&quot;node-exporter&quot;} / (node_memory_MemTotal_bytes{job=&quot;node-exporter&quot;})))* 100
+      record: node_exporter:memory:free:percent
+      labels:
+        desc: &quot;节点的内存剩余百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+##############################################################################################
+#                                   load                                                     #
+    - expr: sum by (instance) (node_load1{job=&quot;node-exporter&quot;})
+      record: node_exporter:load:load1
+      labels:
+        desc: &quot;系统1分钟负载&quot;
+        unit: &quot; &quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: sum by (instance) (node_load5{job=&quot;node-exporter&quot;})
+      record: node_exporter:load:load5
+      labels:
+        desc: &quot;系统5分钟负载&quot;
+        unit: &quot; &quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: sum by (instance) (node_load15{job=&quot;node-exporter&quot;})
+      record: node_exporter:load:load15
+      labels:
+        desc: &quot;系统15分钟负载&quot;
+        unit: &quot; &quot;
+        job: &quot;node-exporter&quot;
+
+##############################################################################################
+#                                 disk                                                       #
+    - expr: node_filesystem_size_bytes{job=&quot;node-exporter&quot; ,fstype=~&quot;ext4|xfs&quot;}
+      record: node_exporter:disk:usage:total
+      labels:
+        desc: &quot;节点的磁盘总量&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_filesystem_avail_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;}
+      record: node_exporter:disk:usage:free
+      labels:
+        desc: &quot;节点的磁盘剩余空间&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr: node_filesystem_size_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;} - node_filesystem_avail_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;}
+      record: node_exporter:disk:usage:used
+      labels:
+        desc: &quot;节点的磁盘使用的空间&quot;
+        unit: byte
+        job: &quot;node-exporter&quot;
+
+    - expr:  (1 - node_filesystem_avail_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;} / node_filesystem_size_bytes{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;}) * 100
+      record: node_exporter:disk:used:percent
+      labels:
+        desc: &quot;节点的磁盘的使用百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: irate(node_disk_reads_completed_total{job=&quot;node-exporter&quot;}[1m])
+      record: node_exporter:disk:read:count:rate
+      labels:
+        desc: &quot;节点的磁盘读取速率&quot;
+        unit: &quot;次/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: irate(node_disk_writes_completed_total{job=&quot;node-exporter&quot;}[1m])
+      record: node_exporter:disk:write:count:rate
+      labels:
+        desc: &quot;节点的磁盘写入速率&quot;
+        unit: &quot;次/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (irate(node_disk_written_bytes_total{job=&quot;node-exporter&quot;}[1m]))/1024/1024
+      record: node_exporter:disk:read:mb:rate
+      labels:
+        desc: &quot;节点的设备读取MB速率&quot;
+        unit: &quot;MB/s&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: (irate(node_disk_read_bytes_total{job=&quot;node-exporter&quot;}[1m]))/1024/1024
+      record: node_exporter:disk:write:mb:rate
+      labels:
+        desc: &quot;节点的设备写入MB速率&quot;
+        unit: &quot;MB/s&quot;
+        job: &quot;node-exporter&quot;
+
+##############################################################################################
+#                                filesystem                                                  #
+    - expr:   (1 -node_filesystem_files_free{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;} / node_filesystem_files{job=&quot;node-exporter&quot;,fstype=~&quot;ext4|xfs&quot;}) * 100
+      record: node_exporter:filesystem:used:percent
+      labels:
+        desc: &quot;节点的inode的剩余可用的百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+#############################################################################################
+#                                filefd                                                     #
+    - expr: node_filefd_allocated{job=&quot;node-exporter&quot;}
+      record: node_exporter:filefd_allocated:count
+      labels:
+        desc: &quot;节点的文件描述符打开个数&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: node_filefd_allocated{job=&quot;node-exporter&quot;}/node_filefd_maximum{job=&quot;node-exporter&quot;} * 100
+      record: node_exporter:filefd_allocated:percent
+      labels:
+        desc: &quot;节点的文件描述符打开百分比&quot;
+        unit: &quot;%&quot;
+        job: &quot;node-exporter&quot;
+
+#############################################################################################
+#                                network                                                    #
+    - expr: avg by (environment,instance,device) (irate(node_network_receive_bytes_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netin:bit:rate
+      labels:
+        desc: &quot;节点网卡eth0每秒接收的比特数&quot;
+        unit: &quot;bit/s&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_transmit_bytes_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netout:bit:rate
+      labels:
+        desc: &quot;节点网卡eth0每秒发送的比特数&quot;
+        unit: &quot;bit/s&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_receive_packets_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netin:packet:rate
+      labels:
+        desc: &quot;节点网卡每秒接收的数据包个数&quot;
+        unit: &quot;个/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_transmit_packets_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netout:packet:rate
+      labels:
+        desc: &quot;节点网卡发送的数据包个数&quot;
+        unit: &quot;个/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_receive_errs_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netin:error:rate
+      labels:
+        desc: &quot;节点设备驱动器检测到的接收错误包的数量&quot;
+        unit: &quot;个/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: avg by (environment,instance,device) (irate(node_network_transmit_errs_total{device=~&quot;eth0|eth1|ens33|ens37&quot;}[1m]))
+      record: node_exporter:network:netout:error:rate
+      labels:
+        desc: &quot;节点设备驱动器检测到的发送错误包的数量&quot;
+        unit: &quot;个/秒&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: node_tcp_connection_states{job=&quot;node-exporter&quot;, state=&quot;established&quot;}
+      record: node_exporter:network:tcp:established:count
+      labels:
+        desc: &quot;节点当前established的个数&quot;
+        unit: &quot;个&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: node_tcp_connection_states{job=&quot;node-exporter&quot;, state=&quot;time_wait&quot;}
+      record: node_exporter:network:tcp:timewait:count
+      labels:
+        desc: &quot;节点timewait的连接数&quot;
+        unit: &quot;个&quot;
+        job: &quot;node-exporter&quot;
+
+    - expr: sum by (environment,instance) (node_tcp_connection_states{job=&quot;node-exporter&quot;})
+      record: node_exporter:network:tcp:total:count
+      labels:
+        desc: &quot;节点tcp连接总数&quot;
+        unit: &quot;个&quot;
+        job: &quot;node-exporter&quot;
+
+#############################################################################################
+#                                process                                                    #
+    - expr: node_processes_state{state=&quot;Z&quot;}
+      record: node_exporter:process:zoom:total:count
+      labels:
+        desc: &quot;节点当前状态为zoom的个数&quot;
+        unit: &quot;个&quot;
+        job: &quot;node-exporter&quot;
+#############################################################################################
+#                                other                                                    #
+    - expr: abs(node_timex_offset_seconds{job=&quot;node-exporter&quot;})
+      record: node_exporter:time:offset
+      labels:
+        desc: &quot;节点的时间偏差&quot;
+        unit: &quot;s&quot;
+        job: &quot;node-exporter&quot;
+
+#############################################################################################
+
+    - expr: count by (instance) ( count by (instance,cpu) (node_cpu_seconds_total{ mode='system'}) )
+      record: node_exporter:cpu:count
+</code></pre>
+<p>创建node-exporter-alert-rule.yml</p>
+<pre><code class="language-bash">groups:
+  - name: node-exporter-alert
+    rules:
+    - alert: node-exporter-down
+      expr: node_exporter:up == 0
+      for: 1m
+      labels:
+        severity: 'critical'
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 宕机了&quot;
+        description: &quot;instance: {{ $labels.instance }} \n- job: {{ $labels.job }} 关机了， 时间已经1分钟了。&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+
+    - alert: node-exporter-cpu-high
+      expr:  node_exporter:cpu:total:percent &gt; 80
+      for: 3m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} cpu 使用率高于 {{ $value }}&quot;
+        description: &quot;instance: {{ $labels.instance }} \n- job: {{ $labels.job }} CPU使用率已经持续三分钟高过80% 。&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+    - alert: node-exporter-cpu-iowait-high
+      expr:  node_exporter:cpu:iowait:percent &gt;= 12
+      for: 3m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} cpu iowait 使用率高于 {{ $value }}&quot;
+        description: &quot;instance: {{ $labels.instance }} \n- job: {{ $labels.job }} cpu iowait使用率已经持续三分钟高过12%&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-load-load1-high
+      expr:  (node_exporter:load:load1) &gt; (node_exporter:cpu:count) * 1.2
+      for: 3m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} load1 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-memory-high
+      expr:  node_exporter:memory:used:percent &gt; 85
+      for: 3m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} memory 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-disk-high
+      expr:  node_exporter:disk:used:percent &gt; 88
+      for: 10m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} disk 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-disk-read:count-high
+      expr:  node_exporter:disk:read:count:rate &gt; 3000
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} iops read 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-disk-write-count-high
+      expr:  node_exporter:disk:write:count:rate &gt; 3000
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} iops write 使用率高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+
+
+
+    - alert: node-exporter-disk-read-mb-high
+      expr:  node_exporter:disk:read:mb:rate &gt; 60
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 读取字节数 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+        value: &quot;{{ $value }}&quot;
+
+
+    - alert: node-exporter-disk-write-mb-high
+      expr:  node_exporter:disk:write:mb:rate &gt; 60
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 写入字节数 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-filefd-allocated-percent-high
+      expr:  node_exporter:filefd_allocated:percent &gt; 80
+      for: 10m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 打开文件描述符 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-network-netin-error-rate-high
+      expr:  node_exporter:network:netin:error:rate &gt; 4
+      for: 1m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 包进入的错误速率 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+    - alert: node-exporter-network-netin-packet-rate-high
+      expr:  node_exporter:network:netin:packet:rate &gt; 35000
+      for: 1m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 包进入速率 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-network-netout-packet-rate-high
+      expr:  node_exporter:network:netout:packet:rate &gt; 35000
+      for: 1m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 包流出速率 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-network-tcp-total-count-high
+      expr:  node_exporter:network:tcp:total:count &gt; 40000
+      for: 1m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} tcp连接数量 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-process-zoom-total-count-high
+      expr:  node_exporter:process:zoom:total:count &gt; 10
+      for: 10m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} 僵死进程数量 高于 {{ $value }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+
+
+    - alert: node-exporter-time-offset-high
+      expr:  node_exporter:time:offset &gt; 0.03
+      for: 2m
+      labels:
+        severity: info
+      annotations:
+        summary: &quot;instance: {{ $labels.instance }} {{ $labels.desc }}  {{ $value }} {{ $labels.unit }}&quot;
+        description: &quot;&quot;
+        value: &quot;{{ $value }}&quot;
+        instance: &quot;{{ $labels.instance }}&quot;
+</code></pre>
+<h3 id="添加告警模板">添加告警模板</h3>
+<pre><code class="language-bash">mkdir  template
+vim template/default-monitor.tmpl
+</code></pre>
+<pre><code class="language-tmpl">{{ define &quot;default-monitor.html&quot; }}
+{{ range .Alerts }}
+=========start==========&lt;br&gt;
+告警程序: prometheus_alert &lt;br&gt;
+告警级别: {{ .Labels.severity }} 级 &lt;br&gt;
+告警类型: {{ .Labels.alertname }} &lt;br&gt;
+故障主机: {{ .Labels.instance }} &lt;br&gt;
+告警主题: {{ .Annotations.summary }} &lt;br&gt;
+告警详情: {{ .Annotations.description }} &lt;br&gt;
+触发时间: {{ .StartsAt.Format &quot;2019-08-04 16:58:15&quot; }} &lt;br&gt;
+=========end==========&lt;br&gt;
+{{ end }}
+{{ end }}
+</code></pre>
+<h2 id="编写docker-compose文件">编写docker-compose文件</h2>
+<p>vim    docker-compose-monitor.yml</p>
+<pre><code class="language-yaml">version: '2'
+
+networks:
+    monitor:
+        driver: bridge
+
+services:
+    prometheus:
+        image: prom/prometheus
+        container_name: prometheus
+        hostname: prometheus
+        restart: always
+        volumes:
+            - /usr/local/src/config/prometheus.yml:/etc/prometheus/prometheus.yml
+            - /usr/local/src/config/rule:/etc/prometheus/config/rule
+        ports:
+            - &quot;9090:9090&quot;
+        networks:
+            - monitor
+
+    alertmanager:
+        image: prom/alertmanager
+        container_name: alertmanager
+        hostname: alertmanager
+        restart: always
+        volumes:
+            - /usr/local/src/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+            - /usr/local/src/config/template/default-monitor.tmpl:/etc/alertmanager/default-monitor.tmpl
+        ports:
+            - &quot;9093:9093&quot;
+        networks:
+            - monitor
+
+    grafana:
+        image: grafana/grafana
+        container_name: grafana
+        hostname: grafana
+        restart: always
+        ports:
+            - &quot;3000:3000&quot;
+        networks:
+            - monitor
+
+    node-exporter:
+        image: quay.io/prometheus/node-exporter
+        container_name: node-exporter
+        hostname: $HOSTNAME
+        restart: always
+        ports:
+            - &quot;9100:9100&quot;
+        volumes:
+          - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+          - /proc:/host/proc:ro
+          - /sys:/host/sys:ro
+          - /:/rootfs:ro
+        restart: always
+        command:
+          - '--path.procfs=/host/proc'
+          - '--path.sysfs=/host/sys'
+          - '--path.rootfs=/rootfs'
+        networks:
+            - monitor
+
+    cadvisor:
+        image: google/cadvisor:latest
+        container_name: cadvisor
+        hostname: cadvisor
+        restart: always
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        ports:
+            - &quot;8080:8080&quot;
+        networks:
+            - monitor
+</code></pre>
+<h2 id="启动docker-compose">启动docker-compose</h2>
+<pre><code class="language-bash">#启动容器：
+docker-compose -f /usr/local/src/config/docker-compose-monitor.yml up -d
+#删除容器：
+docker-compose -f /usr/local/src/config/docker-compose-monitor.yml down
+#重启容器：
+docker restart id
+</code></pre>
+<p>在其他节点分别启动cadvisor和node-exporter容器</p>
+<pre><code class="language-yaml">version: '2'
+
+networks:
+    monitor:
+        driver: bridge
+
+services:
+    node-exporter:
+        image: quay.io/prometheus/node-exporter
+        container_name: node-exporter
+        hostname: $HOSTNAME
+        restart: always
+        ports:
+            - &quot;9100:9100&quot;
+        volumes:
+          - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+          - /proc:/host/proc:ro
+          - /sys:/host/sys:ro
+          - /:/rootfs:ro
+        restart: always
+        command:
+          - '--path.procfs=/host/proc'
+          - '--path.sysfs=/host/sys'
+          - '--path.rootfs=/rootfs'
+        networks:
+            - monitor
+    cadvisor:
+        image: google/cadvisor:latest
+        container_name: cadvisor
+        hostname: cadvisor
+        restart: always
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        ports:
+            - &quot;8080:8080&quot;
+        networks:
+            - monitor
+</code></pre>
+<p><strong>容器启动如下：</strong><br>
+<img src="https://chriswsq.github.io/post-images/1599121054830.png" alt="" loading="lazy"></p>
+<p><strong>prometheus targets界面如下：</strong><br>
+<img src="https://chriswsq.github.io/post-images/1599121262766.png" alt="" loading="lazy"></p>
+<blockquote>
+<p>备注：如果State为Down，应该是防火墙问题，参考下面防火墙配置。</p>
+</blockquote>
+<p><strong>prometheus targets界面如下：</strong><br>
+<img src="https://chriswsq.github.io/post-images/1599121408543.png" alt="" loading="lazy"></p>
+<blockquote>
+<p>备注：如果没有数据，同步下时间。</p>
+</blockquote>
+<h2 id="配置grafana">配置grafana</h2>
+<h3 id="添加prometheus数据源">添加Prometheus数据源</h3>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1599121507210.png" alt="" loading="lazy"></figure>
+<h3 id="配置dashboards">配置dashboards</h3>
+<p><strong>说明：可以用自带模板，也可以去https://grafana.com/dashboards，下载对应的模板。</strong></p>
+<p>添加监控服务器模板 此处用的模板id是   8919   也可使用（1860）</p>
+<p><img src="https://chriswsq.github.io/post-images/1599121616143.png" alt="" loading="lazy"><br>
+<img src="https://chriswsq.github.io/post-images/1599121699226.png" alt="" loading="lazy"><br>
+<img src="https://chriswsq.github.io/post-images/1599121761143.png" alt="" loading="lazy"></p>
+<p>添加监控容器模板   此处用  893</p>
+<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1599122084044.png" alt="" loading="lazy"></figure>
+<p>也可用综合的 9276</p>
+<h2 id="告警">告警</h2>
+<p>停止192.168.40.7 的 cadvisor和node-exporter容器<br>
+<img src="https://chriswsq.github.io/post-images/1599122289244.png" alt="" loading="lazy"></p>
+<p>收到告警邮件<br>
+<img src="https://chriswsq.github.io/post-images/1599122330270.png" alt="" loading="lazy"></p>
+<p>日期有问题，目前有点事，先整到这里，后面调整</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[k8s 如何关联pvc到特定的pv?]]></title>
         <id>https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/</id>
@@ -1509,380 +2322,6 @@ content=&quot;本文最后更新于&lt;%= post.dateFormat %&gt;，已超过 1 �
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[cita服务]]></title>
-        <id>https://chriswsq.github.io/post/cita-fu-wu/</id>
-        <link href="https://chriswsq.github.io/post/cita-fu-wu/">
-        </link>
-        <updated>2020-08-25T09:55:03.000Z</updated>
-        <summary type="html"><![CDATA[<p>根据公司需求研究部署cita服务</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>根据公司需求研究部署cita服务</p>
-<!-- more -->
-<h2 id="关于-cita">关于 CITA</h2>
-<p>CITA 是一个面向企业级应用的支持智能合约的高性能区块链内核， 旨在为企业级区块链应用提供一个稳固、高效、灵活、可适应未来的运行平台。 CITA 将区块链节点的必要功能解耦为六个微服务：RPC，Auth，Consensus，Chain，Executor，Network。各组件之间通过消息总线交换信息相互协作。 通过配置和定制相应的服务，CITA 能够满足企业级用户的全部需要。</p>
-<p>基础环境<br>
-docker、docker-compose<br>
-部署方式<br>
-docker-compose<br>
-镜像版本<br>
-cita/cita-release:20.2.0-sm2-sm3</p>
-<blockquote>
-<p>注意<br>
-必选配置项有 super_admin 和 nodes，系统不提供默认配置。</p>
-</blockquote>
-<h2 id="安装-cita-客户端工具">安装 CITA 客户端工具</h2>
-<ol>
-<li>创建目录</li>
-</ol>
-<p><code>mkdir -p /bsn/cita</code><br>
-2. 切换目录</p>
-<p><code>cd /bsn/cita</code><br>
-3. 下载 CITA-CLI 安装包</p>
-<pre><code class="language-bash">wget https://github.com/citahub/cita-cli/releases/download/20.2.2/cita-cli-x86_64-musl-tls-20.2.2.tar.gz
-</code></pre>
-<ol start="4">
-<li>解压程序</li>
-</ol>
-<p><code>tar zxvf cita-cli-x86_64-musl-tls-20.2.2.tar.gz</code><br>
-5. 复制 CITA-CLI 到 系统可执行文件目录下</p>
-<p><code>cp -rp cita-cli /usr/local/bin/</code></p>
-<h2 id="docker-compose-部署cita服务">docker-compose 部署cita服务</h2>
-<h3 id="1-生成节点配置文件">1. 生成节点配置文件</h3>
-<p>docker-compose-conf.yml</p>
-<pre><code class="language-yml">version: '3'
-networks:
-  main:
-
-services:
-  config:
-    container_name: config
-    environment:
-      - SUPER_ADMIN=0x4b5ae4567ad5d9fb92bc9afd6a657e6fa13a2523
-      - NODES_CONFIG=192.168.40.6:4000,192.168.40.7:4000,192.168.40.8
-    image: cita/cita-release:20.2.0-sm2-sm3
-    hostname: config
-    networks:
-      main:
-        aliases:
-          - config
-    volumes:
-      - ./:/opt/cita-run
-    command: |
-      bash -c '
-      echo &quot;Create config files...&quot;;
-      cita create --super_admin &quot;$$SUPER_ADMIN&quot; --nodes &quot;$$NODES_CONFIG&quot;;
-      echo &quot;Done config&quot;'
-</code></pre>
-<pre><code class="language-bash">docker create network main
-docker-compose -f  docker-compose-conf.yml
-</code></pre>
-<p>创建 3 个共识节点的目录结构如下:</p>
-<pre><code class="language-bash">$ ls test-chain/
-0 1 2  template
-$ ls 0
-address     consensus.toml  forever.toml       logs
-auth.toml   data            genesis.json       network.toml
-chain.toml  executor.toml   jsonrpc.toml       privkey
-</code></pre>
-<p>将配置文件拷贝到其他节点</p>
-<ul>
-<li>privkey : 存放私钥</li>
-<li>address : 存放地址</li>
-<li>*.toml : 各个微服务配置文件，详细说明见微服务说明</li>
-<li>genesis.json ： 生成 genesis 块文件， 其中 timestamp 为时间戳，秒为单位；prevhash -指前一个块哈希，这里是默认值；而 alloc 指部署到创世块的合约内容；</li>
-<li>test-chain/template 目录下是模板文件，包括这个链的共识节点地址 test-chain/template/- authorities.list，系统参数 test-chain/template/init_data.yml, 节点端口地址 test-chain/template/nodes.list 等信息</li>
-<li>logs : 记录链运行的日志信息</li>
-<li>data : 数据存储</li>
-</ul>
-<p>CITA有一些保留端口，设置节点网络端口，或者自定义端口的时候要避免产生端口冲突。保留端口有：<br>
-默认的 jsonrpc 端口：1337 到 1337 + N<br>
-默认的 websocket 端口：4337 到 4337+N<br>
-因为我们是不同的机器所以不用担心端口冲突的问题，可以修改jsonrpc.toml文件上面两个端口为一致</p>
-<h3 id="2-节点部署文件">2. 节点部署文件</h3>
-<p>node-1节点文件<br>
-docker-compose-node0.yml</p>
-<pre><code class="language-yml">version: '3'
-networks:
-  main:
-
-  services:
-    node0:
-    container_name: node0
-    image: cita/cita-release:20.2.0-sm2-sm3
-    hostname: node0
-    networks:
-      main:
-        aliases:
-          - node0
-    volumes:
-      - ./:/opt/cita-run
-    ports:
-      - &quot;1337:1337&quot;
-    command: |
-      bash -c '
-      while [[ ! -d /opt/cita-run/test-chain ]]; do sleep 1; done;
-      sleep 10;
-      cita setup test-chain/0;
-      cita start test-chain/0;
-      sleep infinity'
-</code></pre>
-<p>node-2节点文件<br>
-docker-compose-node1.yml</p>
-<pre><code class="language-yml">version: '3'
-networks:
-  main:
-
-  services:
-    node1:
-    container_name: node1
-    image: cita/cita-release:20.2.0-sm2-sm3
-    hostname: node1
-    networks:
-      main:
-        aliases:
-          - node1
-    volumes:
-      - ./:/opt/cita-run
-    ports:
-      - &quot;1337:1337&quot;
-    command: |
-      bash -c '
-      while [[ ! -d /opt/cita-run/test-chain ]]; do sleep 1; done;
-      sleep 10;
-      cita setup test-chain/1;
-      cita start test-chain/1;
-      sleep infinity'
-</code></pre>
-<p>node-2节点文件<br>
-docker-compose-node2.yml<br>
-...</p>
-<h3 id="3-启动服务">3. 启动服务</h3>
-<p><code>docker-compose-node0.yml</code><br>
-<code>docker-compose-node1.yml</code><br>
-<code>docker-compose-node2.yml</code></p>
-<h3 id="验证-cita-是否运行正常">验证 CITA 是否运行正常</h3>
-<p>进入容器执行命令检查服务状态</p>
-<pre><code class="language-bash">docker exec -it node0 bash
-root@node0:/opt/cita-run# cita top test-chain/0
-root       2042      1  0 Aug25 ?        00:00:00 cita-forever
-root       2051   2042  0 Aug25 ?        00:05:51 cita-auth -c auth.toml
-root       2069   2042  0 Aug25 ?        00:02:10 cita-bft -c consensus.toml -p privkey
-root       2061   2042  0 Aug25 ?        00:00:24 cita-chain -c chain.toml
-root       2054   2042  0 Aug25 ?        00:01:50 cita-executor -c executor.toml
-root       2062   2042  0 Aug25 ?        00:00:55 cita-jsonrpc -c jsonrpc.toml
-root       2053   2042  0 Aug25 ?        00:05:40 cita-network -c network.toml
-
-</code></pre>
-<p>检查 7 个服务是否都已经启动。<br>
-分别去其他节点依次检查</p>
-<p>检查日志有无报错情况<br>
-cita-network.log日志会有<br>
-<code>ERROR - [NodeManager] Can not get node status from known_addr, this should ·not happen!</code><br>
-忽略即可</p>
-<h2 id="基本命">基本命</h2>
-<h3 id="查看块高度">查看块高度</h3>
-<pre><code class="language-bash">cita-cli rpc blockNumber
-
-{
-  &quot;id&quot;: 1,
-  &quot;jsonrpc&quot;: &quot;2.0&quot;,
-  &quot;result&quot;: &quot;0x13678&quot;
-}
-
-其中 result 表示本次查询时的块高度为 0x13678。 CITA 默认 3s 出一个块，重复执行查询命令，可以观察到 result 在持续的增长。
-</code></pre>
-<h3 id="部署合约">部署合约</h3>
-<p>执行命令</p>
-<pre><code class="language-bash">cita-cli rpc sendRawTransaction \
-    --code 0x608060405234801561001057600080fd5b5060df8061001f6000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a0565b005b348015608357600080fd5b50608a60aa565b6040518082815260200191505060405180910390f35b8060008190555050565b600080549050905600a165627a7a723058205aed214856a5c433292a354261c9eb88eed1396c83dabbe105bde142e49838ac0029 \
-    --private-key 0x3ef2627393529fed043c7dbfd9358a4ae47a88a59949b07e7631722fd6959002
-</code></pre>
-<p>该命令将合约的字节码部署到区块链上。</p>
-<p>命令返回：</p>
-<pre><code class="language-bash">{
-  &quot;id&quot;: 4,
-  &quot;jsonrpc&quot;: &quot;2.0&quot;,
-  &quot;result&quot;: {
-    &quot;hash&quot;: &quot;0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e&quot;,
-    &quot;status&quot;: &quot;OK&quot;
-  }
-}
-</code></pre>
-<h3 id="查看回执">查看回执</h3>
-<p>执行命令：</p>
-<pre><code class="language-bash">cita-cli rpc getTransactionReceipt --hash 0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e
-</code></pre>
-<p>其中的 hash 为部署合约的交易 hash，所查询的结果为部署合约的交易回执。<br>
-命令返回：</p>
-<pre><code class="language-bash">{
-  &quot;id&quot;: 1,
-  &quot;jsonrpc&quot;: &quot;2.0&quot;,
-  &quot;result&quot;: {
-    &quot;blockHash&quot;: &quot;0xb9e2167e07550c55406acc22f8d3d83fa81cfd29430c9b5ffb5a7e58fbf130c0&quot;,
-    &quot;blockNumber&quot;: &quot;0x136b3&quot;,
-    &quot;contractAddress&quot;: &quot;0xb701924639d802dc8093d1a43dffa9939a4506de&quot;,
-    &quot;cumulativeQuotaUsed&quot;: &quot;0x17d9d&quot;,
-    &quot;errorMessage&quot;: null,
-    &quot;logs&quot;: [
-    ],
-    &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
-    &quot;quotaUsed&quot;: &quot;0x17d9d&quot;,
-    &quot;root&quot;: null,
-    &quot;transactionHash&quot;: &quot;0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e&quot;,
-    &quot;transactionIndex&quot;: &quot;0x0&quot;
-  }
-}
-</code></pre>
-<h3 id="查看交易">查看交易</h3>
-<p>执行命令：</p>
-<pre><code class="language-bash">cita-cli rpc getTransaction --hash  0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e
-</code></pre>
-<p>其中的 hash 为部署合约的交易 hash，所查询的结果为部署合约的交易信息。<br>
-命令返回：</p>
-<pre><code class="language-bash">{
-  &quot;id&quot;: 1,
-  &quot;jsonrpc&quot;: &quot;2.0&quot;,
-  &quot;result&quot;: {
-    &quot;blockHash&quot;: &quot;0xb9e2167e07550c55406acc22f8d3d83fa81cfd29430c9b5ffb5a7e58fbf130c0&quot;,
-    &quot;blockNumber&quot;: &quot;0x136b3&quot;,
-    &quot;content&quot;: &quot;0x0af202122032343532366161336362383834626164626166656261313437623932663939661880ade2042089ee042afe01608060405234801561001057600080fd5b5060df8061001f6000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a0565b005b348015608357600080fd5b50608a60aa565b6040518082815260200191505060405180910390f35b8060008190555050565b600080549050905600a165627a7a723058205aed214856a5c433292a354261c9eb88eed1396c83dabbe105bde142e49838ac00293220000000000000000000000000000000000000000000000000000000000000000040025220000000000000000000000000000000000000000000000000000000000000000112413fd75865ad692e8903d05c4cadcca4b52621c5b6a4798c9300c2927f6c1b915210d5be6956d0cac8dea79b6a9ac0f1de09dee275eeb4bf871e08ad5a920f8fbb01&quot;,
-    &quot;from&quot;: &quot;0x37d1c7449bfe76fe9c445e626da06265e9377601&quot;,
-    &quot;hash&quot;: &quot;0x36e7c55e48df9e465200c55cad1cb14fe677edc8ea087b97c9b8c1ed9495670e&quot;,
-    &quot;index&quot;: &quot;0x0&quot;
-  }
-}
-</code></pre>
-<p>其中 content 为交易数据。由于数据经过了签名处理，所以与部署合约时指定的 --code 不一致。可以使用 cita-cli 提供的 decode-unverifiedTransaction 命令来解码。</p>
-<p>执行命令：</p>
-<pre><code class="language-bash">cita-cli tx decode-unverifiedTransaction --content   0x0af202122032343532366161336362383834626164626166656261313437623932663939661880ade2042089ee042afe01608060405234801561001057600080fd5b5060df8061001f6000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a0565b005b348015608357600080fd5b50608a60aa565b6040518082815260200191505060405180910390f35b8060008190555050565b600080549050905600a165627a7a723058205aed214856a5c433292a354261c9eb88eed1396c83dabbe105bde142e49838ac00293220000000000000000000000000000000000000000000000000000000000000000040025220000000000000000000000000000000000000000000000000000000000000000112413fd75865ad692e8903d05c4cadcca4b52621c5b6a4798c9300c2927f6c1b915210d5be6956d0cac8dea79b6a9ac0f1de09dee275eeb4bf871e08ad5a920f8fbb01
-</code></pre>
-<p>命令返回：</p>
-<pre><code class="language-bash">{
-  &quot;crypto&quot;: 0,
-  &quot;signature&quot;: &quot;0x3fd75865ad692e8903d05c4cadcca4b52621c5b6a4798c9300c2927f6c1b915210d5be6956d0cac8dea79b6a9ac0f1de09dee275eeb4bf871e08ad5a920f8fbb01&quot;,
-  &quot;transaction&quot;: {
-    &quot;chain_id&quot;: 0,
-    &quot;chain_id_v1&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000001&quot;,
-    &quot;data&quot;: &quot;0x608060405234801561001057600080fd5b5060df8061001f6000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a0565b005b348015608357600080fd5b50608a60aa565b6040518082815260200191505060405180910390f35b8060008190555050565b600080549050905600a165627a7a723058205aed214856a5c433292a354261c9eb88eed1396c83dabbe105bde142e49838ac0029&quot;,
-    &quot;encrypted_hash&quot;: &quot;0x8d434bd11a8f94f6fb128b1b941daa573daa21d795858f366fed1593f6eb30ff&quot;,
-    &quot;nonce&quot;: &quot;24526aa3cb884badbafeba147b92f99f&quot;,
-    &quot;pub_key&quot;: &quot;0x9dc6fc7856f5271e6e8c45e5c5fe22d2ff699ac3b24497599be77803d3c25fb4e2fe7da616c65a291910c947c89923009f354634421bddd0a25cd0a509bcf6a9&quot;,
-    &quot;quota&quot;: 10000000,
-    &quot;sender&quot;: &quot;0x37d1c7449bfe76fe9c445e626da06265e9377601&quot;,
-    &quot;to&quot;: &quot;&quot;,
-    &quot;to_v1&quot;: &quot;0x0000000000000000000000000000000000000000&quot;,
-    &quot;valid_until_block&quot;: 79625,
-    &quot;value&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
-    &quot;version&quot;: 2
-  }
-}
-</code></pre>
-<p>其中的 data 数据便与部署合约中指定的 code 相一致。</p>
-<h3 id="调用合约">调用合约</h3>
-<p>执行命令，调用 set 函数：</p>
-<pre><code class="language-bash">cita-cli rpc sendRawTransaction \
-    --code 0x60fe47b10000000000000000000000000000000000000000000000000000000000000001 \
-    --private-key 0x3ef2627393529fed043c7dbfd9358a4ae47a88a59949b07e7631722fd6959002 \
-    --address 0xb701924639d802dc8093d1a43dffa9939a4506de
-</code></pre>
-<p>注意：这里的 address 要与部署合约回执中的 contractAddress 相一致。</p>
-<p>命令返回：</p>
-<pre><code class="language-bash">{
-  &quot;id&quot;: 4,
-  &quot;jsonrpc&quot;: &quot;2.0&quot;,
-  &quot;result&quot;: {
-    &quot;hash&quot;: &quot;0xd68853e6df7893b5b2299abaf8cb2631e37b4047dbab55511c96c459efd2242b&quot;,
-    &quot;status&quot;: &quot;OK&quot;
-  }
-}
-</code></pre>
-<h2 id="修改个别配置操作示例">修改个别配置操作示例</h2>
-<p>起链后，也就是说创世块一旦生成，除 chainName、operator、website 三项可以在运行时更改，其他配置均无法修改。接下来我们用 cita-cli 来进行演示，以超级管理员修改 chainName 作为示例：</p>
-<p>确保你的链正常运行，进入 cita-cli 交互式模式，输入命令：</p>
-<pre><code class="language-bash">$ scm SysConfig setChainName --chain-name &quot;AAA&quot; --admin-private \ 0x5f0258a4778057a8a7d97809bd209055b2fbafa654ce7d31ec7191066b9225e6
-</code></pre>
-<p>查询交易回执无误后，我们成功的把链名称从默认的 test-chain 更改为 AAA。</p>
-<p>我们可以通过 getMeta 查询更改后的结果，示例如下：</p>
-<p><code>rpc getMetaData</code></p>
-<p>输出：</p>
-<pre><code class="language-bash">{
-  &quot;id&quot;: 1,
-  &quot;jsonrpc&quot;: &quot;2.0&quot;,
-  &quot;result&quot;: {
-    &quot;blockInterval&quot;: 3000,
-    &quot;chainId&quot;: 1,
-    &quot;chainName&quot;: &quot;AAA&quot;,
-    &quot;economicalModel&quot;: 1,
-    &quot;genesisTimestamp&quot;: 1538101178583,
-    &quot;operator&quot;: &quot;test-operator&quot;,
-    &quot;tokenAvatar&quot;: &quot;https://cdn.citahub.com/icon_cita.png&quot;,
-    &quot;tokenName&quot;: &quot;CITA Test Token&quot;,
-    &quot;tokenSymbol&quot;: &quot;CTT&quot;,
-    &quot;validators&quot;: [
-      &quot;0x185e7072f53574666cf8ed8ec080e09b7e39c98f&quot;
-    ],
-    &quot;version&quot;: 1,
-    &quot;website&quot;: &quot;https://www.example.com&quot;
-  }
-}
-</code></pre>
-<h2 id="节点管理">节点管理</h2>
-<h3 id="节点分类">节点分类</h3>
-<p>CITA区块链分为两大类节点：</p>
-<ul>
-<li>共识节点：共识节点具有出块和投票权限，交易由共识节点排序并打包成块，共识完成后即被确认为合法区块。</li>
-<li>普通节点：普通节点没有出块和投票权限，其他方面和共识节点相同。可以同步和验证链上所有的原始数据，接受交易数据并向其他节点广播。</li>
-</ul>
-<p>###普通节点管理<br>
-普通节点的管理，是指普通节点的添加与删除。当前 CITA 的节点发现提供两种机制：</p>
-<ul>
-<li>自动发现机制，本节点会自动通过所配置的 peers 发现网络中的其它节点并尝试连接。</li>
-<li>配置文件发现机制，本节点仅连接 peers 中所配置的节点。</li>
-</ul>
-<p>CITA 的节点发现机制通过 network 网络配置 中的 enable_discovery 配置项设置。</p>
-<p><strong>添加普通节点（以下以 4 号节点举例）</strong></p>
-<ol>
-<li>假设目前的工作目录在 cita/target/install/ 下：</li>
-</ol>
-<pre><code class="language-bash">$ ls test-chain/
-  0  1  2  3  template
-</code></pre>
-<p>template 中保存了当前节点的公钥地址 template/authorities.list，以及创世块信息 template/configs/genesis.json，目前地址有四个。</p>
-<ol start="2">
-<li>生成新 node：</li>
-</ol>
-<pre><code class="language-bash">$ ./bin/cita append --chain_name test-chain --node &quot;127.0.0.1:4004&quot;
-$ ls test-chain/
-  0  1  2  3  4  template
-</code></pre>
-<ul>
-<li>append 子命令，在指定链中增加对应 ip 地址的节点。</li>
-<li>脚本将自动生成 4 号节点，并在原有节点中 test-chain/*/network.toml 中插入新节点的 ip 及端口配置。</li>
-</ul>
-<blockquote>
-<p>注： 如果不同机器的节点就要手动去修改 network.toml 文件了</p>
-</blockquote>
-<ol start="3">
-<li>启动新节点：</li>
-</ol>
-<p>新节点只需要按照正常流程启动，就可以连接入网络，并开始同步链上的块数据。</p>
-<blockquote>
-<p>注意：<br>
-a. 此时的新节点为普通节点，不参与共识选举，即只能同步数据和接收 jsonrpc 请求。<br>
-b. 当 network 网络配置为 enable_discovery = false 时，需要在原来节点的 network.toml 文件中 peers 域添加新节点信息。</p>
-</blockquote>
-<pre><code class="language-bash">$ ./bin/cita setup test-chain/4
-$ ./bin/cita start test-chain/4
-</code></pre>
-<p><strong>删除普通节点</strong></p>
-<ul>
-<li>当 network 网络配置为 enable_discovery = false 时，到对应节点目录下，找到 network.toml，删除对应 peers 条目即可。</li>
-<li>当 network 网络配置为 enable_discovery = true 时，一个节点主动下线，该节点便在网络中被移除。</li>
-</ul>
-<h3 id="共识节点管理">共识节点管理</h3>
 ]]></content>
     </entry>
 </feed>

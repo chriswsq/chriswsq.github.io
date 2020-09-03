@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-03T08:40:25.702Z</updated>
+    <updated>2020-09-03T08:51:15.683Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -30,7 +30,32 @@
 <li>Cadvisor: 负责收集容器数据。它将以容器方式运行在所有 host 上。</li>
 <li>Alertmanager: 警告管理器，用来进行报警。</li>
 </ul>
-<p>|服务|IP|</p>
+<table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>ip</th>
+<th>服务</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>test-1</td>
+<td>192.168.40.6</td>
+<td>cadvisor、node-exporter、grafana、prometheus、alertmanager.yml</td>
+</tr>
+<tr>
+<td>test-2</td>
+<td>192.168.40.7</td>
+<td>node-exporter、cadvisor</td>
+</tr>
+<tr>
+<td>test-3</td>
+<td>192.168.40.8</td>
+<td>node-exporter、cadvisor</td>
+</tr>
+</tbody>
+</table>
 <h2 id="安装docker-docker-compose">安装docker、docker-compose</h2>
 <h3 id="安装docker">安装docker</h3>
 <pre><code class="language-bash"># 安装依赖包

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-04T02:48:11.268Z</updated>
+    <updated>2020-09-04T05:55:28.029Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -837,7 +837,7 @@ services:
 <p><img src="https://chriswsq.github.io/post-images/1599121616143.png" alt="" loading="lazy"><br>
 <img src="https://chriswsq.github.io/post-images/1599121699226.png" alt="" loading="lazy"><br>
 <img src="https://chriswsq.github.io/post-images/1599121761143.png" alt="" loading="lazy"></p>
-<p>添加监控容器模板   此处用  893</p>
+<p>添加监控容器模板   此处用  893   也可用（8321）</p>
 <figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1599122084044.png" alt="" loading="lazy"></figure>
 <p>也可用综合的 9276</p>
 <h2 id="告警">告警</h2>
@@ -845,7 +845,9 @@ services:
 <img src="https://chriswsq.github.io/post-images/1599122289244.png" alt="" loading="lazy"></p>
 <p>收到告警邮件<br>
 <img src="https://chriswsq.github.io/post-images/1599122330270.png" alt="" loading="lazy"></p>
-<p>日期有问题，目前有点事，先整到这里，后面调整</p>
+<blockquote>
+<p>注： 如果日期有问题则将告警模板的触发时间参数改为 <code>{{ .StartsAt.Format &quot;2019-08-04 16:58:15&quot; }} &lt;br&gt;</code> 即可。</p>
+</blockquote>
 <p>参考博客：<br>
 https://juejin.im/post/6844903809517371406<br>
 https://blog.csdn.net/w342164796/article/details/105079231/<br>

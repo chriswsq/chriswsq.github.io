@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-07T02:17:38.111Z</updated>
+    <updated>2020-09-10T09:52:18.807Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,24 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[记一次服务器内存过高问题]]></title>
+        <id>https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/</id>
+        <link href="https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/">
+        </link>
+        <updated>2020-09-10T09:40:31.000Z</updated>
+        <content type="html"><![CDATA[<!-- more -->
+<p>监控系统发邮件告警，一台服务器内存过高，已达 90% 以上，之前这台机器内存就高到85%以上，上去看了下服务正常 top 指令看了下没什么太高的进程占用，就重启了下上面的服务（前提是上面的服务重启是没什么影响的）。</p>
+<p>今天有来告警了，内存占用率已经到90%，照常上去看了下<br>
+使用 free -m 查看内存，一共是16G  已经用了 13G<br>
+top  查看进程占用资源情况，发现最高的应用占用也不过百分之五左右</p>
+<p>怀疑是被攻击了，看了下进程  ps  aux<br>
+发现进程很多   ps aux |wc  -l    进程都6000多了，大部分的进程都是 sshd: root@notty  的进程，网上查了下这是被 ssh 暴力破解了，很奇怪，端口号改了不是22 了 ，攻击者怎么知道的呢。。。。</p>
+<p>先解决问题吧</p>
+<pre><code class="language-bash"> for i in  `ps  aux | grep root@notty | more | awk  '{print $2}'` ;do echo $i ;done
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[docker部署Prometheus监控服务器及容器并发送告警]]></title>
         <id>https://chriswsq.github.io/post/docker-bu-shu-prometheus-jian-kong-fu-wu-qi-ji-rong-qi-bing-fa-song-gao-jing/</id>
@@ -2238,120 +2256,6 @@ docker exec cli peer channel join -b blocktx/netchannel.block
 #安装链码
 docker exec cli peer chaincode install blocktx/cc_sys.3.0.pak 
 
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Gridea添加Valine评论系统]]></title>
-        <id>https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/</id>
-        <link href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/">
-        </link>
-        <updated>2020-08-26T09:28:40.000Z</updated>
-        <summary type="html"><![CDATA[<p>给自己的博客添加评论系统</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>给自己的博客添加评论系统</p>
-<!-- more -->
-<p>参考： https://kveln.cn/post/qE678A4ce/</p>
-<h2 id="注意点">注意点：</h2>
-<p>修改主题模板<br>
-在post.ejs文章详情页模板中文章末尾的位置添加下面的代码</p>
-<pre><code class="language-ejs">&lt;!--载入js，在&lt;/body&gt;之前插入即可--&gt;
-    &lt;!--Leancloud 操作库:--&gt;
-    &lt;script src=&quot;//cdn1.lncld.net/static/js/3.0.4/av-min.js&quot;&gt;&lt;/script&gt;
-    &lt;!--Valine 的核心代码库--&gt;
-    &lt;script src=&quot;/media/scripts/Valine.min.js&quot;&gt;&lt;/script&gt;
-&lt;div class=&quot;comment&quot;&gt;&lt;/div&gt;
-&lt;script&gt;
-    new Valine({
-        // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
-        av: AV, 
-        el: '.comment',
-	      lang: 'zh-cn',//设置评论语言
-        emoticon_url: 'https://cloud.panjunwen.com/alu',
-  emoticon_list: [&quot;狂汗.png&quot;,&quot;不说话.png&quot;,&quot;汗.png&quot;,&quot;坐等.png&quot;,&quot;献花.png&quot;,&quot;不高兴.png&quot;,&quot;中刀.png&quot;,&quot;害羞.png&quot;,&quot;皱眉.png&quot;,&quot;小眼睛.png&quot;,&quot;暗地观察.png&quot;],
-  app_id: '你的id',
-  app_key: '你的key',
-  placeholder: '评论留言'
-    });
-&lt;/script&gt;    
-</code></pre>
-<p>添加位置添加到</p>
-<pre><code class="language-ejs">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-&lt;%- include('./_blocks/head', { siteTitle: `${post.title} | ${themeConfig.siteName}` }) %&gt;
-&lt;link rel=&quot;canonical&quot; href=&quot;&lt;%= post.link %&gt;&quot; /&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;%- include('./_blocks/header') %&gt;
-&lt;div class=&quot;main&quot;&gt;&lt;div class=&quot;main-inner&quot;&gt;&lt;div class=&quot;content&quot;&gt;
-&lt;article class=&quot;post&quot;&gt;
-&lt;h2 class=&quot;post_title sm_margin&quot;&gt;&lt;a&gt;&lt;%= post.title %&gt;&lt;/a&gt;&lt;/h2&gt;
-&lt;script&gt;function lan(){if(document.getElementById(&quot;lan&quot;).innerText==&quot;繁&quot;){var s=document.getElementById(&quot;tongwenlet_cn&quot;);if(s!=null){document.body.removeChild(s)}var s=document.createElement(&quot;script&quot;);s.language=&quot;javascript&quot;;s.type=&quot;text/javascript&quot;;s.src=&quot;https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js&quot;;s.id=&quot;tongwenlet_cn&quot;;document.body.appendChild(s);document.getElementById(&quot;lan&quot;).innerHTML=&quot;简&quot;}else{if(document.getElementById(&quot;lan&quot;).innerText==&quot;簡&quot;){var s=document.getElementById(&quot;tongwenlet_cn&quot;);if(s!=null){document.body.removeChild(s)}var s=document.createElement(&quot;script&quot;);s.language=&quot;javascript&quot;;s.type=&quot;text/javascript&quot;;s.src=&quot;https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js&quot;;s.id=&quot;tongwenlet_cn&quot;;document.body.appendChild(s);document.getElementById(&quot;lan&quot;).innerHTML=&quot;繁&quot;}}};&lt;/script&gt;
-&lt;section class=&quot;post_details&quot;&gt;&lt;i class=&quot;iconfont icon-calendar&quot;&gt;&lt;/i&gt;&lt;span style=&quot;margin-right:15px&quot;&gt; &lt;%= post.dateFormat %&gt;&lt;/span&gt;&lt;i class=&quot;iconfont icon-browse&quot;&gt;&lt;/i&gt;&lt;span style=&quot;margin-right:15px&quot;&gt; &lt;span id=&quot;busuanzi_value_page_pv&quot;&gt;&lt;/span&gt; Views&lt;/span&gt;&lt;i class=&quot;iconfont icon-category&quot;&gt;&lt;/i&gt;&lt;span class=&quot;weaklink&quot; style=&quot;margin-right:15px&quot;&gt;&lt;% post.tags.forEach(function(tag, index) { %&gt;	&lt;a href=&quot;&lt;%= tag.link %&gt;&quot; class=&quot;tag&quot;&gt;&lt;%= tag.name %&gt;&lt;/a&gt;&lt;% if (index !== post.tags.length - 1) { %&gt; | &lt;% } %&gt;&lt;%});%&gt;&lt;/span&gt;&lt;i class=&quot;iconfont icon-caret-down&quot;&gt;&lt;/i&gt;&lt;span style=&quot;margin-right:15px&quot;&gt;&lt;%= post.stats.words %&gt;字&lt;/span&gt;&lt;i class=&quot;iconfont icon-naozhong&quot;&gt;&lt;/i&gt;&lt;span style=&quot;margin-right:15px&quot;&gt;&lt;%= post.stats.text %&gt;&lt;/span&gt;&lt;a id=&quot;lan&quot; href=&quot;javascript:void(0);&quot;onclick=&quot;lan();&quot;title=&quot;调整简繁体&quot; style=&quot;margin-right:15px;&quot;&gt;繁&lt;/a&gt;
-&lt;%if(post.isTop){ %&gt;&lt;font color=7D26CD&gt;置顶&lt;/font&gt;&lt;%}%&gt;&lt;/section&gt;
-&lt;% if (themeConfig.showFeatureImage &amp;&amp; post.feature) { %&gt;
-&lt;img class=&quot;featureImg&quot; alt=&quot;featureimg&quot; src=&quot;&lt;%= post.feature %&gt;&quot; referrerpolicy=&quot;no-referrer&quot;&gt;
-&lt;% } %&gt;
-&lt;div style=&quot;display:flex&quot;&gt;
-&lt;div class=&quot;md_block&quot; id=&quot;md_block&quot;&gt;
-&lt;div class=&quot;round-shape-one&quot;&gt;&lt;/div&gt;
-&lt;%- post.content %&gt;
-&lt;span id=&quot;footnote&quot;&gt;&lt;/span&gt;
-&lt;div id = &quot;warn&quot;&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&quot;toc-container&quot;&gt;&lt;%- post.toc %&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&quot;fullPage&quot;&gt;&lt;canvas id=&quot;canvas&quot;&gt;&lt;/canvas&gt;&lt;/div&gt;
-&lt;/article&gt;
-&lt;div id=&quot;eof&quot;&gt;&lt;span&gt;EOF&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;round-shape-one&quot;&gt;&lt;/div&gt;
-&lt;section&gt;
-&lt;div class=&quot;doc_comments&quot;&gt;
-&lt;!--载入js，在&lt;/body&gt;之前插入即可--&gt;
-    &lt;!--Leancloud 操作库:--&gt;
-    &lt;script src=&quot;//cdn1.lncld.net/static/js/3.0.4/av-min.js&quot;&gt;&lt;/script&gt;
-    &lt;!--Valine 的核心代码库--&gt;
-    &lt;script src=&quot;/media/scripts/Valine.min.js&quot;&gt;&lt;/script&gt;
-&lt;div class=&quot;comment&quot;&gt;&lt;/div&gt;
-&lt;script&gt;
-    new Valine({
-        // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
-        av: AV, 
-        el: '.comment',
-	      lang: 'zh-cn',//设置评论语言
-        emoticon_url: 'https://cloud.panjunwen.com/alu',
-  emoticon_list: [&quot;狂汗.png&quot;,&quot;不说话.png&quot;,&quot;汗.png&quot;,&quot;坐等.png&quot;,&quot;献花.png&quot;,&quot;不高兴.png&quot;,&quot;中刀.png&quot;,&quot;害羞.png&quot;,&quot;皱眉.png&quot;,&quot;小眼睛.png&quot;,&quot;暗地观察.png&quot;],
-  app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
-  app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
-  placeholder: '唠两块钱儿'
-    });
-&lt;/script&gt;  
-&lt;% if (typeof commentSetting !== 'undefined' &amp;&amp; commentSetting.showComment) { %&gt;
-	  &lt;% if (commentSetting.commentPlatform === 'gitalk') { %&gt;
-		&lt;div id=&quot;gitalk-container&quot;&gt;&lt;/div&gt;
-		&lt;%- include('./_blocks/gitalk') %&gt;
-	  &lt;% } %&gt;
-		  
-	  &lt;% if (commentSetting.commentPlatform === 'disqus') { %&gt;
-		&lt;%- include('./_blocks/disqus') %&gt;
-	  &lt;% } %&gt;
-&lt;% } %&gt;
-&lt;/div&gt;&lt;/section&gt;
-&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;
-&quot;use strict&quot;;!function(){for(var n=document.getElementsByTagName(&quot;pre&quot;),e=n.length,s=0;s&lt;e;s++){n[s].innerHTML='&lt;span class=&quot;line-number&quot;&gt;&lt;/span&gt;'+n[s].innerHTML+'&lt;span class=&quot;cl&quot;&gt;&lt;/span&gt;';for(var a=n[s].innerHTML.split(/\n/).length,r=0;r&lt;a-1;r++){n[s].getElementsByTagName(&quot;span&quot;)[0].innerHTML+=&quot;&lt;span&gt;&quot;+(r+1)+&quot;&lt;/span&gt;&quot;}}}();
-let mainNavLinks=document.querySelectorAll(&quot;.markdownIt-TOC a&quot;);window.addEventListener(&quot;scroll&quot;,event=&gt;{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=&gt;{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
-if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
-if(section.offsetTop&lt;=fromTop){if(nextSection){if(nextSection.offsetTop&gt;fromTop){link.classList.add(&quot;currentToc&quot;);}else{link.classList.remove(&quot;currentToc&quot;);}}else{link.classList.add(&quot;currentToc&quot;);}}else{link.classList.remove(&quot;currentToc&quot;);}});});
-var list=document.querySelectorAll(&quot;.katex&quot;);for(var i=0;i&lt;list.length;i++){list[i].style.display=&quot;unset&quot;};
-var h=document.documentElement,b=document.body,st=&quot;scrollTop&quot;,sh=&quot;scrollHeight&quot;,progress=document.querySelector(&quot;.progress&quot;),scroll;document.addEventListener(&quot;scroll&quot;,function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty(&quot;--scroll&quot;,scroll+&quot;%&quot;)});
-var wxScale=new WxScale({fullPage:document.querySelector(&quot;#fullPage&quot;),canvas:document.querySelector(&quot;#canvas&quot;)});var imgBox=document.querySelectorAll(&quot;#md_block img&quot;);for(var i=0;i&lt;imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
-content=&quot;本文最后更新于&lt;%= post.dateFormat %&gt;，已超过 1 年没有更新，涉及的内容可能已经失效！&quot;;var date1=&quot;&lt;%= post.date %&gt;&quot;;date1=date1.replace(&quot;-&quot;,&quot;/&quot;);var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days&gt;=365){document.getElementById(&quot;warn&quot;).innerHTML=content};
-&lt;/script&gt;
-&lt;style&gt;#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}&lt;/style&gt;
-&lt;%- include('./_blocks/footer') %&gt;
-&lt;script type=&quot;text/javascript&quot; async src=&quot;&lt;%= themeConfig.domain %&gt;/media/js/prism.js&quot;&gt;&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
 </code></pre>
 ]]></content>
     </entry>

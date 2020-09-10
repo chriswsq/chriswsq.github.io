@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>k8s pv,pvc无法删除问题 | chris&#39;wang</title>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>记一次服务器内存过高问题 | chris&#39;wang</title>
 <link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 <script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
 
 <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
 
-<link rel="canonical" href="https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/" />
+<link rel="canonical" href="https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/" />
 </head>
 <body>
 <div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
@@ -25,26 +25,23 @@
 
 <div class="main"><div class="main-inner"><div class="content">
 <article class="post">
-<h2 class="post_title sm_margin"><a>k8s pv,pvc无法删除问题</a></h2>
+<h2 class="post_title sm_margin"><a>记一次服务器内存过高问题</a></h2>
 <script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
-<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-27</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/09VioQtSo/" class="tag">kubernetes</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">100字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">1 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-09-10</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/fURWwtEfo/" class="tag">work</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">259字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">1 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
 </section>
 
 <div style="display:flex">
 <div class="md_block" id="md_block">
 <div class="round-shape-one"></div>
-<p>解决k8s pv,pvc无法删除问题</p>
 <!-- more -->
-<p>一般删除步骤为：先删pod再删pvc最后删pv</p>
-<p>但是遇到pv始终处于“Terminating”状态，而且delete不掉。如下：</p>
-<pre><code class="language-bash">[root@test-1 pv]# kubectl get pv
-NAME         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS        CLAIM                    STORAGECLASS   REASON   AGE
-ca-service   100Mi      RWX            Retain           Terminating   default/ca-service-pvc                           17h
-
-</code></pre>
-<p>解决方法：</p>
-<p>直接删除k8s中的记录：</p>
-<pre><code class="language-bash">kubectl patch pv ca-service  -p '{&quot;metadata&quot;:{&quot;finalizers&quot;:null}}'
+<p>监控系统发邮件告警，一台服务器内存过高，已达 90% 以上，之前这台机器内存就高到85%以上，上去看了下服务正常 top 指令看了下没什么太高的进程占用，就重启了下上面的服务（前提是上面的服务重启是没什么影响的）。</p>
+<p>今天有来告警了，内存占用率已经到90%，照常上去看了下<br>
+使用 free -m 查看内存，一共是16G  已经用了 13G<br>
+top  查看进程占用资源情况，发现最高的应用占用也不过百分之五左右</p>
+<p>怀疑是被攻击了，看了下进程  ps  aux<br>
+发现进程很多   ps aux |wc  -l    进程都6000多了，大部分的进程都是 sshd: root@notty  的进程，网上查了下这是被 ssh 暴力破解了，很奇怪，端口号改了不是22 了 ，攻击者怎么知道的呢。。。。</p>
+<p>先解决问题吧</p>
+<pre><code class="language-bash"> for i in  `ps  aux | grep root@notty | more | awk  '{print $2}'` ;do echo $i ;done
 </code></pre>
 
 <span id="footnote"></span>
@@ -76,7 +73,7 @@ if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop)
 var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
 var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
 var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
-content="本文最后更新于2020-08-27，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-08-27 13:58:37";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+content="本文最后更新于2020-09-10，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-09-10 17:40:31";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
 </script>
 <style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
 <a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-10T09:52:18.807Z</updated>
+    <updated>2020-09-11T01:48:13.487Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -24,7 +24,7 @@ top  查看进程占用资源情况，发现最高的应用占用也不过百分
 <p>怀疑是被攻击了，看了下进程  ps  aux<br>
 发现进程很多   ps aux |wc  -l    进程都6000多了，大部分的进程都是 sshd: root@notty  的进程，网上查了下这是被 ssh 暴力破解了，很奇怪，端口号改了不是22 了 ，攻击者怎么知道的呢。。。。</p>
 <p>先解决问题吧</p>
-<pre><code class="language-bash"> for i in  `ps  aux | grep root@notty | more | awk  '{print $2}'` ;do echo $i ;done
+<pre><code class="language-bash"> for i in  `ps  aux | grep root@notty | more | awk  '{print $2}'` ;do kill $i ;done
 </code></pre>
 ]]></content>
     </entry>

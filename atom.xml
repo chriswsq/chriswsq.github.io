@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-11T01:48:13.487Z</updated>
+    <updated>2020-09-14T08:46:56.752Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,33 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[docker容器保持后台运行的两种方式]]></title>
+        <id>https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/</id>
+        <link href="https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/">
+        </link>
+        <updated>2020-09-14T08:39:50.000Z</updated>
+        <content type="html"><![CDATA[<!-- more -->
+<p>有的服务支持服务后台运行，那么在用docker启动服务时可以使用前台运行的命令，除此之外一些服务器是不支持前台运行，那么就要靠其他方式使用进程挂在前台。</p>
+<ul>
+<li>方法1 ，run一个容器：</li>
+</ul>
+<pre><code class="language-bash">[root@localhost ~]# docker run -dit --hostname centos --name centos --restart always a8493f5f50ff /bin/bash
+ 
+-dit 是后台运行、交互模式、分配终端，容器启动后不会退出
+ 如果没有it参数，run 一个容器以后，docker ps -a 容器状态就exited了
+--restart always 容器可以随docker服务启动而启动
+</code></pre>
+<ul>
+<li>方法2， run 一个容器，并一直发送ping包</li>
+</ul>
+<pre><code class="language-bash">[root@localhost ~]# docker run -d --name test --hostname test a8493f5f50ff ping 127.0.0.1
+</code></pre>
+<p>这样容器就一直在发送ping包，不会退出。<br>
+意思就是然容器一直运行一个程序，不退出，容器就不会停止</p>
+<p>本文链接地址 https://www.rootop.org/pages/3736.html</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[记一次服务器内存过高问题]]></title>
         <id>https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/</id>
@@ -1905,358 +1932,6 @@ Apache服务器的用户，可以是EMAILADDRESS或USERNAME</p>
 <p>grok正则表达式：(?<temMsg>(.<em>)(?=Report)/?) 获取Report之前的字符<br>
 grok正则表达式：(?<temMsg>(?=Report)(.</em>)/?) 获取Report之后的字符</p>
 <p><a href="https://www.cnblogs.com/stozen/p/5638369.html">参考</a></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[生产环境部署fabric]]></title>
-        <id>https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/</id>
-        <link href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/">
-        </link>
-        <updated>2020-08-27T05:40:46.000Z</updated>
-        <content type="html"><![CDATA[<!-- more -->
-<h3 id="环境准备">环境准备</h3>
-<ul>
-<li>
-<p>ansible临时添加主机信息</p>
-</li>
-<li>
-<p>修改服务器密码</p>
-</li>
-<li>
-<p>docker</p>
-</li>
-<li>
-<p>docker-compose</p>
-</li>
-<li>
-<p>挂载数据盘</p>
-</li>
-<li>
-<p>传送镜像文件</p>
-</li>
-</ul>
-<h4 id="ansible临时添加主机信息">ansible临时添加主机信息</h4>
-<p>因为后续需要根据不同节点传递不同的镜像文件，所以先临时添加节点信息。</p>
-<p>例如：龙岩节点   fz</p>
-<pre><code class="language-bash">[fz]
-z1      ansible_host=121.204.20.15
-z2      ansible_host=121.204.220.15
-z3      ansible_host=121.204.20.14
-z4      ansible_host=121.204.20.15
-z5      ansible_host=121.204.20.11
-z6      ansible_host=121.204.20.1
-z7      ansible_host=121.204.22.14
-z8      ansible_host=121.204.20.14
-z9      ansible_host=121.204.20.14
-z10     ansible_host=121.204.220.1
-                     
-[fz:vars]
-ansible_ssh_port=650
-ansible_ssh_pass='123456'
-</code></pre>
-<h4 id="修改服务器密码">修改服务器密码</h4>
-<p>/application/ansible-playbook/optimization/</p>
-<pre><code class="language-bash">#推送ansible服务器秘钥
-ansible-playbook -e host=fz  push-ssh.yaml
-#更改服务器密码
-ansible-playbook -e host=fz  changepw.yaml
-
-</code></pre>
-<h4 id="安装docker">安装docker</h4>
-<p>playbook 地址：<br>
-/application/ansible-playbook/optimization</p>
-<p><code>ansible-playbook -e host=fz install-docker.yaml</code></p>
-<p><strong>安装docker</strong></p>
-<pre><code class="language-bash">#安装依赖
-ansible     fz  -m shell -a    &quot;yum install -y yum-utils ;yum-config-manager --add-repo   https://download.docker.com/linux/centos/docker-ce.repo&quot;
-
-#从ansible主机传送 docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm 文件
-
-ansible fz  -m copy -a &quot;src=/home/ansible-playbook/optimization/common/docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm dest=/root/&quot;
-
-# 安装
-ansible fz  -m  shell  -a &quot;yum  -y install docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm&quot;
-</code></pre>
-<p><strong>拷贝daemon.json文件</strong></p>
-<pre><code class="language-bash">
-ansible fz  -m shell -a &quot;mkdir /etc/docker&quot;
-
-ansible fz  -m copy -a &quot;src=/application/ansible-playbook/localnode/fabirc/peer/install-peer/template/daemon.json dest=/etc/docker/&quot;
-</code></pre>
-<h4 id="安装docker-compose">安装docker-compose</h4>
-<p>可在传送镜像是安装也可执行下面命令安装</p>
-<pre><code class="language-bash">curl -L https://get.daocloud.io/docker/compose/releases/download/1.12.0/docker-compose-`uname -s`-`uname -m` &gt; ./docker-compose
-mv ./docker-compose /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
-docker-compose -v
-或
-ansible fz  -m copy -a &quot;src=/application/ansible-playbook/common/iso/docker-compose dest=/usr/bin/docker-compose mode=0755&quot;
-</code></pre>
-<blockquote>
-<p>注： 如果是手动安装docker 需要调整docker的数据目录<br>
-/usr/lib/systemd/system/docker.service</p>
-</blockquote>
-<h4 id="挂载数据盘">挂载数据盘</h4>
-<pre><code class="language-bash">#查看数据盘
-fdisk -l
-#磁盘分区
-fdisk /dev/vdb
-n
-p
-回车
-回车
-回车
-w
-#格式化磁盘
-mkfs.xfs -n ftype=1 /dev/vdb1
-#添加永久挂载
-echo '/dev/vdb1                                 /bsn                    xfs     defaults        0 0' &gt;&gt;/etc/fstab
-#创建挂在目录
-mkdir /bsn
-#初始化挂载
-mount -a
-#查看挂在情况
-df -hT
-
-</code></pre>
-<h4 id="传送镜像文件">传送镜像文件</h4>
-<p>根据节点不同的服务类型来传送不同的镜像</p>
-<p><strong>传送服务节点的镜像</strong></p>
-<p>使用ansible服务器上  /application/ansible-playbook/optimization/copy.yaml 文件进行传送</p>
-<pre><code class="language-bash">- hosts: &quot;{{ host }}&quot;
-  remote_user: root
-  tasks:
-    #- name: 安装zip
-    #  yum: name=unzip state=latest
-    - name: 创建镜像目录/bsn/iso
-      file:
-        path: /bsn/iso
-        state: directory
-        mode: '0755'
-    - name: 传镜像
-      copy:
-        src: /application/ansible-playbook/common/iso/{{ item }}
-        dest: /bsn/iso
-      with_items:
-       # - bsnCa-tomcat9.zip
-       # - zipkin.zip
-        - docker-compose
-        - fabric-peer1.4.3.1.zip
-        - fabric-tools1.4.3.1.zip
-        - fabric-couchdb.zip
-        - fabric-ccenv.zip
-        - docker-ce-18.03.1.ce-1.el7.centos.x86_64.rpm
-        - fabric-ca-postgresql.zip
-        - fabric-ca-service.zip
-        - webase-mysql.zip     
-        - fabric-gateway.zip   
-        - fisco-gm-0.3.zip    
-        - webase-mysql.zip
-        - webasechainmanager.zip
-        - webasesign.zip       
-        - gateway-service-v4.zip               
-        - zipkin.zip
-        - mcs.zip
-    - name: 解压
-      shell: cd /bsn/iso &amp;&amp; unzip \*.zip
-      ignore_errors: yes
-</code></pre>
-<pre><code class="language-bash">#根据节点所需镜像进行传送，可先将不需要的注释掉
-
-peer节点
-        - fabric-peer1.4.3.1.zip
-        - fabric-tools1.4.3.1.zip
-        - fabric-couchdb.zip
-        - fabric-ccenv.zip
-        
-ca节点		
-        - fabric-ca-postgresql.zip
-        - fabric-ca-service.zip
-        - webase-mysql.zip 
-        
-网关节点		
-        - fabric-gateway.zip  
-        - rabbitmq.zip
-        - consul.zip
-        
-fisco节点		
-        - fisco-gm-0.3.zip
-        
-fisco签名服务 链管理
-        - webase-mysql.zip
-        - webasechainmanager.zip
-        - webasesign.zip
-        
-微服务节点		
-        - zipkin.zip
-        - mcs.zip
- 
-</code></pre>
-<p><strong>peer节点 （z1  z2  z3）</strong></p>
-<pre><code class="language-bash">ansible-playbook -e host=fz copy.yaml -l z1,z2,z3   #保留copy.yaml文件中四个文件，其他注释
-</code></pre>
-<p><strong>ca节点（z6）</strong></p>
-<pre><code class="language-bash">ansible-playbook -e host=fz copy.yaml -l z6   #保留copy.yaml文件中三个文件，其他注释
-</code></pre>
-<p><strong>网关节点（z4）</strong></p>
-<pre><code class="language-bash">ansible-playbook -e host=fz copy.yaml -l z4   #保留copy.yaml文件中三个文件，其他注释
-</code></pre>
-<blockquote>
-<p>注： 因镜像文件较大，传送时间较长，需耐心等候</p>
-<p>传送镜像服务结束之后将临时创建的变量文件移除掉（一般移除至/mnt 下）</p>
-</blockquote>
-<h3 id="部署peer服务">部署peer服务</h3>
-<h4 id="修改peer变量文件">修改peer变量文件</h4>
-<p>/etc/ansible/inventory/peer1   peer2   peer3</p>
-<p>两个方面调整，添加主机组、主机组添加至子组（例如：peer1）</p>
-<pre><code class="language-bash">#添加主机组
-[fuzhou_peer1]
-fuzhou_peer1 ansible_host=121.204.220.16 ansible_ssh_port=22
-
-[fuzhou_peer1:vars]
-peer=peer1
-name=fuzhou
-MSP=Fuzhou
-node1=172.31.0.3
-node2=172.31.0.1
-node3=172.31.0.2
-cjq=172.31.0.2
-
-#添加子组
-[peer1:children]
-suzhou_peer1
-
-
-</code></pre>
-<h4 id="上传peer相关文件">上传peer相关文件</h4>
-<p>fuzhou-peer1.zip  fuzhou-peer2.zip  fuzhou-peer3.zip</p>
-<p>上传至<br>
-/application/ansible-playbook/localnode/fabirc/peer/install-peer/peer-package</p>
-<h4 id="部署peer1-2-3">部署peer1 2 3</h4>
-<p>执行目录：/application/ansible-playbook/localnode/fabirc/peer/install-peer</p>
-<pre><code class="language-bash">ansible-playbook -e host=peer1 install-peer1.yaml -l fuzhou_peer1
-ansible-playbook -e host=peer2 install-peer2.yaml -l fuzhou_peer2
-ansible-playbook -e host=peer3 install-peer3.yaml -l fuzhou_peer3
-</code></pre>
-<blockquote>
-<p>查看链码这块会报错，忽略即可</p>
-</blockquote>
-<h3 id="部署ca服务">部署ca服务</h3>
-<h4 id="修改ca变量文件">修改ca变量文件</h4>
-<p>/etc/ansible/inventory/ca</p>
-<p>两个方面调整，添加主机组、主机组添加至子组</p>
-<pre><code class="language-bash">#添加群组
-[fuzhou_ca]
-fuzhou_ca ansible_host=121.204.220.14  ansible_ssh_port=22 name=fuzhou
-
-#添加子组
-[ca:children]
-fuzhou_ca
-
-</code></pre>
-<blockquote>
-<p>加入链码部分会报错，待采集器部署完后之后手动加入链码并安装（命令可见playbook文件底部）</p>
-</blockquote>
-<h4 id="上传ca相关文件">上传ca相关文件</h4>
-<p>fuzhou-ca.zip</p>
-<p>上传至<br>
-/application/ansible-playbook/localnode/fabirc/ca/install-ca/ca-package</p>
-<h4 id="部署ca-mysql">部署ca-mysql</h4>
-<p>执行目录 /application/ansible-playbook/localnode/fabirc/ca/install-mysql</p>
-<pre><code class="language-bash">ansible-playbook -e host=ca install-mysql.yaml -l fuzhou_ca
-</code></pre>
-<h4 id="部署ca-service">部署ca-service</h4>
-<p>执行目录 ：/application/ansible-playbook/localnode/fabirc/ca/install-ca</p>
-<pre><code class="language-bash">ansible-playbook -e host=ca install-ca.yaml -l fuzhou_ca
-</code></pre>
-<h4 id="检查状态">检查状态</h4>
-<p>查看数据库表状态</p>
-<pre><code class="language-bash">  docker exec cjq-gate-mysql  mysql -uroot -pRed80@80 -e &quot;use bsnflowdb;select * from tb_nc_config&quot;
-</code></pre>
-<h3 id="部署gateway服务">部署gateway服务</h3>
-<h4 id="修改ca变量文件-2">修改ca变量文件</h4>
-<p>/etc/ansible/inventory/gateway_M</p>
-<p>两个方面调整，添加主机组、主机组添加至子组</p>
-<pre><code class="language-bash">#添加主机组
-[fuzhou_gateway_M]
-fuzhou_gateway_M ansible_host=121.204.220.10  ansible_ssh_port=22
-
-[fuzhou_gateway_M:vars]
-name=fuzhou
-MSP=Fuzhou
-titleName=福州
-code=ORG20200804                   #根据当天日志填写即可
-node1=172.31.0.31                  #三个peer节点的内网地址
-node2=172.31.0.23
-node3=172.31.0.26
-sign=1.1.1.1                        #没有fisco 填写1.1.1.1
-ca=172.31.0.24                      
-mcs=1.1.1.1                         #没有微服务 填写1.1.1.1
-
-#添加子组
-[gateway_M:children]
-nanping_gateway_M
-
-</code></pre>
-<h4 id="上传gateway相关文件">上传gateway相关文件</h4>
-<p>fuzhou-certs.zip</p>
-<p>上传至<br>
-/application/ansible-playbook/localnode/fabirc/gateway/install-gate/gateway-certs</p>
-<h4 id="部署gateway">部署gateway</h4>
-<p>执行目录：/application/ansible-playbook/localnode/fabirc/gateway/install-gate</p>
-<pre><code class="language-bash">ansible-playbook -e host=gateway_M install-gate.yaml -l fuzhou_gateway_M
-</code></pre>
-<h3 id="部署采集器服务">部署采集器服务</h3>
-<h4 id="修改cjq变量文件">修改cjq变量文件</h4>
-<pre><code class="language-bash">[fuzhou_cjq]
-fuzhou_cjq ansible_host=121.204.220.18 ansible_ssh_port=22
-
-[fuzhou_cjq:vars]
-name=fuzhou
-MSP=Fuzhou
-titleName=福州
-code=ORG20200804
-node1=172.31.0.31
-node2=172.31.0.23
-node3=172.31.0.26
-ca=172.31.0.24
-peerport=22
-fiscocron=false          #没有fisco则填写false
-fiscosign=1.1.1.1        #没有fisco则填写 1.1.1.1
-xupercron=false          #没有xupercron则填写false    
-mcs=1.1.1.1              #没有微服务则填写1.1.1.1
-gmfabriccron=false       #没有微服务则填写false
-</code></pre>
-<h4 id="上传采集器相关文件">上传采集器相关文件</h4>
-<p>fuzhou-collect.zip</p>
-<p>上传至<br>
-/application/ansible-playbook/localnode/fabirc/cjq/install-cjq/install-package</p>
-<h4 id="部署cjq">部署CJQ</h4>
-<p>执行目录：/application/ansible-playbook/localnode/fabirc/cjq/install-cjq</p>
-<pre><code class="language-bash">ansible-playbook -e host=cjq install-cjq.yaml -l fuzhou_cjq
-</code></pre>
-<h4 id="查看服务日志">查看服务日志</h4>
-<p>/bsn/go/src/node-collect/logs</p>
-<pre><code class="language-bash">tail -100f /bsn/go/src/node-collect/logs/catalina.out
-</code></pre>
-<p>如果出现以下报错，则需要重新加入链，安装链</p>
-<pre><code class="language-bash">2020-08-04 13:57:55.381 ERROR 4179 --- [ost-startStop-1] c.b.n.u.C.BaseConfigUtils$Companion      : /bsn/go/src/node-collect/webapps/nodecollectConf/conf/xuperChainBlockResult.properties (No such file or directory)
-2020-08-04 13:57:55.487  INFO 4179 --- [ost-startStop-1] c.b.n.utils.NetUtils$Companion           : 请求地址：http://1.1.1.1:5005/WeBASE-Chain-Manager/chain/all
-2020-08-04 14:00:02.770  INFO 4179 --- [ost-startStop-1] c.b.n.utils.NetUtils$Companion           : 处理异常：Connection timed out (Connection timed out),附加信息：fisco获取所有链编号
-2020-08-04 14:00:02.794 ERROR 4179 --- [ost-startStop-1] c.b.n.u.C.BaseConfigUtils$Companion      : /bsn/go/src/node-collect/webapps/nodecollectConf/conf/sm2FabricBlockResult.properties (No such file or directory)
-2020-08-04 14:00:02.830  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco fbTimetaskopenorclose==false
-2020-08-04 14:00:02.831  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco channelsUploadTime==1200000
-2020-08-04 14:00:02.831  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco blocksUploadTime==1200000
-2020-08-04 14:00:02.831  INFO 4179 --- [ost-startStop-1] c.b.nodecollector.task.FiscoTimeTask     : fisco peerResourceUploadTime==600000
-</code></pre>
-<p>在peer的3个节点执行</p>
-<pre><code class="language-bash">#加入链码
-docker exec cli peer channel join -b blocktx/netchannel.block
-
-#安装链码
-docker exec cli peer chaincode install blocktx/cc_sys.3.0.pak 
-
-</code></pre>
 ]]></content>
     </entry>
 </feed>

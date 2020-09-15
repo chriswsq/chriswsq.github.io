@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-15T03:27:22.488Z</updated>
+    <updated>2020-09-15T11:19:12.161Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,109 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[test]]></title>
+        <id>https://chriswsq.github.io/post/test/</id>
+        <link href="https://chriswsq.github.io/post/test/">
+        </link>
+        <updated>2020-09-15T11:19:03.000Z</updated>
+        <content type="html"><![CDATA[<p>app0001202007302056480751681</p>
+<p>所在节点<br>
+淮南2                 &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
+信息港金昌2           &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;,<br>
+潍坊2                 &quot;28HsYtaS1p7DqZ3QqXzCSsEk47dX4seU6o</p>
+<p>钱最多的是淮南2，需在淮南2执行提案操作</p>
+<hr>
+<p>app0001202007310000590617583</p>
+<p>所在节点<br>
+淮南2                &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
+信息港金昌1          &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+济宁2                &quot;sMbiWCdbiAHn84p77zjepAzGn3F7ztzAD&quot;</p>
+<p>钱最多的是淮南2，需在淮南2执行提案操作</p>
+<hr>
+<p>app0001202008011331415497000</p>
+<p>所在节点</p>
+<p>淮南2               &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
+信息港金昌2         &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;,<br>
+济宁1               &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;</p>
+<p>钱最多的是淮南2，需在淮南2执行提案操作</p>
+<hr>
+<p>=====完</p>
+<p>app0001202008060914360435534</p>
+<p>所在节点</p>
+<p>潍坊1             &quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72&quot;,<br>
+济宁1             &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
+信息港金昌1       &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;</p>
+<p>钱最多的是潍坊1，需在潍坊1执行提案操作</p>
+<p>查看金额</p>
+<p>./xchain-cli account balance zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc --name app0001202008241658118354220</p>
+<p>100000000231084000000</p>
+<p>688505</p>
+<p>提案<br>
+./xchain-cli transfer --to scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72 --desc proposal_app0001202008060914360435534.json  --amount 1  --name app0001202008060914360435534</p>
+<p>ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918</p>
+<p>投票</p>
+<p>./xchain-cli vote ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918 --frozen 688990 --amount 55000000378835600000   --name app0001202008060914360435534</p>
+<p>74217bf729af8fc1b6acfbc5f953fbda029fb9078360ec301dfc113e690ac016</p>
+<p>查看共识节点</p>
+<p>./xchain-cli tdpos status --name  app0001202008060914360435534</p>
+<p>查看快高</p>
+<p>./xchain-cli status -H 127.0.0.1:37101 | jq '.blockchains[] | {&quot;name&quot;:.name,&quot;height&quot;:.ledger.trunkHeight}' | grep -A 1 app0001202008060914360435534</p>
+<hr>
+<p>app0001202008061655043329381</p>
+<p>所在节点<br>
+信息港金昌1    &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+潍坊2          &quot;28HsYtaS1p7DqZ3QqXzCSsEk47dX4seU6o&quot;,<br>
+济宁1          &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;</p>
+<p>钱最多的是信息港金昌1，需在信息港金昌1执行提案操作</p>
+<hr>
+<p>===========  卡死  没法做</p>
+<p>app0001202008241658118354220</p>
+<p>所在节点</p>
+<p>苏州1                &quot;zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc&quot;,<br>
+淮南2                &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
+信息港金昌2          &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;</p>
+<p>钱最多的是苏州1，需在苏州1执行提案操作</p>
+<p>55000000165462550000</p>
+<hr>
+<p>============</p>
+<p>app0001202009071731525216971</p>
+<p>所在节点</p>
+<p>苏州1          &quot;zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc&quot;,<br>
+信息港金昌1    &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+济宁2          &quot;sMbiWCdbiAHn84p77zjepAzGn3F7ztzAD&quot;</p>
+<p>钱最多的是苏州1，需在苏州1执行提案操作</p>
+<hr>
+<p>app0001202009091117176212756</p>
+<p>所在节点</p>
+<p>苏州2          &quot;tmGrMmqsu33yrFQeYfaJ6mZM9K4xNit1r&quot;,<br>
+信息港金昌2    &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;,<br>
+济宁1          &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;</p>
+<p>钱最多的是苏州2，需在苏州2执行提案操作</p>
+<hr>
+<p>xuper</p>
+<p>所在节点<br>
+济宁1             &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
+淮南1             &quot;2C7isZoZkRjyP6G5SWRZDaK9ALPN7XSubq&quot;,<br>
+信息港金昌1       &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+潍坊1             &quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72</p>
+<hr>
+<p>testtest_zxl6</p>
+<p>所在节点<br>
+&quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
+&quot;2C7isZoZkRjyP6G5SWRZDaK9ALPN7XSubq&quot;,<br>
+&quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+&quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72&quot;</p>
+<h2 id="平行链hang住">平行链hang住</h2>
+<p>testtest_zxl7</p>
+<p>所在节点<br>
+&quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
+&quot;2C7isZoZkRjyP6G5SWRZDaK9ALPN7XSubq&quot;,<br>
+&quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+&quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72&quot;</p>
+<p>平行链hang住</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[docker容器保持后台运行的两种方式]]></title>
         <id>https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/</id>
@@ -1609,324 +1712,6 @@ ZSMIKAVFCLTASBHXV
 <h2 id="规则测试">规则测试</h2>
 <p>刚刚已经添加了一条规则，现在可以用自身的命令测试一下刚刚添加的规则。<br>
 elastalert-test-rule --config config.yaml nginx_404.yaml</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[关于Logstash中grok插件的正则表达式例子]]></title>
-        <id>https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/</id>
-        <link href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">
-        </link>
-        <updated>2020-08-27T05:51:06.000Z</updated>
-        <summary type="html"><![CDATA[<p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
-<!-- more -->
-<h2 id="grok提供的常用patterns说明及举例">Grok提供的常用Patterns说明及举例</h2>
-<p>大多数Linux使用人员都有过用正则表达式来查询机器中相关文件或文件里内容的经历，在Grok里，我们也是使用正则表达式来识别日志里的相关数据块。</p>
-<p>有两种方式来使用正则表达式：</p>
-<p>直接写正则来匹配<br>
-用Grok表达式映射正则来匹配</p>
-<h3 id="常用表达式">常用表达式</h3>
-<ul>
-<li>
-<p>GREEDYDATA<br>
-<strong>匹配任意字符</strong></p>
-</li>
-<li>
-<p>USERNAME 或 USER<br>
-<strong>用户名</strong>，由数字、大小写及特殊字符(._-)组成的字符串</p>
-</li>
-</ul>
-<blockquote>
-<p>比如：1234、Bob、Alex.Wong等</p>
-</blockquote>
-<ul>
-<li>EMAILLOCALPART<br>
-<strong>电子邮件用户名部分</strong>，首位由大小写字母组成，其他位由数字、大小写及特殊字符(_.+-=:)组成的字符串。注意，国内的QQ纯数字邮箱账号是无法匹配的，需要修改正则</li>
-</ul>
-<blockquote>
-<p>比如：stone、Gary_Lu、abc-123等</p>
-</blockquote>
-<ul>
-<li>EMAILADDRESS<br>
-<strong>电子邮件</strong></li>
-</ul>
-<blockquote>
-<p>比如：wwwwaf@abc.com、Gadf_adf@gmail.com、abc-123@163.com等</p>
-</blockquote>
-<ul>
-<li>
-<p>HTTPDUSER<br>
-Apache服务器的用户，可以是EMAILADDRESS或USERNAME</p>
-</li>
-<li>
-<p>INT<br>
-<strong>整数，包括0和正负整数</strong></p>
-</li>
-</ul>
-<blockquote>
-<p>比如：0、-123、43987等</p>
-</blockquote>
-<ul>
-<li>BASE10NUM 或 NUMBER<br>
-<strong>十进制数字，包括整数和小数</strong></li>
-</ul>
-<blockquote>
-<p>比如：0、18、5.23等</p>
-</blockquote>
-<ul>
-<li>BASE16NUM<br>
-<strong>十六进制数字，整数</strong></li>
-</ul>
-<blockquote>
-<p>比如：0x0045fa2d、-0x3F8709等</p>
-</blockquote>
-<ul>
-<li>WORD<br>
-<strong>字符串，包括数字和大小写字母</strong></li>
-</ul>
-<blockquote>
-<p>比如：String、3529345、ILoveYou等</p>
-</blockquote>
-<ul>
-<li>
-<p>NOTSPACE<br>
-<strong>不带任何空格的字符串</strong></p>
-</li>
-<li>
-<p>SPACE<br>
-<strong>空格字符串</strong></p>
-</li>
-<li>
-<p>{SPACE}*<br>
-**匹配任意连续空格</p>
-</li>
-<li>
-<p>QUOTEDSTRING 或 QS<br>
-带引号的字符串</p>
-</li>
-</ul>
-<blockquote>
-<p>比如：&quot;This is an apple&quot;、'What is your name?'等</p>
-</blockquote>
-<ul>
-<li>UUID<br>
-<strong>标准UUID</strong></li>
-</ul>
-<blockquote>
-<p>比如：550E8400-E29B-11D4-A716-446655440000</p>
-</blockquote>
-<ul>
-<li>
-<p>MAC<br>
-<strong>MAC地址</strong>，可以是Cisco设备里的MAC地址，也可以是通用或者Windows系统的MAC地址</p>
-</li>
-<li>
-<p>IP<br>
-<strong>IP地址</strong>，IPv4或IPv6地址</p>
-</li>
-</ul>
-<blockquote>
-<p>比如：127.0.0.1、FE80:0000:0000:0000:AAAA:0000:00C2:0002等</p>
-</blockquote>
-<ul>
-<li>
-<p>HOSTNAME<br>
-<strong>主机名称</strong></p>
-</li>
-<li>
-<p>IPORHOST<br>
-<strong>IP或者主机名称</strong></p>
-</li>
-<li>
-<p>HOSTPORT<br>
-<strong>主机名(IP)+端口</strong></p>
-</li>
-</ul>
-<blockquote>
-<p>比如：127.0.0.1:3306、api.stozen.net:8000等</p>
-</blockquote>
-<ul>
-<li>PATH<br>
-<strong>路径</strong>，Unix系统或者Windows系统里的路径格式</li>
-</ul>
-<blockquote>
-<p>比如：/usr/local/nginx/sbin/nginx、c:\windows\system32\clr.exe等</p>
-</blockquote>
-<ul>
-<li>URIPROTO<br>
-<strong>URI协议</strong></li>
-</ul>
-<blockquote>
-<p>比如：http、ftp等</p>
-</blockquote>
-<ul>
-<li>URIHOST<br>
-<strong>URI主机</strong></li>
-</ul>
-<blockquote>
-<p>比如：www.baidu.net、10.0.0.1:22等</p>
-</blockquote>
-<ul>
-<li>URIPATH<br>
-<strong>URI路径</strong></li>
-</ul>
-<blockquote>
-<p>比如：<code>//www.baidu.net/abc/、/api.php</code>等</p>
-</blockquote>
-<ul>
-<li>URIPARAM<br>
-<strong>URI里的GET参数</strong></li>
-</ul>
-<blockquote>
-<p>比如：?a=1&amp;b=2&amp;c=3</p>
-</blockquote>
-<ul>
-<li>URIPATHPARAM<br>
-<strong>URI路径+GET参数</strong></li>
-</ul>
-<blockquote>
-<p>比如：<code>//www.google.net/abc/api.php?a=1&amp;b=2&amp;c=3</code></p>
-</blockquote>
-<ul>
-<li>URI<br>
-<strong>完整的URI</strong></li>
-</ul>
-<blockquote>
-<p>比如：<code>http://www.google.net/abc/api.php?a=1&amp;b=2&amp;c=3</code></p>
-</blockquote>
-<h3 id="日期时间表达式">日期时间表达式</h3>
-<ul>
-<li>MONTH<br>
-<strong>月份名称</strong></li>
-</ul>
-<blockquote>
-<p>比如：Jan、January等</p>
-</blockquote>
-<ul>
-<li>MONTHNUM<br>
-<strong>月份数字</strong></li>
-</ul>
-<blockquote>
-<p>比如：03、9、12等</p>
-</blockquote>
-<ul>
-<li>MONTHDAY<br>
-<strong>日期数字</strong></li>
-</ul>
-<blockquote>
-<p>比如：03、9、31等</p>
-</blockquote>
-<ul>
-<li>DAY<br>
-<strong>星期几名称</strong></li>
-</ul>
-<blockquote>
-<p>比如：Mon、Monday等</p>
-</blockquote>
-<ul>
-<li>YEAR<br>
-<strong>年份数字</strong></li>
-<li>HOUR<br>
-<strong>小时数字</strong></li>
-<li>MINUTE<br>
-<strong>分钟数字</strong></li>
-<li>SECOND<br>
-<strong>秒数字</strong></li>
-<li>TIME<br>
-<strong>时间</strong></li>
-</ul>
-<blockquote>
-<p>比如：00:01:23</p>
-</blockquote>
-<ul>
-<li>DATE_US<br>
-<strong>美国日期格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：10-15-1982、10/15/1982等</p>
-</blockquote>
-<ul>
-<li>DATE_EU<br>
-<strong>欧洲日期格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：15-10-1982、15/10/1982、15.10.1982等</p>
-</blockquote>
-<ul>
-<li>ISO8601_TIMEZONE<br>
-<strong>ISO8601时间格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：+10:23、-1023等</p>
-</blockquote>
-<ul>
-<li>TIMESTAMP_ISO8601<br>
-<strong>ISO8601时间戳格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：2016-07-03T00:34:06+08:00</p>
-</blockquote>
-<ul>
-<li>
-<p>DATE<br>
-<strong>日期</strong>，美国日期%{DATE_US}或者欧洲日期%{DATE_EU}</p>
-</li>
-<li>
-<p>DATESTAMP<br>
-<strong>完整日期+时间</strong></p>
-</li>
-</ul>
-<blockquote>
-<p>比如：07-03-2016 00:34:06</p>
-</blockquote>
-<ul>
-<li>HTTPDATE<br>
-<strong>http默认日期格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：03/Jul/2016:00:36:53 +0800</p>
-</blockquote>
-<h3 id="log表达式">Log表达式</h3>
-<ul>
-<li>LOGLEVEL<br>
-<strong>日志等级</strong></li>
-</ul>
-<blockquote>
-<p>比如：Alert、alert、ALERT、Error等</p>
-</blockquote>
-<h2 id="创建自己的grok表达式">创建自己的Grok表达式</h2>
-<p>在业务领域中，可能会有越来越多的日志格式出现在我们眼前，而Grok的默认表达式显然已无法满足我们的需求（比如用户身份证号、手机号等信息），所以，我们需要自己动手添加些表达式。</p>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>正则表达式</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>DATE_CHS</td>
-<td>%{YEAR}[./-]%{MONTHNUM}[./-]%{MONTHDAY}</td>
-<td>中国人习惯的日期格式</td>
-</tr>
-<tr>
-<td>ZIPCODE_CHS</td>
-<td>[1-9]\d{5}</td>
-<td>国内邮政编码</td>
-</tr>
-<tr>
-<td>GAME_ACCOUNT</td>
-<td>[a-zA-Z][a-zA-Z0-9_]{4,15}</td>
-<td>游戏账号，首字符为字母，4-15位字母、数字、下划线组成</td>
-</tr>
-</tbody>
-</table>
-<h2 id="其他">其他</h2>
-<p>grok正则表达式：(?<temMsg>(.<em>)(?=Report)/?) 获取Report之前的字符<br>
-grok正则表达式：(?<temMsg>(?=Report)(.</em>)/?) 获取Report之后的字符</p>
-<p><a href="https://www.cnblogs.com/stozen/p/5638369.html">参考</a></p>
 ]]></content>
     </entry>
 </feed>

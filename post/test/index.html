@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>NFS网络文件系统部署 | chris&#39;wang</title>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>test | chris&#39;wang</title>
 <link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 <script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
 
 <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
 
-<link rel="canonical" href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/" />
+<link rel="canonical" href="https://chriswsq.github.io/post/test/" />
 </head>
 <body>
 <div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
@@ -25,149 +25,109 @@
 
 <div class="main"><div class="main-inner"><div class="content">
 <article class="post">
-<h2 class="post_title sm_margin"><a>NFS网络文件系统部署</a></h2>
+<h2 class="post_title sm_margin"><a>test</a></h2>
 <script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
-<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-20</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px"></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">692字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">3 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-09-15</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px"></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">528字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">3 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
 </section>
 
 <div style="display:flex">
 <div class="md_block" id="md_block">
 <div class="round-shape-one"></div>
-<p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
-<!-- more -->
-<h2 id="系统环境">系统环境</h2>
-<table>
-<thead>
-<tr>
-<th>主机名称</th>
-<th>操作系统</th>
-<th>IP地址</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>NFS服务器</td>
-<td>Centos 7 64位</td>
-<td>192.168.40.6</td>
-</tr>
-<tr>
-<td>NFS客户端</td>
-<td>Centos 7 64位</td>
-<td>192.168.40.7</td>
-</tr>
-</tbody>
-</table>
-<h2 id="nfs服务配置文件的参数">NFS服务配置文件的参数</h2>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ro</td>
-<td></td>
-</tr>
-<tr>
-<td>rw</td>
-<td>读写</td>
-</tr>
-<tr>
-<td>root_squash</td>
-<td>当NFS客户端以root管理员访问时，映射为NFS服务器的匿名用户</td>
-</tr>
-<tr>
-<td>no_root_squash</td>
-<td>当NFS客户端以root管理员访问时，映射为NFS服务器的root管理员</td>
-</tr>
-<tr>
-<td>all_squash</td>
-<td>无论NFS客户端使用什么账户访问，均映射为NFS服务器的匿名用户</td>
-</tr>
-<tr>
-<td>sync</td>
-<td>同时将数据写入到内存与硬盘中，保证不丢失数据</td>
-</tr>
-<tr>
-<td>async</td>
-<td>优先将数据写入到内存，然后再写入硬盘；这样效率更高，但可能会丢失数据</td>
-</tr>
-</tbody>
-</table>
-<h2 id="nfs服务器操作">NFS服务器操作</h2>
-<h3 id="1-安装nfs">1、安装NFS</h3>
-<p><code>yum -y install nfs-utils</code></p>
-<h3 id="2-创建用于nfs共享的目录">2、创建用于NFS共享的目录</h3>
-<pre><code class="language-bash">mkdir /test
-chown -R nfsnobody /nfsdata
-</code></pre>
-<h3 id="3-编辑nfs的配置文件添加如下内容">3、编辑NFS的配置文件，添加如下内容</h3>
-<p><em>注：NFS的配置文件默认是没有内容的</em></p>
-<pre><code class="language-conf">vim /etc/exports
-/nfsdata 192.168.40.*(rw,sync,root_squash)
-</code></pre>
-<h3 id="4-启动nfs服务并加入开机启动项">4、启动NFS服务，并加入开机启动项</h3>
-<p>NFS服务需要使用RPC（Remote Procedure Call，远程过程调用）服务将NFS服务器的IP地址和端口号等信息发送给客户端，因此，在启动NFS服务之前，还需要顺带启动rpcbind服务。</p>
-<pre><code class="language-shell">systemctl start rpcbind
-systemctl enable rpcbind
-systemctl start nfs-server
-systemctl enable nfs-server
-</code></pre>
-<h3 id="5-查看nfs向rpc注册的端口信息">5、查看nfs向rpc注册的端口信息</h3>
-<p><code>rpcinfo -p localhost</code><br>
-<em>注：下图中用红框括起来的端口号需要防火墙允许</em><br>
-<img src="/images/nfs/nfs.jpg" alt="" loading="lazy"></p>
-<h3 id="6-配置firewalld防火墙允许nfs和rpc端口">6、配置firewalld防火墙，允许nfs和rpc端口</h3>
-<pre><code class="language-bash">firewall-cmd --permanent --add-service=nfs
-firewall-cmd --permanent --add-service=mountd
-firewall-cmd --permanent --add-port=111/tcp
-firewall-cmd --permanent --add-port=111/udp
-firewall-cmd --reload
-</code></pre>
-<h2 id="nfs客户端操作">NFS客户端操作</h2>
-<h3 id="1-使用showmount命令查询nfs服务器的远程共享信息">1、使用showmount命令查询NFS服务器的远程共享信息</h3>
-<p><strong>表3：showmount命令可用的参数以及作用</strong></p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>-e</td>
-<td>显示NFS服务器的共享列表</td>
-</tr>
-<tr>
-<td>-a</td>
-<td>显示本机挂载的文件资源的情况</td>
-</tr>
-<tr>
-<td>-v</td>
-<td>显示版本号</td>
-</tr>
-</tbody>
-</table>
-<p>查看能否连接到nfs服务</p>
-<pre><code>showmount -e 192.168.40.6
-</code></pre>
-<h3 id="2-创建挂载目录并挂载">2、创建挂载目录，并挂载</h3>
-<pre><code class="language-bash">mkdir /nfsdata
-mount -t nfs 192.168.40.6:/nfsdata /nfsdata
-df -h
-</code></pre>
-<h3 id="3-将挂载信息写入etcfstab文件中以便开机自动挂载">3、将挂载信息写入/etc/fstab文件中，以便开机自动挂载</h3>
-<pre><code class="language-bash">vim /etc/fstab
-192.168.40.6:/nfsdata /nfsdata nfs defaults 0 0
-</code></pre>
-<p>4、测试<br>
-往/nfsdata目录下写入一个文件</p>
-<pre><code>echo &quot;welcome to xuad.com&quot; &gt; /nfsdata/xuad.txt
-</code></pre>
-<p>在NFS服务器上查看/nfsdata目录下是否生成了此文件</p>
+<p>app0001202007302056480751681</p>
+<p>所在节点<br>
+淮南2                 &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
+信息港金昌2           &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;,<br>
+潍坊2                 &quot;28HsYtaS1p7DqZ3QqXzCSsEk47dX4seU6o</p>
+<p>钱最多的是淮南2，需在淮南2执行提案操作</p>
+<hr>
+<p>app0001202007310000590617583</p>
+<p>所在节点<br>
+淮南2                &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
+信息港金昌1          &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+济宁2                &quot;sMbiWCdbiAHn84p77zjepAzGn3F7ztzAD&quot;</p>
+<p>钱最多的是淮南2，需在淮南2执行提案操作</p>
+<hr>
+<p>app0001202008011331415497000</p>
+<p>所在节点</p>
+<p>淮南2               &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
+信息港金昌2         &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;,<br>
+济宁1               &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;</p>
+<p>钱最多的是淮南2，需在淮南2执行提案操作</p>
+<hr>
+<p>=====完</p>
+<p>app0001202008060914360435534</p>
+<p>所在节点</p>
+<p>潍坊1             &quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72&quot;,<br>
+济宁1             &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
+信息港金昌1       &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;</p>
+<p>钱最多的是潍坊1，需在潍坊1执行提案操作</p>
+<p>查看金额</p>
+<p>./xchain-cli account balance zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc --name app0001202008241658118354220</p>
+<p>100000000231084000000</p>
+<p>688505</p>
+<p>提案<br>
+./xchain-cli transfer --to scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72 --desc proposal_app0001202008060914360435534.json  --amount 1  --name app0001202008060914360435534</p>
+<p>ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918</p>
+<p>投票</p>
+<p>./xchain-cli vote ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918 --frozen 688990 --amount 55000000378835600000   --name app0001202008060914360435534</p>
+<p>74217bf729af8fc1b6acfbc5f953fbda029fb9078360ec301dfc113e690ac016</p>
+<p>查看共识节点</p>
+<p>./xchain-cli tdpos status --name  app0001202008060914360435534</p>
+<p>查看快高</p>
+<p>./xchain-cli status -H 127.0.0.1:37101 | jq '.blockchains[] | {&quot;name&quot;:.name,&quot;height&quot;:.ledger.trunkHeight}' | grep -A 1 app0001202008060914360435534</p>
+<hr>
+<p>app0001202008061655043329381</p>
+<p>所在节点<br>
+信息港金昌1    &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+潍坊2          &quot;28HsYtaS1p7DqZ3QqXzCSsEk47dX4seU6o&quot;,<br>
+济宁1          &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;</p>
+<p>钱最多的是信息港金昌1，需在信息港金昌1执行提案操作</p>
+<hr>
+<p>===========  卡死  没法做</p>
+<p>app0001202008241658118354220</p>
+<p>所在节点</p>
+<p>苏州1                &quot;zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc&quot;,<br>
+淮南2                &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
+信息港金昌2          &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;</p>
+<p>钱最多的是苏州1，需在苏州1执行提案操作</p>
+<p>55000000165462550000</p>
+<hr>
+<p>============</p>
+<p>app0001202009071731525216971</p>
+<p>所在节点</p>
+<p>苏州1          &quot;zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc&quot;,<br>
+信息港金昌1    &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+济宁2          &quot;sMbiWCdbiAHn84p77zjepAzGn3F7ztzAD&quot;</p>
+<p>钱最多的是苏州1，需在苏州1执行提案操作</p>
+<hr>
+<p>app0001202009091117176212756</p>
+<p>所在节点</p>
+<p>苏州2          &quot;tmGrMmqsu33yrFQeYfaJ6mZM9K4xNit1r&quot;,<br>
+信息港金昌2    &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;,<br>
+济宁1          &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;</p>
+<p>钱最多的是苏州2，需在苏州2执行提案操作</p>
+<hr>
+<p>xuper</p>
+<p>所在节点<br>
+济宁1             &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
+淮南1             &quot;2C7isZoZkRjyP6G5SWRZDaK9ALPN7XSubq&quot;,<br>
+信息港金昌1       &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+潍坊1             &quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72</p>
+<hr>
+<p>testtest_zxl6</p>
+<p>所在节点<br>
+&quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
+&quot;2C7isZoZkRjyP6G5SWRZDaK9ALPN7XSubq&quot;,<br>
+&quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+&quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72&quot;</p>
+<h2 id="平行链hang住">平行链hang住</h2>
+<p>testtest_zxl7</p>
+<p>所在节点<br>
+&quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
+&quot;2C7isZoZkRjyP6G5SWRZDaK9ALPN7XSubq&quot;,<br>
+&quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
+&quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72&quot;</p>
+<p>平行链hang住</p>
 
 <span id="footnote"></span>
 <div id = "warn"></div>
@@ -175,25 +135,7 @@ df -h
 <div class="toc-container"><ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83">系统环境</a></li>
-<li><a href="#nfs%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E5%8F%82%E6%95%B0">NFS服务配置文件的参数</a></li>
-<li><a href="#nfs%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%93%8D%E4%BD%9C">NFS服务器操作</a>
-<ul>
-<li><a href="#1-%E5%AE%89%E8%A3%85nfs">1、安装NFS</a></li>
-<li><a href="#2-%E5%88%9B%E5%BB%BA%E7%94%A8%E4%BA%8Enfs%E5%85%B1%E4%BA%AB%E7%9A%84%E7%9B%AE%E5%BD%95">2、创建用于NFS共享的目录</a></li>
-<li><a href="#3-%E7%BC%96%E8%BE%91nfs%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%A6%82%E4%B8%8B%E5%86%85%E5%AE%B9">3、编辑NFS的配置文件，添加如下内容</a></li>
-<li><a href="#4-%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1%E5%B9%B6%E5%8A%A0%E5%85%A5%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8%E9%A1%B9">4、启动NFS服务，并加入开机启动项</a></li>
-<li><a href="#5-%E6%9F%A5%E7%9C%8Bnfs%E5%90%91rpc%E6%B3%A8%E5%86%8C%E7%9A%84%E7%AB%AF%E5%8F%A3%E4%BF%A1%E6%81%AF">5、查看nfs向rpc注册的端口信息</a></li>
-<li><a href="#6-%E9%85%8D%E7%BD%AEfirewalld%E9%98%B2%E7%81%AB%E5%A2%99%E5%85%81%E8%AE%B8nfs%E5%92%8Crpc%E7%AB%AF%E5%8F%A3">6、配置firewalld防火墙，允许nfs和rpc端口</a></li>
-</ul>
-</li>
-<li><a href="#nfs%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C">NFS客户端操作</a>
-<ul>
-<li><a href="#1-%E4%BD%BF%E7%94%A8showmount%E5%91%BD%E4%BB%A4%E6%9F%A5%E8%AF%A2nfs%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E8%BF%9C%E7%A8%8B%E5%85%B1%E4%BA%AB%E4%BF%A1%E6%81%AF">1、使用showmount命令查询NFS服务器的远程共享信息</a></li>
-<li><a href="#2-%E5%88%9B%E5%BB%BA%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95%E5%B9%B6%E6%8C%82%E8%BD%BD">2、创建挂载目录，并挂载</a></li>
-<li><a href="#3-%E5%B0%86%E6%8C%82%E8%BD%BD%E4%BF%A1%E6%81%AF%E5%86%99%E5%85%A5etcfstab%E6%96%87%E4%BB%B6%E4%B8%AD%E4%BB%A5%E4%BE%BF%E5%BC%80%E6%9C%BA%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD">3、将挂载信息写入/etc/fstab文件中，以便开机自动挂载</a></li>
-</ul>
-</li>
+<li><a href="#%E5%B9%B3%E8%A1%8C%E9%93%BEhang%E4%BD%8F">平行链hang住</a></li>
 </ul>
 </li>
 </ul>
@@ -223,7 +165,7 @@ if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop)
 var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
 var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
 var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
-content="本文最后更新于2020-08-20，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-08-20 14:58:24";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+content="本文最后更新于2020-09-15，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-09-15 19:19:03";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
 </script>
 <style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
 <a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>

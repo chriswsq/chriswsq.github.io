@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-14T08:46:56.752Z</updated>
+    <updated>2020-09-15T03:27:22.488Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -740,41 +740,47 @@ networks:
         driver: bridge
 
 services:
-    prometheus:
-        image: prom/prometheus
-        container_name: prometheus
-        hostname: prometheus
-        restart: always
-        volumes:
-            - /usr/local/src/config/prometheus.yml:/etc/prometheus/prometheus.yml
-            - /usr/local/src/config/rule:/etc/prometheus/config/rule
-        ports:
-            - &quot;9090:9090&quot;
-        networks:
-            - monitor
-
-    alertmanager:
-        image: prom/alertmanager
-        container_name: alertmanager
-        hostname: alertmanager
-        restart: always
-        volumes:
-            - /usr/local/src/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-            - /usr/local/src/config/template/default-monitor.tmpl:/etc/alertmanager/default-monitor.tmpl
-        ports:
-            - &quot;9093:9093&quot;
-        networks:
-            - monitor
-
-    grafana:
-        image: grafana/grafana
-        container_name: grafana
-        hostname: grafana
-        restart: always
-        ports:
-            - &quot;3000:3000&quot;
-        networks:
-            - monitor
+  prometheus:
+    image: prom/prometheus:v2.16.0
+    container_name: prometheus
+    restart: always
+    ports:
+     - 9090:9090
+    volumes:
+     - /bsn/prometheus/prometheus:/prometheus
+     - /bsn/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+     - /bsn/prometheus/alert/alert.rules:/usr/local/prometheus/rules/alert.rules
+     - /etc/localtime:/etc/localtime
+    command:
+     - '--config.file=/etc/prometheus/prometheus.yml'
+     - '--storage.tsdb.path=/prometheus/'
+     - '--storage.tsdb.retention.time=90d'
+    depends_on:
+     - alertmanager
+  grafana:
+    image: grafana/grafana:6.4.2
+    container_name: grafana
+    restart: always
+    volumes:
+     - /bsn/prometheus/grafana:/var/lib/grafana
+     - /bsn/prometheus/grafana/grafana.ini:/etc/grafana/grafana.ini
+     - /etc/localtime:/etc/localtime
+    ports:
+     - 3000:3000
+    depends_on:
+     - prometheus
+  alertmanager:
+    image: prom/alertmanager:v0.21.0-rc.0
+    container_name: alertmanager
+    volumes:
+      - /bsn/prometheus/alert/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - /bsn/prometheus/alert/email.tmpl:/etc/alertmanager/template/email.tmpl
+      - /etc/localtime:/etc/localtime
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    ports:
+      - 9093:9093
+    restart: always
 
     node-exporter:
         image: quay.io/prometheus/node-exporter
@@ -793,8 +799,6 @@ services:
           - '--path.procfs=/host/proc'
           - '--path.sysfs=/host/sys'
           - '--path.rootfs=/rootfs'
-        networks:
-            - monitor
 
     cadvisor:
         image: google/cadvisor:latest
@@ -808,8 +812,7 @@ services:
             - /var/lib/docker/:/var/lib/docker:ro
         ports:
             - &quot;8080:8080&quot;
-        networks:
-            - monitor
+
 </code></pre>
 <h2 id="启动docker-compose">启动docker-compose</h2>
 <pre><code class="language-bash">#启动容器：
@@ -820,11 +823,7 @@ docker-compose -f /usr/local/src/config/docker-compose-monitor.yml down
 docker restart id
 </code></pre>
 <p>在其他节点分别启动cadvisor和node-exporter容器</p>
-<pre><code class="language-yaml">version: '2'
-
-networks:
-    monitor:
-        driver: bridge
+<pre><code class="language-yaml">version: '3'
 
 services:
     node-exporter:
@@ -844,8 +843,6 @@ services:
           - '--path.procfs=/host/proc'
           - '--path.sysfs=/host/sys'
           - '--path.rootfs=/rootfs'
-        networks:
-            - monitor
     cadvisor:
         image: google/cadvisor:latest
         container_name: cadvisor
@@ -858,8 +855,6 @@ services:
             - /var/lib/docker/:/var/lib/docker:ro
         ports:
             - &quot;8080:8080&quot;
-        networks:
-            - monitor
 </code></pre>
 <p><strong>容器启动如下：</strong><br>
 <img src="https://chriswsq.github.io/post-images/1599121054830.png" alt="" loading="lazy"></p>

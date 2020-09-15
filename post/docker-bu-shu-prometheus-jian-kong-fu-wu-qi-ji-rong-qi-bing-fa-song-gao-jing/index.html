@@ -19,7 +19,7 @@
 <div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 <div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
 <div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
-<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1600073214679" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1600140440136" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 </div></div>
 <script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
 
@@ -27,7 +27,7 @@
 <article class="post">
 <h2 class="post_title sm_margin"><a>docker部署Prometheus监控服务器及容器并发送告警</a></h2>
 <script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
-<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-09-03</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/GF9B9x5r8/" class="tag">monitor</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">4013字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">22 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-09-03</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/GF9B9x5r8/" class="tag">monitor</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">4049字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">22 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
 </section>
 
 <div style="display:flex">
@@ -710,41 +710,47 @@ networks:
         driver: bridge
 
 services:
-    prometheus:
-        image: prom/prometheus
-        container_name: prometheus
-        hostname: prometheus
-        restart: always
-        volumes:
-            - /usr/local/src/config/prometheus.yml:/etc/prometheus/prometheus.yml
-            - /usr/local/src/config/rule:/etc/prometheus/config/rule
-        ports:
-            - &quot;9090:9090&quot;
-        networks:
-            - monitor
-
-    alertmanager:
-        image: prom/alertmanager
-        container_name: alertmanager
-        hostname: alertmanager
-        restart: always
-        volumes:
-            - /usr/local/src/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-            - /usr/local/src/config/template/default-monitor.tmpl:/etc/alertmanager/default-monitor.tmpl
-        ports:
-            - &quot;9093:9093&quot;
-        networks:
-            - monitor
-
-    grafana:
-        image: grafana/grafana
-        container_name: grafana
-        hostname: grafana
-        restart: always
-        ports:
-            - &quot;3000:3000&quot;
-        networks:
-            - monitor
+  prometheus:
+    image: prom/prometheus:v2.16.0
+    container_name: prometheus
+    restart: always
+    ports:
+     - 9090:9090
+    volumes:
+     - /bsn/prometheus/prometheus:/prometheus
+     - /bsn/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+     - /bsn/prometheus/alert/alert.rules:/usr/local/prometheus/rules/alert.rules
+     - /etc/localtime:/etc/localtime
+    command:
+     - '--config.file=/etc/prometheus/prometheus.yml'
+     - '--storage.tsdb.path=/prometheus/'
+     - '--storage.tsdb.retention.time=90d'
+    depends_on:
+     - alertmanager
+  grafana:
+    image: grafana/grafana:6.4.2
+    container_name: grafana
+    restart: always
+    volumes:
+     - /bsn/prometheus/grafana:/var/lib/grafana
+     - /bsn/prometheus/grafana/grafana.ini:/etc/grafana/grafana.ini
+     - /etc/localtime:/etc/localtime
+    ports:
+     - 3000:3000
+    depends_on:
+     - prometheus
+  alertmanager:
+    image: prom/alertmanager:v0.21.0-rc.0
+    container_name: alertmanager
+    volumes:
+      - /bsn/prometheus/alert/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - /bsn/prometheus/alert/email.tmpl:/etc/alertmanager/template/email.tmpl
+      - /etc/localtime:/etc/localtime
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    ports:
+      - 9093:9093
+    restart: always
 
     node-exporter:
         image: quay.io/prometheus/node-exporter
@@ -763,8 +769,6 @@ services:
           - '--path.procfs=/host/proc'
           - '--path.sysfs=/host/sys'
           - '--path.rootfs=/rootfs'
-        networks:
-            - monitor
 
     cadvisor:
         image: google/cadvisor:latest
@@ -778,8 +782,7 @@ services:
             - /var/lib/docker/:/var/lib/docker:ro
         ports:
             - &quot;8080:8080&quot;
-        networks:
-            - monitor
+
 </code></pre>
 <h2 id="启动docker-compose">启动docker-compose</h2>
 <pre><code class="language-bash">#启动容器：
@@ -790,11 +793,7 @@ docker-compose -f /usr/local/src/config/docker-compose-monitor.yml down
 docker restart id
 </code></pre>
 <p>在其他节点分别启动cadvisor和node-exporter容器</p>
-<pre><code class="language-yaml">version: '2'
-
-networks:
-    monitor:
-        driver: bridge
+<pre><code class="language-yaml">version: '3'
 
 services:
     node-exporter:
@@ -814,8 +813,6 @@ services:
           - '--path.procfs=/host/proc'
           - '--path.sysfs=/host/sys'
           - '--path.rootfs=/rootfs'
-        networks:
-            - monitor
     cadvisor:
         image: google/cadvisor:latest
         container_name: cadvisor
@@ -828,8 +825,6 @@ services:
             - /var/lib/docker/:/var/lib/docker:ro
         ports:
             - &quot;8080:8080&quot;
-        networks:
-            - monitor
 </code></pre>
 <p><strong>容器启动如下：</strong><br>
 <img src="https://chriswsq.github.io/post-images/1599121054830.png" alt="" loading="lazy"></p>

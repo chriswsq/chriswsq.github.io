@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-15T11:28:59.661Z</updated>
+    <updated>2020-09-16T07:37:21.701Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -11,106 +11,33 @@
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
     <entry>
-        <title type="html"><![CDATA[test]]></title>
+        <title type="html"><![CDATA[xuperchian 增减节点操作步骤]]></title>
         <id>https://chriswsq.github.io/post/test/</id>
         <link href="https://chriswsq.github.io/post/test/">
         </link>
         <updated>2020-09-15T11:19:03.000Z</updated>
-        <content type="html"><![CDATA[<p>app0001202007302056480751681</p>
-<p>所在节点<br>
-淮南2                 &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
-信息港金昌2           &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;,<br>
-潍坊2                 &quot;28HsYtaS1p7DqZ3QqXzCSsEk47dX4seU6o</p>
-<p>钱最多的是淮南2，需在淮南2执行提案操作</p>
-<hr>
-<p>app0001202007310000590617583</p>
-<p>所在节点<br>
-淮南2                &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
-信息港金昌1          &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
-济宁2                &quot;sMbiWCdbiAHn84p77zjepAzGn3F7ztzAD&quot;</p>
-<p>钱最多的是淮南2，需在淮南2执行提案操作</p>
-<hr>
-<p>app0001202008011331415497000</p>
-<p>所在节点</p>
-<p>淮南2               &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
-信息港金昌2         &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;,<br>
-济宁1               &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;</p>
-<p>钱最多的是淮南2，需在淮南2执行提案操作</p>
-<hr>
-<p>=====完</p>
-<p>app0001202008060914360435534</p>
-<p>所在节点</p>
-<p>潍坊1             &quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72&quot;,<br>
-济宁1             &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
-信息港金昌1       &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;</p>
-<p>钱最多的是潍坊1，需在潍坊1执行提案操作</p>
-<p>查看金额</p>
-<p>./xchain-cli account balance zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc --name app0001202008241658118354220</p>
-<p>100000000231084000000</p>
-<p>688505</p>
-<p>提案<br>
-./xchain-cli transfer --to scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72 --desc proposal_app0001202008060914360435534.json  --amount 1  --name app0001202008060914360435534</p>
-<p>ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918</p>
-<p>投票</p>
-<p>./xchain-cli vote ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918 --frozen 688990 --amount 55000000378835600000   --name app0001202008060914360435534</p>
-<p>74217bf729af8fc1b6acfbc5f953fbda029fb9078360ec301dfc113e690ac016</p>
-<p>查看共识节点</p>
-<p>./xchain-cli tdpos status --name  app0001202008060914360435534</p>
-<p>查看快高</p>
-<p>./xchain-cli status -H 127.0.0.1:37101 | jq '.blockchains[] | {&quot;name&quot;:.name,&quot;height&quot;:.ledger.trunkHeight}' | grep -A 1 app0001202008060914360435534</p>
-<hr>
-<p>app0001202008061655043329381</p>
-<p>所在节点<br>
-信息港金昌1    &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
-潍坊2          &quot;28HsYtaS1p7DqZ3QqXzCSsEk47dX4seU6o&quot;,<br>
-济宁1          &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;</p>
-<p>钱最多的是信息港金昌1，需在信息港金昌1执行提案操作</p>
-<hr>
-<p>===========  卡死  没法做</p>
-<p>app0001202008241658118354220</p>
-<p>所在节点</p>
-<p>苏州1                &quot;zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc&quot;,<br>
-淮南2                &quot;2A8cTP6dFjKoZPXyCx7T5APbQKCUzbgBsx&quot;,<br>
-信息港金昌2          &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;</p>
-<p>钱最多的是苏州1，需在苏州1执行提案操作</p>
-<p>55000000165462550000</p>
-<hr>
-<p>============</p>
-<p>app0001202009071731525216971</p>
-<p>所在节点</p>
-<p>苏州1          &quot;zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc&quot;,<br>
-信息港金昌1    &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
-济宁2          &quot;sMbiWCdbiAHn84p77zjepAzGn3F7ztzAD&quot;</p>
-<p>钱最多的是苏州1，需在苏州1执行提案操作</p>
-<hr>
-<p>app0001202009091117176212756</p>
-<p>所在节点</p>
-<p>苏州2          &quot;tmGrMmqsu33yrFQeYfaJ6mZM9K4xNit1r&quot;,<br>
-信息港金昌2    &quot;pecX9eVDd368J3GBfdPNtVUgnTu4nvD7b&quot;,<br>
-济宁1          &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;</p>
-<p>钱最多的是苏州2，需在苏州2执行提案操作</p>
-<hr>
-<p>xuper</p>
-<p>所在节点<br>
-济宁1             &quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
-淮南1             &quot;2C7isZoZkRjyP6G5SWRZDaK9ALPN7XSubq&quot;,<br>
-信息港金昌1       &quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
-潍坊1             &quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72</p>
-<hr>
-<p>testtest_zxl6</p>
-<p>所在节点<br>
-&quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
-&quot;2C7isZoZkRjyP6G5SWRZDaK9ALPN7XSubq&quot;,<br>
-&quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
-&quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72&quot;</p>
-<h2 id="平行链hang住">平行链hang住</h2>
-<p>testtest_zxl7</p>
-<p>所在节点<br>
-&quot;qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am&quot;,<br>
-&quot;2C7isZoZkRjyP6G5SWRZDaK9ALPN7XSubq&quot;,<br>
-&quot;27xoBigJ6HRqtqQtohvaoMyBt55uECtNbV&quot;,<br>
-&quot;scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72&quot;</p>
-<p>平行链hang住</p>
+        <content type="html"><![CDATA[<h1 id="查询金额">查询金额</h1>
+<pre><code class="language-bash">./xchain-cli account balance zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc --name app000120200824165811835422
+</code></pre>
+<h1 id="查看块高">查看块高</h1>
+<pre><code class="language-bash">./xchain-cli status -H 127.0.0.1:37101 | jq '.blockchains[] | {&quot;name&quot;:.name,&quot;height&quot;:.ledger.trunkHeight}' | grep -A 1 app000120200824165811835422
+</code></pre>
+<h1 id="提案">提案</h1>
+<pre><code class="language-bash">./xchain-cli transfer --to scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72 --desc proposal_app000120200824165811835422.json  --amount 1  --name app000120200824165811835422
+
+ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918
+</code></pre>
+<h1 id="投票">投票</h1>
+<pre><code class="language-bash">./xchain-cli vote ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918 --frozen 138160 --amount 52000000071795360000   --name app000120200824165811835422
+
+74217bf729af8fc1b6acfbc5f953fbda029fb9078360ec301dfc113e690ac016
+</code></pre>
+<h1 id="查看交易内容">查看交易内容</h1>
+<pre><code class="language-bash">./xchain-cli tx query  74217bf729af8fc1b6acfbc5f953fbda029fb9078360ec301dfc113e690ac016
+</code></pre>
+<h1 id="查看共识节点">查看共识节点</h1>
+<pre><code class="language-bash">./xchain-cli tdpos status --name   app000120200824165811835422
+</code></pre>
 ]]></content>
     </entry>
     <entry>

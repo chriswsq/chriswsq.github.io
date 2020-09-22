@@ -19,7 +19,7 @@
 <div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 <div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
 <div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
-<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1600398358601" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1600776001227" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 </div></div>
 <script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
 
@@ -27,32 +27,43 @@
 <article class="post">
 <h2 class="post_title sm_margin"><a>xuperchian 增减节点操作步骤</a></h2>
 <script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
-<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-09-15</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px"></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">202字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">2 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-09-15</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px"></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">429字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">3 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
 </section>
 
 <div style="display:flex">
 <div class="md_block" id="md_block">
 <div class="round-shape-one"></div>
-<h1 id="查询金额">查询金额</h1>
+<h1 id="加入群组">加入群组</h1>
+<h2 id="查看当前群组节点">查看当前群组节点</h2>
+<pre><code class="language-bash">./xchain-cli wasm query group_chain --method listNode -a '{&quot;bcname&quot;:&quot;app000120200824165811835422&quot;}'
+</code></pre>
+<h2 id="节点加入群组">节点加入群组</h2>
+<pre><code class="language-bash">./xchain-cli wasm invoke group_chain --method addNode -a '{&quot;bcname&quot;:&quot;app000120200824165811835422&quot;, &quot;ip&quot;:&quot;/ip4/192.168.40.6/tcp/40001/p2p/QmY7UxwcLpD8QK8p6gAk99xuz3Q16jcaCoU8iMokVWYa83&quot;, &quot;address&quot;:&quot;2B1rDQhq7W4TStSHoD88N1SUYXrCDV821v&quot;}'
+</code></pre>
+<blockquote>
+<p>将bcname 、ip 、 address改为实际的参数即可</p>
+</blockquote>
+<h1 id="更改共识节点">更改共识节点</h1>
+<h2 id="查询金额">查询金额</h2>
 <pre><code class="language-bash">./xchain-cli account balance zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc --name app000120200824165811835422
 </code></pre>
-<h1 id="查看块高">查看块高</h1>
+<h2 id="查看块高">查看块高</h2>
 <pre><code class="language-bash">./xchain-cli status -H 127.0.0.1:37101 | jq '.blockchains[] | {&quot;name&quot;:.name,&quot;height&quot;:.ledger.trunkHeight}' | grep -A 1 app000120200824165811835422
 </code></pre>
-<h1 id="提案">提案</h1>
+<h2 id="提案">提案</h2>
 <pre><code class="language-bash">./xchain-cli transfer --to scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72 --desc proposal_app000120200824165811835422.json  --amount 1  --name app000120200824165811835422
 
 ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918
 </code></pre>
-<h1 id="投票">投票</h1>
+<h2 id="投票">投票</h2>
 <pre><code class="language-bash">./xchain-cli vote ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918 --frozen 138160 --amount 52000000071795360000   --name app000120200824165811835422
 
 74217bf729af8fc1b6acfbc5f953fbda029fb9078360ec301dfc113e690ac016
 </code></pre>
-<h1 id="查看交易内容">查看交易内容</h1>
+<h2 id="查看交易内容">查看交易内容</h2>
 <pre><code class="language-bash">./xchain-cli tx query  74217bf729af8fc1b6acfbc5f953fbda029fb9078360ec301dfc113e690ac016
 </code></pre>
-<h1 id="查看共识节点">查看共识节点</h1>
+<h2 id="查看共识节点">查看共识节点</h2>
 <pre><code class="language-bash">./xchain-cli tdpos status --name   app000120200824165811835422
 </code></pre>
 <h1 id="提案内容">提案内容</h1>
@@ -85,17 +96,34 @@ ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918
     }
 }
 </code></pre>
+<blockquote>
+<p>注意： 以上将 address、p2p、proposer_num等改为实际数据即可<br>
+命令添加群组，一次性添加两个以上群组 不生效,须一个一个添加<br>
+用命令行创建平行链，如果命令写错不报命令的错误，而会报其他的问题    例如 地址不在白名单<br>
+后续加入群组的节点，需要重启才会同步块数据<br>
+在进行提案的时候经常会导致xuper链或其他调整的链快高不一致的情况，这时候重启解决问题</p>
+</blockquote>
 
 <span id="footnote"></span>
 <div id = "warn"></div>
 </div>
 <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#%E5%8A%A0%E5%85%A5%E7%BE%A4%E7%BB%84">加入群组</a>
+<ul>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E7%BE%A4%E7%BB%84%E8%8A%82%E7%82%B9">查看当前群组节点</a></li>
+<li><a href="#%E8%8A%82%E7%82%B9%E5%8A%A0%E5%85%A5%E7%BE%A4%E7%BB%84">节点加入群组</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9B%B4%E6%94%B9%E5%85%B1%E8%AF%86%E8%8A%82%E7%82%B9">更改共识节点</a>
+<ul>
 <li><a href="#%E6%9F%A5%E8%AF%A2%E9%87%91%E9%A2%9D">查询金额</a></li>
 <li><a href="#%E6%9F%A5%E7%9C%8B%E5%9D%97%E9%AB%98">查看块高</a></li>
 <li><a href="#%E6%8F%90%E6%A1%88">提案</a></li>
 <li><a href="#%E6%8A%95%E7%A5%A8">投票</a></li>
 <li><a href="#%E6%9F%A5%E7%9C%8B%E4%BA%A4%E6%98%93%E5%86%85%E5%AE%B9">查看交易内容</a></li>
 <li><a href="#%E6%9F%A5%E7%9C%8B%E5%85%B1%E8%AF%86%E8%8A%82%E7%82%B9">查看共识节点</a></li>
+</ul>
+</li>
 <li><a href="#%E6%8F%90%E6%A1%88%E5%86%85%E5%AE%B9">提案内容</a></li>
 </ul>
 </div>

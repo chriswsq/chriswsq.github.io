@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-18T03:06:00.567Z</updated>
+    <updated>2020-09-22T12:00:04.402Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -38,26 +38,37 @@
         <link href="https://chriswsq.github.io/post/test/">
         </link>
         <updated>2020-09-15T11:19:03.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="查询金额">查询金额</h1>
+        <content type="html"><![CDATA[<h1 id="加入群组">加入群组</h1>
+<h2 id="查看当前群组节点">查看当前群组节点</h2>
+<pre><code class="language-bash">./xchain-cli wasm query group_chain --method listNode -a '{&quot;bcname&quot;:&quot;app000120200824165811835422&quot;}'
+</code></pre>
+<h2 id="节点加入群组">节点加入群组</h2>
+<pre><code class="language-bash">./xchain-cli wasm invoke group_chain --method addNode -a '{&quot;bcname&quot;:&quot;app000120200824165811835422&quot;, &quot;ip&quot;:&quot;/ip4/192.168.40.6/tcp/40001/p2p/QmY7UxwcLpD8QK8p6gAk99xuz3Q16jcaCoU8iMokVWYa83&quot;, &quot;address&quot;:&quot;2B1rDQhq7W4TStSHoD88N1SUYXrCDV821v&quot;}'
+</code></pre>
+<blockquote>
+<p>将bcname 、ip 、 address改为实际的参数即可</p>
+</blockquote>
+<h1 id="更改共识节点">更改共识节点</h1>
+<h2 id="查询金额">查询金额</h2>
 <pre><code class="language-bash">./xchain-cli account balance zALW2YRp55LFuro1uAjgfoGTqCjgz3nHc --name app000120200824165811835422
 </code></pre>
-<h1 id="查看块高">查看块高</h1>
+<h2 id="查看块高">查看块高</h2>
 <pre><code class="language-bash">./xchain-cli status -H 127.0.0.1:37101 | jq '.blockchains[] | {&quot;name&quot;:.name,&quot;height&quot;:.ledger.trunkHeight}' | grep -A 1 app000120200824165811835422
 </code></pre>
-<h1 id="提案">提案</h1>
+<h2 id="提案">提案</h2>
 <pre><code class="language-bash">./xchain-cli transfer --to scocy5ZTaFykhRGGYxN9KSEkpxCD1cd72 --desc proposal_app000120200824165811835422.json  --amount 1  --name app000120200824165811835422
 
 ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918
 </code></pre>
-<h1 id="投票">投票</h1>
+<h2 id="投票">投票</h2>
 <pre><code class="language-bash">./xchain-cli vote ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918 --frozen 138160 --amount 52000000071795360000   --name app000120200824165811835422
 
 74217bf729af8fc1b6acfbc5f953fbda029fb9078360ec301dfc113e690ac016
 </code></pre>
-<h1 id="查看交易内容">查看交易内容</h1>
+<h2 id="查看交易内容">查看交易内容</h2>
 <pre><code class="language-bash">./xchain-cli tx query  74217bf729af8fc1b6acfbc5f953fbda029fb9078360ec301dfc113e690ac016
 </code></pre>
-<h1 id="查看共识节点">查看共识节点</h1>
+<h2 id="查看共识节点">查看共识节点</h2>
 <pre><code class="language-bash">./xchain-cli tdpos status --name   app000120200824165811835422
 </code></pre>
 <h1 id="提案内容">提案内容</h1>
@@ -90,6 +101,13 @@ ae074dc967e0a03b81346a8e4796b01fe15b51472d3ba34f191d6b08e24a1918
     }
 }
 </code></pre>
+<blockquote>
+<p>注意： 以上将 address、p2p、proposer_num等改为实际数据即可<br>
+命令添加群组，一次性添加两个以上群组 不生效,须一个一个添加<br>
+用命令行创建平行链，如果命令写错不报命令的错误，而会报其他的问题    例如 地址不在白名单<br>
+后续加入群组的节点，需要重启才会同步块数据<br>
+在进行提案的时候经常会导致xuper链或其他调整的链快高不一致的情况，这时候重启解决问题</p>
+</blockquote>
 ]]></content>
     </entry>
     <entry>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-23T02:19:36.130Z</updated>
+    <updated>2020-09-23T02:27:54.143Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -34,8 +34,8 @@
     </entry>
     <entry>
         <title type="html"><![CDATA[xuperchian 增减共识节点、添加群组操作步骤]]></title>
-        <id>https://chriswsq.github.io/post/xuperchian-zeng-jian-gong-shi-jie-dian-tian-jia-qun-zu-cao-zuo-bu-zou/</id>
-        <link href="https://chriswsq.github.io/post/xuperchian-zeng-jian-gong-shi-jie-dian-tian-jia-qun-zu-cao-zuo-bu-zou/">
+        <id>https://chriswsq.github.io/post/xuperchian-change-Common-node/</id>
+        <link href="https://chriswsq.github.io/post/xuperchian-change-Common-node/">
         </link>
         <updated>2020-09-15T11:19:03.000Z</updated>
         <content type="html"><![CDATA[<h1 id="加入群组">加入群组</h1>

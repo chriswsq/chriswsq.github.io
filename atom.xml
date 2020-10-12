@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-09-27T06:20:29.233Z</updated>
+    <updated>2020-10-12T07:23:40.450Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,257 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[轻量级日志系统Loki原理简介和使用]]></title>
+        <id>https://chriswsq.github.io/post/qing-liang-ji-ri-zhi-xi-tong-loki-yuan-li-jian-jie-he-shi-yong/</id>
+        <link href="https://chriswsq.github.io/post/qing-liang-ji-ri-zhi-xi-tong-loki-yuan-li-jian-jie-he-shi-yong/">
+        </link>
+        <updated>2020-10-12T05:40:24.000Z</updated>
+        <content type="html"><![CDATA[<pre><code> 目前公司未采用传统的zabbix对服务器监控，而采用了prometheus。以前监控日志的时候是采用
+</code></pre>
+<p>elastalert+logstash+kibana+filebeat+zookeeper+kafka 来做日志方面的监控告警。后来了解到有loki这样一个日志系统，上网搜了一番资料做了一些对比</p>
+<h2 id="日志监控系统elkloki">日志监控系统elk，loki</h2>
+<h3 id="elk">ELK</h3>
+<p>优势：<br>
+1、功能丰富，允许复杂的操作（增减字段，调整字段书序，数据json化）<br>
+劣势：<br>
+1、主流的ELK（全文检索）或者EFK比较重<br>
+2、ES复杂的搜索功能很多都用不上 规模复杂，资源占用高，操作苦难<br>
+大多数查询只关注一定时间范围和一些简单的参数（如host、service等）<br>
+3、Kibana和Grafana之间切换，影响用户体验<br>
+4、倒排索引的切分和共享的成本较高</p>
+<h3 id="loki">Loki</h3>
+<p>1、最小化度量和日志的切换成本<br>
+有助于减少异常事件的响应时间和提高用户的体验<br>
+2、在查询语言的易操作性和复杂性之间可以达到一个权衡<br>
+3、更具成本效益</p>
+<h2 id="项目主页">项目主页</h2>
+<p>https://github.com/grafana/loki</p>
+<h2 id="loki组件介绍">loki组件介绍</h2>
+<h3 id="promtail">Promtail</h3>
+<p>用来将容器日志发送到 Loki 或者 Grafana 服务上的日志收集工具<br>
+该工具主要包括发现采集目标以及给日志流添加上 Label 标签 然后发送给 Loki<br>
+Promtail 的服务发现是基于 Prometheus 的服务发现机制实现的</p>
+<h3 id="loki-2">Loki</h3>
+<p>受 Prometheus 启发的可以水平扩展、高可用以及支持多租户的日志聚合系统<br>
+使用了和 Prometheus 相同的服务发现机制，将标签添加到日志流中而不是构建全文索引<br>
+从 Promtail 接收到的日志和应用的 metrics 指标就具有相同的标签集<br>
+不仅提供了更好的日志和指标之间的上下文切换，还避免了对日志进行全文索引</p>
+<h3 id="grafana">Grafana</h3>
+<p>一个用于监控和可视化观测的开源平台<br>
+支持非常丰富的数据源<br>
+在 Loki 技术栈中它专门用来展示来自 Prometheus 和 Loki 等数据源的时间序列数据<br>
+可进行查询、可视化、报警等操作<br>
+可以用于创建、探索和共享数据 Dashboard<br>
+鼓励数据驱动</p>
+<h2 id="安装loki">安装loki</h2>
+<p>这里我使用docker 安装，下面是compose文件</p>
+<pre><code class="language-yaml">version: &quot;3&quot;
+services:
+  loki:
+    image: &quot;grafana/loki&quot;
+    container_name: &quot;loki&quot;
+    restart: &quot;always&quot;
+    volumes:
+      - &quot;/etc/localtime:/etc/localtime&quot;
+      - &quot;/usr/local/src/loki/:/etc/loki&quot;
+      - &quot;./loki:/loki&quot;
+    ports:
+      - &quot;3100:3100&quot;
+    command: &quot;-config.file=/etc/loki/local-config.yaml&quot;
+</code></pre>
+<p>记得要修改loki文件夹的所有者为 10001 不然会提示权限不足</p>
+<p><code>chown -Rf 10001:10001 loki</code></p>
+<p>之后使用docker-compose启动</p>
+<p><code>docker-compose up -d</code></p>
+<p>就这样loki的服务端就ok了，下面说下几个坑，第一个是</p>
+<pre><code class="language-bash">^[level=warn ts=2020-07-06T06:54:12.754273854Z caller=client.go:242 component=client host=192.179.11.1:3100 msg=&quot;error sending batch, will retry&quot; status=429 error=&quot;server returned HTTP status 429 Too Many Requests (429): Ingestion rate limit exceeded (limit: 6291456 bytes/sec) while attempting to ingest '221' lines totaling '101946' bytes, reduce log volume or contact your Loki administrator to see if the limit can be increased&quot;
+</code></pre>
+<p>当你搭建完成promtail，并且启动发送日志到loki的时候很有可能会碰到这个错误，因为你要收集的日志太多了，超过了loki的限制，所以会报429，如果你要增加限制可以修改loki的配置文件,在limits_config中添加</p>
+<p><code>ingestion_rate_mb: 15</code></p>
+<p>如果你是老版本的loki，那么是添加</p>
+<p><code>ingestion_rate: 25000</code></p>
+<p>详细可以看下面</p>
+<p>https://github.com/grafana/loki/pull/1278/files/f468d5d258a42316036290fad1b795c40bec22e4#diff-935fd110763ed3367d3ea740a3d3c072</p>
+<p>还有一个坑是<br>
+<code>level=error ts=2020-07-06T03:58:02.217480067Z caller=client.go:247 component=client host=192.179.11.1:3100 msg=&quot;final error sending batch&quot; status=400 error=&quot;server returned HTTP status 400 Bad Request (400): entry for stream '{app=\&quot;app_error\&quot;, filename=\&quot;/error.log\&quot;, host=\&quot;192.179.11.12\&quot;}' has timestamp too new: 2020-07-06 03:58:01.175699907 +0000 UTC&quot;</code><br>
+这个是两台机器的时间相差太大了，我promtail这台机器的时间没有和ntp服务器同步时间，所以就报了这个错误，只要把时间都同步了就好了</p>
+<p><strong>我的最终配置文件</strong></p>
+<pre><code class="language-yaml">auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+ingester:
+  lifecycler:
+    address: 127.0.0.1
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+    final_sleep: 0s
+  chunk_idle_period: 5m
+  chunk_retain_period: 30s
+  max_transfer_retries: 0
+
+schema_config:
+  configs:
+    - from: 2020-07-01
+      store: boltdb
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 168h
+
+storage_config:
+  boltdb:
+    directory: /loki/index
+
+  filesystem:
+    directory: /loki/chunks
+
+limits_config:
+  enforce_metric_name: false
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+  ingestion_rate_mb: 15
+
+chunk_store_config:
+  max_look_back_period: 0s
+
+table_manager:
+  retention_deletes_enabled: false
+  retention_period: 0s
+</code></pre>
+<h2 id="安装promtail">安装promtail</h2>
+<p>这里我使用docker 安装，下面是compose文件</p>
+<pre><code class="language-yaml">version: &quot;3&quot;
+services:
+  promtail:
+    image: grafana/promtail:1.5.0
+    container_name: promtail
+    restart: always
+    volumes:
+      - $PWD:/etc/promtail
+      - /bsn/xuperchain/output/logs/xchain.log:/bsn/xuperchain/output/logs/xchain.log
+    command:
+      -config.file=/etc/promtail/promtail-docker-config.yaml
+</code></pre>
+<p><strong>配置文件如下</strong></p>
+<pre><code class="language-yaml">server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: ./positions.yaml
+
+clients:
+  - url: http://192.168.40.6:3100/loki/api/v1/push
+
+scrape_configs:
+ - job_name: xuperchain
+   static_configs:
+   - labels:
+      app: local_xchain
+      host: 192.168.40.7
+      env: prod
+      __path__: /bsn/xuperchain/output/logs/xchain.log
+</code></pre>
+<p>之后使用docker-compose启动</p>
+<p><code>docker-compose up -d</code></p>
+<h2 id="安装grafana">安装grafana</h2>
+<pre><code class="language-yaml">version: &quot;3&quot;
+services:
+  grafana:
+    image: grafana/grafana:7.1.5
+    container_name: grafana
+    restart: always
+    volumes:
+     - /bsn/prometheus/grafana:/var/lib/grafana
+     - /bsn/prometheus/grafana/grafana.ini:/etc/grafana/grafana.ini
+     - /etc/localtime:/etc/localtime
+    ports:
+     - 3000:3000
+</code></pre>
+<p><strong>配置文件</strong><br>
+下载一个grafana的tar包用即可，也可下载镜像后拷出来grafana.ini文件即可</p>
+<p><strong>访问grafana界面</strong></p>
+<p>http://192.168.40.6:3000/</p>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1602485759409.png" alt="" loading="lazy"></figure>
+<p>默认的登陆账号 admin/admin</p>
+<p>然后添加loki数据源<br>
+<img src="https://chriswsq.github.io/post-images/1602485889822.png" alt="" loading="lazy"></p>
+<p>url添加  http://192.168.40.6:3100<br>
+<img src="https://chriswsq.github.io/post-images/1602485944668.png" alt="" loading="lazy"></p>
+<p>点击Exporter 选择loki选择相应的label</p>
+<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1602486257770.png" alt="" loading="lazy"></figure>
+<h2 id="loki-日志查询语言">Loki 日志查询语言</h2>
+<p>基本的LogQL查询由两部分组成：log stream selector、filter expression</p>
+<h3 id="log-stream-selector">Log stream selector</h3>
+<p>它由一个或多个键值对组成，每个键是一个日志标签，值的话是标签的值，例如<br>
+<code>{app=&quot;local_xchain&quot;,host=&quot;192.168.40.7&quot;}</code></p>
+<p>在这个例子中，记录具有的标签流app，其值是local_xhcain和的一个标签host，它的值192.168.40.7将被包括在查询结果。注意，这将匹配其标签至少 包含192.168.40.7其名称标签的任何日志流；如果有多个包含该标签的流，则所有匹配流的日志将显示在结果中。</p>
+<p>支持以下标签匹配运算符：</p>
+<p>=：完全相等。<br>
+!=：不相等。<br>
+=~：正则表达式匹配。<br>
+!~：正则表达式不匹配。</p>
+<p>适用于Prometheus标签选择器的相同规则也适用 于Loki日志流选择器。</p>
+<p>Filter expression<br>
+写入日志流选择器后，可以使用搜索表达式进一步过滤生成的日志集。搜索表达式可以只是文本或正则表达式：</p>
+<ul>
+<li>{job=“mysql”} |= “error”</li>
+<li>{name=“kafka”} |~ “tsdb-ops.*io:2003”</li>
+<li>{instance=~“kafka-[23]”,name=“kafka”} != kafka.server:type=ReplicaManager</li>
+</ul>
+<p>运算符说明</p>
+<ul>
+<li>|=：日志行包含字符串。</li>
+<li>!=：日志行不包含字符串。</li>
+<li>|~：日志行匹配正则表达式。</li>
+<li>!~：日志行与正则表达式不匹配。</li>
+</ul>
+<h3 id="指标查询">指标查询</h3>
+<h4 id="范围向量">范围向量</h4>
+<p>LogQL 与Prometheus 具有相同的范围向量概念，不同之处在于所选的样本范围包括每个日志条目的值1。可以在所选范围内应用聚合，以将其转换为实例向量。</p>
+<p><strong>注：对于此种查询，需要添加数据源，选择promethes，但是地址为loki的地址，并在最后添加/lok即可</strong></p>
+<p>当前支持的操作功能为：</p>
+<ul>
+<li>rate：计算每秒的条目数</li>
+<li>count_over_time：计算给定范围内每个日志流的条目。</li>
+</ul>
+<p>//对fluent-bit作业在最近五分钟内的所有日志行进行计数。</p>
+<p><code>count_over_time({job=&quot;fluent-bit&quot;}[5m])</code></p>
+<p>获取fluent-bit作业在过去十秒内所有非超时错误的每秒速率。</p>
+<p><code>rate({job=&quot;fluent-bit&quot;} |= &quot;error&quot; != &quot;timeout&quot; [10s]</code></p>
+<h4 id="集合运算符">集合运算符</h4>
+<p>与PromQL一样，LogQL支持内置聚合运算符的一个子集，可用于聚合单个向量的元素，从而产生具有更少元素但具有集合值的新向量：</p>
+<ul>
+<li>sum：计算标签上的总和</li>
+<li>min：选择最少的标签</li>
+<li>max：选择标签上方的最大值</li>
+<li>avg：计算标签上的平均值</li>
+<li>stddev：计算标签上的总体标准差</li>
+<li>stdvar：计算标签上的总体标准方差</li>
+<li>count：计算向量中元素的数量</li>
+<li>bottomk：通过样本值选择最小的k个元素</li>
+<li>topk：通过样本值选择最大的k个元素</li>
+</ul>
+<p>可以通过包含a without或 by子句，使用聚合运算符聚合所有标签值或一组不同的标签值：</p>
+<p><code>&lt;aggr-op&gt;([parameter,] &lt;vector expression&gt;) [without|by (&lt;label list&gt;)]</code></p>
+<p>举例：</p>
+<p>统计最高日志吞吐量按container排序前十的应用程序<br>
+<code>topk(10,sum(rate({job=&quot;fluent-bit&quot;}[5m])) by(container))</code></p>
+<p>获取最近五分钟内的日志计数，按级别分组<br>
+<code>sum(count_over_time({job=&quot;fluent-bit&quot;}[5m])) by (level)</code></p>
+<p>更多内容请参考：https://github.com/grafana/loki/blob/master/docs/logql.md</p>
+<p>参考文档：<br>
+https://blog.csdn.net/weixin_44267608/article/details/105264432<br>
+https://segmentfault.com/a/1190000023379491<br>
+https://www.bboy.app/2020/07/08/%E4%BD%BF%E7%94%A8loki%E8%BF%9B%E8%A1%8C%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86/</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[xuperchian  建链未成功手动修复]]></title>
         <id>https://chriswsq.github.io/post/xuperchian change Common node/</id>
@@ -1388,186 +1639,6 @@ date {
   add_field =&gt; { &quot;debug&quot; =&gt; &quot;timestampMatched&quot;}
 }
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[elk用户认证问题]]></title>
-        <id>https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/</id>
-        <link href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/">
-        </link>
-        <updated>2020-08-27T05:52:58.000Z</updated>
-        <summary type="html"><![CDATA[<p>elk7+的用户认证免费了，不过没有集成在安装包里，还需要自己再进行一些操作，在此记录下自己再配置用户认证时遇到的问题</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>elk7+的用户认证免费了，不过没有集成在安装包里，还需要自己再进行一些操作，在此记录下自己再配置用户认证时遇到的问题</p>
-<!-- more -->
-<h2 id="开启安全功能">开启安全功能</h2>
-<p>首先在es配置文件中开启安全功能</p>
-<pre><code>.....
-
-xpack.security.enabled: true
-xpack.security.transport.ssl.enabled
-</code></pre>
-<p>然后重启es服务</p>
-<h2 id="生成证书配置node间ssl通信">生成证书，配置Node间SSL通信</h2>
-<h3 id="创建ca证书">创建ca证书</h3>
-<pre><code>$ bin/elasticsearch-certutil ca -v
-</code></pre>
-<p>一路回车即可</p>
-<p>默认的CA证书存放在$ES_HOME 目录中</p>
-<p>这个命令生成格式为PKCS#12名称为 elastic-stack-ca.p12 的keystore文件，包含CA证书和私钥。</p>
-<h3 id="创建节点间认证用的证书">创建节点间认证用的证书</h3>
-<pre><code>$ ./bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12 
-</code></pre>
-<p>一路回车即可</p>
-<h3 id="配置es节点使用这个证书">配置ES节点使用这个证书</h3>
-<pre><code>$ mkdir config/certs
-$ mv elastic-* config/certs/
-ll config/certs/
-
--rw------- 1 elasticsearch root 3443 Jun  9 15:22 elastic-certificates.p12
--rw------- 1 elasticsearch root 2527 Jun  9 15:22 elastic-stack-ca.p12
-</code></pre>
-<p>拷贝这个目录到所有的ES节点中<br>
-config/certs 目录中不需要拷贝CA证书文件，只拷贝cert文件即可</p>
-<p>配置elasticsearch.yml配置文件，注意所有的node节点都需要配置，这里的配置是使用PKCS#12格式的证书。</p>
-<pre><code>$ vim  config/elasticsearch.yml
-xpack.security.enabled: true
-xpack.security.transport.ssl.enabled: true
-xpack.security.transport.ssl.verification_mode: certificate #认证方式使用证书
-xpack.security.transport.ssl.keystore.path: certs/elastic-certificates.p12
-xpack.security.transport.ssl.truststore.path: certs/elastic-certificates.p12
-</code></pre>
-<h2 id="测试能够正常启动了-好了我们再来继续之前的生成密码在随意一台节点即可">测试能够正常启动了。好了，我们再来继续之前的生成密码：在随意一台节点即可。</h2>
-<p>生成密码有两个命令，一个为自动生成，一个为手动生成</p>
-<p>自动<br>
-<code>bin/elasticsearch-setup-passwords auto</code><br>
-手动<br>
-<code>bin/elasticsearch-setup-passwords interactive</code></p>
-<p>这里我们选择自动</p>
-<pre><code>[root@elasticsearch1 elasticsearch]# bin/elasticsearch-setup-passwords auto
-Initiating the setup of passwords for reserved users elastic,apm_system,kibana,logstash_system,beats_system,remote_monitoring_user.
-The passwords will be randomly generated and printed to the console.
-Please confirm that you would like to continue [y/N]y
-
-
-Changed password for user apm_system
-PASSWORD apm_system = EKPbqziKu4v3P0MYoYIJ
-
-Changed password for user kibana
-PASSWORD kibana = 48Sf7tIFArn4rmyMW2x4
-
-Changed password for user logstash_system
-PASSWORD logstash_system = O09XtxP495uNRxHRZxtC
-
-Changed password for user beats_system
-PASSWORD beats_system = ULC810uP0sVCAKhbwxvE
-
-Changed password for user remote_monitoring_user
-PASSWORD remote_monitoring_user = zqnO9YBFsoRu5QIsgOi6
-
-Changed password for user elastic
-PASSWORD elastic = d27DuDQjTChIdv3sE8oI
-
-</code></pre>
-<p>查看集群节点数量：</p>
-<pre><code>[root@test-1 conf]# curl -u elastic 192.168.154.6:9200/_cat/nodes
-Enter host password for user 'elastic':
-10.0.0.67 32 88 1 0.12 0.08 0.43 ilmr   - node-1
-10.0.0.92 14 80 1 0.12 0.07 0.22 dilmrt * node-2
-10.0.0.93 12 79 1 0.00 0.03 0.24 dilmrt - node-3
-</code></pre>
-<h2 id="kibana的安装配置">kibana的安装配置</h2>
-<h3 id="编辑配置文件">编辑配置文件</h3>
-<pre><code>$ cat kibana/config/kibana.yml |grep -Ev &quot;^$|^#&quot;
-server.port: 5601
-server.host: &quot;0.0.0.0&quot;
-server.name: &quot;mykibana&quot;
-elasticsearch.hosts: [&quot;http://localhost:9200&quot;]
-kibana.index: &quot;.kibana&quot;
-elasticsearch.username: &quot;kibana&quot;
-elasticsearch.password: &quot;UKuHceHWudloJk9NvHlX&quot;
-# i18n.locale: &quot;en&quot;
-i18n.locale: &quot;zh-CN&quot;
-xpack.security.encryptionKey: Hz*9yFFaPejHvCkhT*ddNx%WsBgxVSCQ
-</code></pre>
-<h3 id="页面访问kibana">页面访问kibana</h3>
-<figure data-type="image" tabindex="1"><img src="/images/elk%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/kibana-login.jpg" alt="" loading="lazy"></figure>
-<p>输入上面生成的管理员elastic的用户和密码，就可以登陆了，我们查看一下license许可吧：<br>
-<img src="/images/elk%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81/kibana-basic.jpg" alt="" loading="lazy"></p>
-<p>一个使用永不过期的Basic许可的免费License，开启了基本的Auth认证和集群间SSL/TLS 认证的Elasticsearch集群就创建完毕了。</p>
-<p>等等，你有没有想过Kibana的配置文件中使用着明文的用户名密码，这里只能通过LInux的权限进行控制了，有没有更安全的方式呢，有的，就是keystore。</p>
-<h3 id="kibana-keystore-安全配置">kibana keystore 安全配置</h3>
-<p><a href="https://www.elastic.co/guide/en/kibana/7.7/secure-settings.html">参考官方</a></p>
-<p>查看<code>kibana-keystore</code>命令帮助：</p>
-<pre><code>$ ./bin/kibana-keystore --help
-Usage: bin/kibana-keystore [options] [command]
-
-A tool for managing settings stored in the Kibana keystore
-
-Options:
-  -V, --version           output the version number
-  -h, --help              output usage information
-
-Commands:
-  create [options]        Creates a new Kibana keystore
-  list [options]          List entries in the keystore
-  add [options] &lt;key&gt;     Add a string setting to the keystore
-  remove [options] &lt;key&gt;  Remove a setting from the keystore
-
-</code></pre>
-<p>首先我们创建keystore：</p>
-<pre><code>$ bin/kibana-keystore create
-Created Kibana keystore in /opt/elk74/kibana-7.4.2-linux-x86_64/data/kibana.keystore # 默认存放位置
-</code></pre>
-<p>增加配置：</p>
-<p>我们要吧kibana.yml 配置文件中的敏感信息，比如：elasticsearch.username 和 elasticsearch.password，给隐藏掉，或者直接去掉；</p>
-<p>所以这里我们增加两个配置：分别是elasticsearch.password 和 elasticsearch.username:</p>
-<pre><code># 查看add的命令帮助：
-$ ./bin/kibana-keystore add --help
-Usage: add [options] &lt;key&gt;
-
-Add a string setting to the keystore
-
-Options:
-  -f, --force   overwrite existing setting without prompting
-  -x, --stdin   read setting value from stdin
-  -s, --silent  prevent all logging
-  -h, --help    output usage information
-
-# 创建elasticsearch.username这个key：注意名字必须是kibana.yml中的key
-$ ./bin/kibana-keystore add elasticsearch.username
-Enter value for elasticsearch.username: ******  # 输入key对应的value，这里是kibana连接es的账号：kibana
-
-# 创建elasticsearch.password这个key
-$ ./bin/kibana-keystore add elasticsearch.password
-Enter value for elasticsearch.password: ******************** # 输入对应的密码：UKuHceHWudloJk9NvHlX
-</code></pre>
-<p>好了，我们把kibana.yml配置文件中的这两项配置删除即可，然后直接启动kibana，kibana会自动已用这两个配置的。</p>
-<p>最终的kibana.yml配置如下：</p>
-<pre><code>server.port: 5601
-server.host: &quot;0.0.0.0&quot;
-server.name: &quot;mykibana&quot;
-elasticsearch.hosts: [&quot;http://localhost:9200&quot;]
-kibana.index: &quot;.kibana&quot;
-# i18n.locale: &quot;en&quot;
-i18n.locale: &quot;zh-CN&quot;
-xpack.security.encryptionKey: Hz*9yFFaPejHvCkhT*ddNx%WsBgxVSCQ
-</code></pre>
-<p>这样配置文件中就不会出现敏感信息了，达到了更高的安全性。</p>
-<p>类似的Keystore方式不只是Kibana支持，ELK的产品都是支持的。</p>
-<p><strong>注意：两个证书文件属主须是启动用户，certs权限为744即可，权限不够会报错,其他节点权限也一样</strong></p>
-<pre><code>elk_elasticsearch1.1.rqtnwnm1sqzw@test-1    | uncaught exception in thread [main]
-elk_elasticsearch1.1.rqtnwnm1sqzw@test-1    | ElasticsearchSecurityException[failed to load SSL configuration [xpack.security.transport.ssl]]; nested: ElasticsearchException[failed to initialize SSL TrustManager - not permitted to read truststore file [/usr/share/elasticsearch/config/certs/elastic-certificates.p12]]; nested: AccessDeniedException[/usr/share/elasticsearch/config/certs/elastic-certificates.p12];
-elk_elasticsearch1.1.jp9k598g34hq@test-1    | &quot;... 6 more&quot;] }
-elk_elasticsearch1.1.yk71h6aom47z@test-1    | &quot;at org.elasticsearch.node.Node.&lt;init&gt;(Node.java:481) ~[elasticsearch-7.7.0.jar:7.7.0]&quot;,
-elk_elasticsearch1.1.w26656n32a86@test-1    | &quot;... 6 more&quot;] }
-elk_elasticsearch1.1.w26656n32a86@test-1    | ElasticsearchSecurityException[failed to load SSL configuration [xpack.security.transport.ssl]]; nested: ElasticsearchException[failed to initialize SSL TrustManager - not permitted to read truststore file [/usr/share/elasticsearch/config/certs/elastic-certificates.p12]]; nested: AccessDeniedException[/usr/share/elasticsearch/config/certs/elastic-certificates.p12];
-elk_elasticsearch1.1.rqtnwnm1sqzw@test-1    | Likely root cause: java.nio.file.AccessDeniedException: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-elk_elasticsearch1.1.jp9k598g34hq@test-1    | ElasticsearchSecurityException[failed to load SSL configuration [xpack.security.transport.ssl]]; nested: ElasticsearchException[failed to initialize SSL TrustManager - not permitted to read truststore file [/usr/share/elasticsearch/config/certs/elastic-certificates.p12]]; nested: AccessDeniedException[/usr/share/elasticsearch/config/certs/elastic-certificates.p12];
-</code></pre>
-<p><a href="https://knner.wang/2019/11/26/install-elasticsearch-cluster-7-4.html">参考自</a></p>
-<h2 id="logstash配置">logstash配置</h2>
-<p><a href="https://www.elastic.co/cn/blog/configuring-ssl-tls-and-https-to-secure-elasticsearch-kibana-beats-and-logstash">参考</a></p>
 ]]></content>
     </entry>
 </feed>

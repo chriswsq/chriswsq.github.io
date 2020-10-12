@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>logstash配置 | chris&#39;wang</title>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>Loki配置邮件告警 | chris&#39;wang</title>
 <link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 <script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
 
 <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
 
-<link rel="canonical" href="https://chriswsq.github.io/post/logstash-pei-zhi/" />
+<link rel="canonical" href="https://chriswsq.github.io/post/loki-pei-zhi-you-jian-gao-jing/" />
 </head>
 <body>
 <div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
@@ -25,170 +25,67 @@
 
 <div class="main"><div class="main-inner"><div class="content">
 <article class="post">
-<h2 class="post_title sm_margin"><a>logstash配置</a></h2>
+<h2 class="post_title sm_margin"><a>Loki配置邮件告警</a></h2>
 <script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
-<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-27</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="tag">ELK</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">709字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">5 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-10-12</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px"></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">515字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">2 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
 </section>
 
 <div style="display:flex">
 <div class="md_block" id="md_block">
 <div class="round-shape-one"></div>
-<p>补上一份自己在工作中用的一份logstash的配置文件，万变不离其宗，可以参看此内容</p>
+<p>监控的目的就是及时发现问题去解决处理，那么在告警就是必不可少的。</p>
 <!-- more -->
-<h2 id="这一份匹配的日志是前部分是字符串后一部分是json格式的日志">这一份匹配的日志是，前部分是字符串，后一部分是json格式的日志</h2>
-<pre><code class="language-yml">input {
-    kafka {
-        bootstrap_servers =&gt; &quot;kafka1:9092, kafka2:9092, kafka3:9092&quot;
-        topics =&gt; [&quot;tomcat&quot;]
-        type =&gt; &quot;tomcat&quot;
-        codec =&gt; json {
-           charset =&gt; &quot;UTF-8&quot;
-        }
-    }
-}
-
-filter {     
-   if [type] == &quot;tomcat&quot; {
-   grok {
-            match =&gt; { 'message' =&gt; '%{TIMESTAMP_ISO8601:access_time}  %{LOGLEVEL:loglevel} %{INT:number} --- \[%{DATA:thread_name}\] %{URIHOST:
-type_name}  %{SPACE}*  : %{HOSTNAME:status} %{HOSTNAME:action} %{URIHOST:usetime}((?&lt;request&gt;(.*)(?=Creating)/?)|)(%{GREEDYDATA:sql}|)'}
-}
-   json {
-        source =&gt; &quot;request&quot;
-        #target =&gt; &quot;parsedJson&quot;
-        remove_field=&gt;[&quot;request&quot;]
-}      
-    mutate {
-        remove_field =&gt; [&quot;agent&quot;]
-        remove_field =&gt; [&quot;[ecs][version]&quot;,&quot;[fields][log_topics]&quot;,&quot;[fields][registry_file]&quot;,&quot;[host][name]&quot;,&quot;[input][type]&quot;,&quot;[@version]&quot;,&quot;[tag]&quot;,&quot;[id]&quot;,&quot;[score]&quot;]
-          }
-     }
-}
-output {
-  if [type] == &quot;tomcat&quot; {
-  elasticsearch {
-    hosts =&gt; [&quot;elasticsearch1:9200&quot;,&quot;elasticsearch2:9200&quot;,&quot;elasticsearch3:9200&quot;]
-    index =&gt; &quot;tomcat-%{+YYYY.MM.dd}&quot;
-    user =&gt; 'elastic'
-    password =&gt; 'd27DuDQjTChIdv3sE8oI'
-   }
- }
-}
+<p>本次告警配置是loki结合grafana来进行邮件告警</p>
+<h2 id="grafana配置告警">grafana配置告警</h2>
+<p>1.通过标签定位到需要查看的服务,并通过关键字过滤出想要查看的日志内容<br>
+<img src="https://chriswsq.github.io/post-images/1602496164171.png" alt="" loading="lazy"><br>
+为尽快得到告警邮件这里我们设置带有info字符的日志</p>
+<p>2.看下过去一段时间内，日志中带有info字段的趋势<br>
+<img src="https://chriswsq.github.io/post-images/1602496259867.png" alt="" loading="lazy"></p>
+<p>这里可以看到，日志在不停的打印带有info字段的日志</p>
+<p>在数据源中添加一个Prometheus类型，并在地址栏中填写上http://loki:3100/loki ,这样我们就能通过像查询prometheus一样查询日志的走势<br>
+<img src="https://chriswsq.github.io/post-images/1602496373242.png" alt="" loading="lazy"></p>
+<p>这时候再创建一个pannel来查询info日志的趋势就可以得到如下结果：</p>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1602496436562.png" alt="" loading="lazy"></figure>
+<p>接下来的工作，就是在Grafana上添加一个Alert小铃铛，让它每分钟去Loki里面查询有没有出现info字段的日志出现，如果计算出来的结果大于0，就让Grafana通过邮件告警出来。</p>
+<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1602496637970.png" alt="" loading="lazy"></figure>
+<p>配置完成后不急保存，我们先Test rule看看rule是否能生效。</p>
+<p><img src="https://chriswsq.github.io/post-images/1602496687577.png" alt="" loading="lazy"><br>
+看到state:&quot;alerting&quot; 说明现在已经开始报警了</p>
+<h2 id="grafana配置邮件">grafana配置邮件</h2>
+<pre><code class="language-ini">[smtp]
+enabled = true
+host = smtp.163.com:25
+user = 你的邮箱
+# If the password contains # or ; you have to wrap it with triple quotes. Ex &quot;&quot;&quot;#password;&quot;&quot;&quot;
+password = 你的密码
+;cert_file =
+;key_file =
+;skip_verify = false
+from_address = 你的邮箱
+from_name = Grafana
 </code></pre>
-<h2 id="这一份是整个的日志都是json格式">这一份是整个的日志都是json格式</h2>
-<pre><code class="language-yml">input {
-    kafka {
-        bootstrap_servers =&gt; &quot;kafka1:9092, kafka2:9092, kafka3:9092&quot;
-        topics =&gt; [&quot;gateway&quot;]
-        type =&gt; &quot;gateway&quot;
-        codec =&gt; json {
-           charset =&gt; &quot;UTF-8&quot;
-        }
-    }
-}
-filter {
-   if [type] == &quot;gateway&quot; {
-    json {
-        source =&gt; &quot;message&quot;
-        #target =&gt; &quot;doc&quot;
-        remove_field =&gt; [&quot;message&quot;]
-    }        
-    mutate {
-        remove_field =&gt; [&quot;agent&quot;]
-        remove_field =&gt; [&quot;[ecs][version]&quot;,&quot;[fields][log_topics]&quot;,&quot;[fields][registry_file]&quot;,&quot;[host][name]&quot;,&quot;[input][type]&quot;,&quot;[@version]&quot;,&quot;[tag]&quot;,&quot;[id]&quot;,&quot;[score]&quot;]
-      } 
-   }
-}
-output {
-   if [type] == &quot;gateway&quot; {
-    elasticsearch {
-    hosts =&gt; [&quot;elasticsearch1:9200&quot;,&quot;elasticsearch2:9200&quot;,&quot;elasticsearch3:9200&quot;]
-    index =&gt; &quot;gateway-%{+YYYY.MM.dd}&quot;
-    user =&gt; 'elastic'
-    password =&gt; 'd27DuDQjTChIdv3sE8oI'
-        } 
-    }
-}
-</code></pre>
-<h2 id="这是一份整个日志都是字符串的格式">这是一份整个日志都是字符串的格式</h2>
-<pre><code class="language-yml">input {
-    kafka {
-        bootstrap_servers =&gt; &quot;kafka1:9092, kafka2:9092, kafka3:9092&quot;
-        topics =&gt; [&quot;gb_core_ngx&quot;]
-        type =&gt; &quot;gb_core_ngx&quot;
-        codec =&gt; json {
-           charset =&gt; &quot;UTF-8&quot;
-        }
-    }
-}
-filter {
-    if [type] == &quot;gb_core_ngx&quot; {
-
-    grok {
-       match =&gt; {
-              &quot;message&quot; =&gt; &quot;%{URIHOST:hostname}: \[%{TIMESTAMP_ISO8601:local_time}\] (%{NUMBER:status}|-) %{NUMBER:siteid}-%{WORD:idc_num}-%{HOSTNAME:Random_value} (%{HOSTNAME:X_system}|-) *(%{URIHOST:remote_hostname}|-),%{URIHOST:outsite_hostname} \[(%{URIHOST:upstream_addr}|-)] %{NUMBER:request_time} (%{NUMBER:upstraem_response_time}|-) (%{WORD:request_method}|-) (%{HOSTNAME:http_host}|-) (%{GREEDYDATA:uri}|-) (%{NUMBER:body_bytes_sent}|-) \| (%{IPORHOST:client_ip}|-)&quot;
-       }
-}
-    mutate {
-        remove_field =&gt; &quot;tags&quot;
-        remove_field =&gt; &quot;port&quot;
-        remove_field =&gt; &quot;prospector&quot;
-        remove_field =&gt; &quot;beat&quot;
-        remove_field =&gt; &quot;source&quot;
-        remove_field =&gt; &quot;offset&quot;
-        remove_field =&gt; &quot;fields&quot;
-        remove_field =&gt; &quot;host&quot;
-        remove_field =&gt; &quot;@version&quot;
-        remove_field =&gt; &quot;message&quot;
-        remove_field =&gt; &quot;input&quot;
-        convert =&gt; [&quot;body_bytes_sent&quot;, &quot;float&quot;]
-        convert =&gt; [&quot;request_time&quot;, &quot;float&quot;]
-        convert =&gt; [&quot;upstream_response_time&quot;, &quot;float&quot;]
-        add_field =&gt; { &quot;uuid&quot; =&gt; &quot;%{siteid}-%{idc_num}-%{Random_value}&quot; }
-    }
-
-#    date {
-#        match =&gt; [&quot;local__time&quot;, &quot;yyyy-MM-dd HH:mm:ss&quot;]
-#}
-   
-   geoip {
-        source =&gt; &quot;client_ip&quot;
-        target =&gt; &quot;geoip&quot;
-        database =&gt; &quot;/opt/GeoLite2-City.mmdb&quot;
-        add_field =&gt; [&quot;[geoip][coordinates]&quot;,&quot;%{[geoip][longitude]}&quot;]
-        add_field =&gt; [&quot;[geoip][coordinates]&quot;,&quot;%{[geoip][latitude]}&quot;]
-                }
-   mutate {
-                 convert =&gt; [ &quot;[geoip][coordinates]&quot;, &quot;float&quot;]
-        }
-   }
-}
-output {
-       if [type] == &quot;gb_core_ngx&quot; {
-       elasticsearch { 
-       hosts =&gt; [&quot;elasticsearch1:9200&quot; ,&quot;elasticsearch2:9200&quot;, &quot;elasticsearch3:9200&quot;]
-       index =&gt; &quot;logstash-gb_core_ngx-%{+YYYY.MM.dd}&quot;
-       user =&gt; 'elastic'
-       password =&gt; 'd27DuDQjTChIdv3sE8oI'
-   }
- }
-}
-</code></pre>
-<h2 id="添加组合字段">添加&amp;组合字段</h2>
-<pre><code class="language-yml">filter {
- grok {
-    match =&gt; { &quot;message&quot; =&gt; '&quot;(%{GREEDYDATA:cust_date})&quot;,&quot;(%{TIME:cust_time})&quot;,&quot;(%{NUMBER:author})&quot;'}
-    add_field =&gt; {
-            &quot;date_time&quot; =&gt; &quot;%{cust_date};%{cust_time}&quot;
-    }
-}
-
-date {
-  match =&gt; [&quot;date_time&quot;, &quot;yyyy-MM-dd;hh:mm:ss&quot;]
-  target =&gt; &quot;@timestamp&quot;
-  add_field =&gt; { &quot;debug&quot; =&gt; &quot;timestampMatched&quot;}
-}
-</code></pre>
+<p>修改后，保存退出，重启grafana服务</p>
+<ul>
+<li>登入grafana页面</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://chriswsq.github.io/post-images/1602496941499.png" alt="" loading="lazy"></figure>
+<ul>
+<li>创建邮件发送规则</li>
+</ul>
+<p><img src="https://chriswsq.github.io/post-images/1602497009120.png" alt="" loading="lazy"><br>
+创建邮件发送规则，Email addresses中多个收件人以英文分号隔开。例：xxx@163.com;xxx@qq.com<br>
+创建成功后，点击Send Test 按钮，测试邮件是否能发送成功。（如果发送不成功，可在grafana.log中查看日志信息）</p>
+<ul>
+<li>在告警中添加配置的告警邮件联系人组</li>
+</ul>
+<figure data-type="image" tabindex="4"><img src="https://chriswsq.github.io/post-images/1602497296964.png" alt="" loading="lazy"></figure>
+<ul>
+<li>收到告警邮件</li>
+</ul>
+<figure data-type="image" tabindex="5"><img src="https://chriswsq.github.io/post-images/1602497366975.png" alt="" loading="lazy"></figure>
+<p>也可以发送图片 ,根据提示安装插件即可<br>
+<img src="https://chriswsq.github.io/post-images/1602497453813.png" alt="" loading="lazy"></p>
 
 <span id="footnote"></span>
 <div id = "warn"></div>
@@ -196,10 +93,8 @@ date {
 <div class="toc-container"><ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E8%BF%99%E4%B8%80%E4%BB%BD%E5%8C%B9%E9%85%8D%E7%9A%84%E6%97%A5%E5%BF%97%E6%98%AF%E5%89%8D%E9%83%A8%E5%88%86%E6%98%AF%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%90%8E%E4%B8%80%E9%83%A8%E5%88%86%E6%98%AFjson%E6%A0%BC%E5%BC%8F%E7%9A%84%E6%97%A5%E5%BF%97">这一份匹配的日志是，前部分是字符串，后一部分是json格式的日志</a></li>
-<li><a href="#%E8%BF%99%E4%B8%80%E4%BB%BD%E6%98%AF%E6%95%B4%E4%B8%AA%E7%9A%84%E6%97%A5%E5%BF%97%E9%83%BD%E6%98%AFjson%E6%A0%BC%E5%BC%8F">这一份是整个的日志都是json格式</a></li>
-<li><a href="#%E8%BF%99%E6%98%AF%E4%B8%80%E4%BB%BD%E6%95%B4%E4%B8%AA%E6%97%A5%E5%BF%97%E9%83%BD%E6%98%AF%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%A0%BC%E5%BC%8F">这是一份整个日志都是字符串的格式</a></li>
-<li><a href="#%E6%B7%BB%E5%8A%A0%E7%BB%84%E5%90%88%E5%AD%97%E6%AE%B5">添加&amp;组合字段</a></li>
+<li><a href="#grafana%E9%85%8D%E7%BD%AE%E5%91%8A%E8%AD%A6">grafana配置告警</a></li>
+<li><a href="#grafana%E9%85%8D%E7%BD%AE%E9%82%AE%E4%BB%B6">grafana配置邮件</a></li>
 </ul>
 </li>
 </ul>
@@ -229,7 +124,7 @@ if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop)
 var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
 var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
 var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
-content="本文最后更新于2020-08-27，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-08-27 13:54:19";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+content="本文最后更新于2020-10-12，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-10-12 17:43:07";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
 </script>
 <style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
 <a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>

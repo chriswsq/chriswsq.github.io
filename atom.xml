@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-10-12T07:23:40.450Z</updated>
+    <updated>2020-10-12T10:11:15.227Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,69 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[Loki配置邮件告警]]></title>
+        <id>https://chriswsq.github.io/post/loki-pei-zhi-you-jian-gao-jing/</id>
+        <link href="https://chriswsq.github.io/post/loki-pei-zhi-you-jian-gao-jing/">
+        </link>
+        <updated>2020-10-12T09:43:07.000Z</updated>
+        <summary type="html"><![CDATA[<p>监控的目的就是及时发现问题去解决处理，那么在告警就是必不可少的。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>监控的目的就是及时发现问题去解决处理，那么在告警就是必不可少的。</p>
+<!-- more -->
+<p>本次告警配置是loki结合grafana来进行邮件告警</p>
+<h2 id="grafana配置告警">grafana配置告警</h2>
+<p>1.通过标签定位到需要查看的服务,并通过关键字过滤出想要查看的日志内容<br>
+<img src="https://chriswsq.github.io/post-images/1602496164171.png" alt="" loading="lazy"><br>
+为尽快得到告警邮件这里我们设置带有info字符的日志</p>
+<p>2.看下过去一段时间内，日志中带有info字段的趋势<br>
+<img src="https://chriswsq.github.io/post-images/1602496259867.png" alt="" loading="lazy"></p>
+<p>这里可以看到，日志在不停的打印带有info字段的日志</p>
+<p>在数据源中添加一个Prometheus类型，并在地址栏中填写上http://loki:3100/loki ,这样我们就能通过像查询prometheus一样查询日志的走势<br>
+<img src="https://chriswsq.github.io/post-images/1602496373242.png" alt="" loading="lazy"></p>
+<p>这时候再创建一个pannel来查询info日志的趋势就可以得到如下结果：</p>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1602496436562.png" alt="" loading="lazy"></figure>
+<p>接下来的工作，就是在Grafana上添加一个Alert小铃铛，让它每分钟去Loki里面查询有没有出现info字段的日志出现，如果计算出来的结果大于0，就让Grafana通过邮件告警出来。</p>
+<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1602496637970.png" alt="" loading="lazy"></figure>
+<p>配置完成后不急保存，我们先Test rule看看rule是否能生效。</p>
+<p><img src="https://chriswsq.github.io/post-images/1602496687577.png" alt="" loading="lazy"><br>
+看到state:&quot;alerting&quot; 说明现在已经开始报警了</p>
+<h2 id="grafana配置邮件">grafana配置邮件</h2>
+<pre><code class="language-ini">[smtp]
+enabled = true
+host = smtp.163.com:25
+user = 你的邮箱
+# If the password contains # or ; you have to wrap it with triple quotes. Ex &quot;&quot;&quot;#password;&quot;&quot;&quot;
+password = 你的密码
+;cert_file =
+;key_file =
+;skip_verify = false
+from_address = 你的邮箱
+from_name = Grafana
+</code></pre>
+<p>修改后，保存退出，重启grafana服务</p>
+<ul>
+<li>登入grafana页面</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://chriswsq.github.io/post-images/1602496941499.png" alt="" loading="lazy"></figure>
+<ul>
+<li>创建邮件发送规则</li>
+</ul>
+<p><img src="https://chriswsq.github.io/post-images/1602497009120.png" alt="" loading="lazy"><br>
+创建邮件发送规则，Email addresses中多个收件人以英文分号隔开。例：xxx@163.com;xxx@qq.com<br>
+创建成功后，点击Send Test 按钮，测试邮件是否能发送成功。（如果发送不成功，可在grafana.log中查看日志信息）</p>
+<ul>
+<li>在告警中添加配置的告警邮件联系人组</li>
+</ul>
+<figure data-type="image" tabindex="4"><img src="https://chriswsq.github.io/post-images/1602497296964.png" alt="" loading="lazy"></figure>
+<ul>
+<li>收到告警邮件</li>
+</ul>
+<figure data-type="image" tabindex="5"><img src="https://chriswsq.github.io/post-images/1602497366975.png" alt="" loading="lazy"></figure>
+<p>也可以发送图片 ,根据提示安装插件即可<br>
+<img src="https://chriswsq.github.io/post-images/1602497453813.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[轻量级日志系统Loki原理简介和使用]]></title>
         <id>https://chriswsq.github.io/post/qing-liang-ji-ri-zhi-xi-tong-loki-yuan-li-jian-jie-he-shi-yong/</id>
@@ -1473,172 +1536,6 @@ wget https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65
 }</p>
 <p>参考<br>
 https://www.kubernetes.org.cn/6632.html</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[logstash配置]]></title>
-        <id>https://chriswsq.github.io/post/logstash-pei-zhi/</id>
-        <link href="https://chriswsq.github.io/post/logstash-pei-zhi/">
-        </link>
-        <updated>2020-08-27T05:54:19.000Z</updated>
-        <summary type="html"><![CDATA[<p>补上一份自己在工作中用的一份logstash的配置文件，万变不离其宗，可以参看此内容</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>补上一份自己在工作中用的一份logstash的配置文件，万变不离其宗，可以参看此内容</p>
-<!-- more -->
-<h2 id="这一份匹配的日志是前部分是字符串后一部分是json格式的日志">这一份匹配的日志是，前部分是字符串，后一部分是json格式的日志</h2>
-<pre><code class="language-yml">input {
-    kafka {
-        bootstrap_servers =&gt; &quot;kafka1:9092, kafka2:9092, kafka3:9092&quot;
-        topics =&gt; [&quot;tomcat&quot;]
-        type =&gt; &quot;tomcat&quot;
-        codec =&gt; json {
-           charset =&gt; &quot;UTF-8&quot;
-        }
-    }
-}
-
-filter {     
-   if [type] == &quot;tomcat&quot; {
-   grok {
-            match =&gt; { 'message' =&gt; '%{TIMESTAMP_ISO8601:access_time}  %{LOGLEVEL:loglevel} %{INT:number} --- \[%{DATA:thread_name}\] %{URIHOST:
-type_name}  %{SPACE}*  : %{HOSTNAME:status} %{HOSTNAME:action} %{URIHOST:usetime}((?&lt;request&gt;(.*)(?=Creating)/?)|)(%{GREEDYDATA:sql}|)'}
-}
-   json {
-        source =&gt; &quot;request&quot;
-        #target =&gt; &quot;parsedJson&quot;
-        remove_field=&gt;[&quot;request&quot;]
-}      
-    mutate {
-        remove_field =&gt; [&quot;agent&quot;]
-        remove_field =&gt; [&quot;[ecs][version]&quot;,&quot;[fields][log_topics]&quot;,&quot;[fields][registry_file]&quot;,&quot;[host][name]&quot;,&quot;[input][type]&quot;,&quot;[@version]&quot;,&quot;[tag]&quot;,&quot;[id]&quot;,&quot;[score]&quot;]
-          }
-     }
-}
-output {
-  if [type] == &quot;tomcat&quot; {
-  elasticsearch {
-    hosts =&gt; [&quot;elasticsearch1:9200&quot;,&quot;elasticsearch2:9200&quot;,&quot;elasticsearch3:9200&quot;]
-    index =&gt; &quot;tomcat-%{+YYYY.MM.dd}&quot;
-    user =&gt; 'elastic'
-    password =&gt; 'd27DuDQjTChIdv3sE8oI'
-   }
- }
-}
-</code></pre>
-<h2 id="这一份是整个的日志都是json格式">这一份是整个的日志都是json格式</h2>
-<pre><code class="language-yml">input {
-    kafka {
-        bootstrap_servers =&gt; &quot;kafka1:9092, kafka2:9092, kafka3:9092&quot;
-        topics =&gt; [&quot;gateway&quot;]
-        type =&gt; &quot;gateway&quot;
-        codec =&gt; json {
-           charset =&gt; &quot;UTF-8&quot;
-        }
-    }
-}
-filter {
-   if [type] == &quot;gateway&quot; {
-    json {
-        source =&gt; &quot;message&quot;
-        #target =&gt; &quot;doc&quot;
-        remove_field =&gt; [&quot;message&quot;]
-    }        
-    mutate {
-        remove_field =&gt; [&quot;agent&quot;]
-        remove_field =&gt; [&quot;[ecs][version]&quot;,&quot;[fields][log_topics]&quot;,&quot;[fields][registry_file]&quot;,&quot;[host][name]&quot;,&quot;[input][type]&quot;,&quot;[@version]&quot;,&quot;[tag]&quot;,&quot;[id]&quot;,&quot;[score]&quot;]
-      } 
-   }
-}
-output {
-   if [type] == &quot;gateway&quot; {
-    elasticsearch {
-    hosts =&gt; [&quot;elasticsearch1:9200&quot;,&quot;elasticsearch2:9200&quot;,&quot;elasticsearch3:9200&quot;]
-    index =&gt; &quot;gateway-%{+YYYY.MM.dd}&quot;
-    user =&gt; 'elastic'
-    password =&gt; 'd27DuDQjTChIdv3sE8oI'
-        } 
-    }
-}
-</code></pre>
-<h2 id="这是一份整个日志都是字符串的格式">这是一份整个日志都是字符串的格式</h2>
-<pre><code class="language-yml">input {
-    kafka {
-        bootstrap_servers =&gt; &quot;kafka1:9092, kafka2:9092, kafka3:9092&quot;
-        topics =&gt; [&quot;gb_core_ngx&quot;]
-        type =&gt; &quot;gb_core_ngx&quot;
-        codec =&gt; json {
-           charset =&gt; &quot;UTF-8&quot;
-        }
-    }
-}
-filter {
-    if [type] == &quot;gb_core_ngx&quot; {
-
-    grok {
-       match =&gt; {
-              &quot;message&quot; =&gt; &quot;%{URIHOST:hostname}: \[%{TIMESTAMP_ISO8601:local_time}\] (%{NUMBER:status}|-) %{NUMBER:siteid}-%{WORD:idc_num}-%{HOSTNAME:Random_value} (%{HOSTNAME:X_system}|-) *(%{URIHOST:remote_hostname}|-),%{URIHOST:outsite_hostname} \[(%{URIHOST:upstream_addr}|-)] %{NUMBER:request_time} (%{NUMBER:upstraem_response_time}|-) (%{WORD:request_method}|-) (%{HOSTNAME:http_host}|-) (%{GREEDYDATA:uri}|-) (%{NUMBER:body_bytes_sent}|-) \| (%{IPORHOST:client_ip}|-)&quot;
-       }
-}
-    mutate {
-        remove_field =&gt; &quot;tags&quot;
-        remove_field =&gt; &quot;port&quot;
-        remove_field =&gt; &quot;prospector&quot;
-        remove_field =&gt; &quot;beat&quot;
-        remove_field =&gt; &quot;source&quot;
-        remove_field =&gt; &quot;offset&quot;
-        remove_field =&gt; &quot;fields&quot;
-        remove_field =&gt; &quot;host&quot;
-        remove_field =&gt; &quot;@version&quot;
-        remove_field =&gt; &quot;message&quot;
-        remove_field =&gt; &quot;input&quot;
-        convert =&gt; [&quot;body_bytes_sent&quot;, &quot;float&quot;]
-        convert =&gt; [&quot;request_time&quot;, &quot;float&quot;]
-        convert =&gt; [&quot;upstream_response_time&quot;, &quot;float&quot;]
-        add_field =&gt; { &quot;uuid&quot; =&gt; &quot;%{siteid}-%{idc_num}-%{Random_value}&quot; }
-    }
-
-#    date {
-#        match =&gt; [&quot;local__time&quot;, &quot;yyyy-MM-dd HH:mm:ss&quot;]
-#}
-   
-   geoip {
-        source =&gt; &quot;client_ip&quot;
-        target =&gt; &quot;geoip&quot;
-        database =&gt; &quot;/opt/GeoLite2-City.mmdb&quot;
-        add_field =&gt; [&quot;[geoip][coordinates]&quot;,&quot;%{[geoip][longitude]}&quot;]
-        add_field =&gt; [&quot;[geoip][coordinates]&quot;,&quot;%{[geoip][latitude]}&quot;]
-                }
-   mutate {
-                 convert =&gt; [ &quot;[geoip][coordinates]&quot;, &quot;float&quot;]
-        }
-   }
-}
-output {
-       if [type] == &quot;gb_core_ngx&quot; {
-       elasticsearch { 
-       hosts =&gt; [&quot;elasticsearch1:9200&quot; ,&quot;elasticsearch2:9200&quot;, &quot;elasticsearch3:9200&quot;]
-       index =&gt; &quot;logstash-gb_core_ngx-%{+YYYY.MM.dd}&quot;
-       user =&gt; 'elastic'
-       password =&gt; 'd27DuDQjTChIdv3sE8oI'
-   }
- }
-}
-</code></pre>
-<h2 id="添加组合字段">添加&amp;组合字段</h2>
-<pre><code class="language-yml">filter {
- grok {
-    match =&gt; { &quot;message&quot; =&gt; '&quot;(%{GREEDYDATA:cust_date})&quot;,&quot;(%{TIME:cust_time})&quot;,&quot;(%{NUMBER:author})&quot;'}
-    add_field =&gt; {
-            &quot;date_time&quot; =&gt; &quot;%{cust_date};%{cust_time}&quot;
-    }
-}
-
-date {
-  match =&gt; [&quot;date_time&quot;, &quot;yyyy-MM-dd;hh:mm:ss&quot;]
-  target =&gt; &quot;@timestamp&quot;
-  add_field =&gt; { &quot;debug&quot; =&gt; &quot;timestampMatched&quot;}
-}
-</code></pre>
 ]]></content>
     </entry>
 </feed>

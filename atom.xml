@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-10-12T10:11:15.227Z</updated>
+    <updated>2020-10-13T02:38:06.263Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -121,7 +121,7 @@ Promtail 的服务发现是基于 Prometheus 的服务发现机制实现的</p>
 <pre><code class="language-yaml">version: &quot;3&quot;
 services:
   loki:
-    image: &quot;grafana/loki&quot;
+    image: &quot;grafana/loki:1.5.0&quot;
     container_name: &quot;loki&quot;
     restart: &quot;always&quot;
     volumes:
@@ -164,11 +164,10 @@ ingester:
     final_sleep: 0s
   chunk_idle_period: 5m
   chunk_retain_period: 30s
-  max_transfer_retries: 0
 
 schema_config:
   configs:
-    - from: 2020-07-01
+    - from: 2020-10-12
       store: boltdb
       object_store: filesystem
       schema: v11
@@ -193,8 +192,8 @@ chunk_store_config:
   max_look_back_period: 0s
 
 table_manager:
-  retention_deletes_enabled: false
-  retention_period: 0s
+  retention_deletes_enabled: true
+  retention_period: 336h
 </code></pre>
 <h2 id="安装promtail">安装promtail</h2>
 <p>这里我使用docker 安装，下面是compose文件</p>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-10-13T02:38:06.263Z</updated>
+    <updated>2020-10-14T09:18:27.370Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -71,6 +71,25 @@ from_name = Grafana
 <figure data-type="image" tabindex="5"><img src="https://chriswsq.github.io/post-images/1602497366975.png" alt="" loading="lazy"></figure>
 <p>也可以发送图片 ,根据提示安装插件即可<br>
 <img src="https://chriswsq.github.io/post-images/1602497453813.png" alt="" loading="lazy"></p>
+<p>安装图片插件 官方建议单独新建一个容器去取加载插件而非直接在grafana容器中安装插件</p>
+<pre><code class="language-yaml">version: '2'
+
+services:
+  grafana:
+    image: grafana/grafana:7.0.0-beta1
+    ports:
+      - 3000
+    environment:
+      GF_RENDERING_SERVER_URL: http://renderer:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
+      GF_LOG_FILTERS: rendering:debug
+  renderer:
+    image: grafana/grafana-image-renderer:2.0.0-beta1
+    ports:
+      - 8081
+    environment:
+      ENABLE_METRICS: 'true'
+</code></pre>
 ]]></content>
     </entry>
     <entry>

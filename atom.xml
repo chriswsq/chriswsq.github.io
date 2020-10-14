@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-10-14T09:51:27.334Z</updated>
+    <updated>2020-10-14T09:55:51.533Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -23,10 +23,10 @@
 <p>本次告警配置是loki结合grafana来进行邮件告警</p>
 <h2 id="grafana配置告警">grafana配置告警</h2>
 <p>1.通过标签定位到需要查看的服务,并通过关键字过滤出想要查看的日志内容<br>
-<img src="https://chriswsq.github.io/post-images/1602496164171.png" alt="" loading="lazy"><br>
-为尽快得到告警邮件这里我们设置带有info字符的日志</p>
+<img src="https://chriswsq.github.io/post-images/1602669342426.png" alt="" loading="lazy"></p>
+<p>为尽快得到告警邮件这里我们设置带有info字符的日志</p>
 <p>2.看下过去一段时间内，日志中带有info字段的趋势<br>
-<img src="https://chriswsq.github.io/post-images/1602496259867.png" alt="" loading="lazy"></p>
+<img src="https://chriswsq.github.io/post-images/1602496164171.png" alt="" loading="lazy"></p>
 <p>这里可以看到，日志在不停的打印带有info字段的日志</p>
 <p>在数据源中添加一个Prometheus类型，并在地址栏中填写上http://loki:3100/loki ,这样我们就能通过像查询prometheus一样查询日志的走势<br>
 <img src="https://chriswsq.github.io/post-images/1602496373242.png" alt="" loading="lazy"></p>

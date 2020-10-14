@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-10-14T09:44:06.259Z</updated>
+    <updated>2020-10-14T09:51:27.334Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -58,17 +58,24 @@ from_name = Grafana
 <ul>
 <li>创建邮件发送规则</li>
 </ul>
-<p><img src="https://chriswsq.github.io/post-images/1602497009120.png" alt="" loading="lazy"><br>
-创建邮件发送规则，Email addresses中多个收件人以英文分号隔开。例：xxx@163.com;xxx@qq.com<br>
-创建成功后，点击Send Test 按钮，测试邮件是否能发送成功。（如果发送不成功，可在grafana.log中查看日志信息）</p>
+<figure data-type="image" tabindex="4"><img src="https://chriswsq.github.io/post-images/1602497009120.png" alt="" loading="lazy"></figure>
+<p>可以为不同的业务组创建不同的通知通道，例如，运维通道为Ops，研发为Dev。然后可以为一个Metrics指定多个通知通道。</p>
+<p>Name为通道名称</p>
+<p>Type为通道类型，此处选Email，也可选择钉钉告警或者Alert Manager等告警类型。</p>
+<p>Default(send on all alerts)开启后，表示在所有Graph Panel中配置告警规则时默认都会选用此通道。该选项默认为关闭。</p>
+<p>Include image开启后，表示是发送告警图片。</p>
+<p>Disable Resove Message开启后，表示发送恢复邮件，默认关闭。</p>
+<p>Send reminders开启后，还需设置下方的发送间隔，表示发送告警邮件的间隔，默认关闭表示若某个告警发生后即使持续很长时间也仅发送一次邮件。</p>
+<p>多个邮箱地址间用分号&quot;;&quot;隔开。例：xxx@163.com;xxx@qq.com</p>
+<p>创建成功后，点击Send Test 按钮，测试邮件是否能发送成功。（如果发送不成功，可在grafana.log中查看日志信息）</p>
 <ul>
 <li>在告警中添加配置的告警邮件联系人组</li>
 </ul>
-<figure data-type="image" tabindex="4"><img src="https://chriswsq.github.io/post-images/1602497296964.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://chriswsq.github.io/post-images/1602497296964.png" alt="" loading="lazy"></figure>
 <ul>
 <li>收到告警邮件</li>
 </ul>
-<figure data-type="image" tabindex="5"><img src="https://chriswsq.github.io/post-images/1602497366975.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="https://chriswsq.github.io/post-images/1602497366975.png" alt="" loading="lazy"></figure>
 <p>也可以发送图片 ,根据提示安装插件即可<br>
 <img src="https://chriswsq.github.io/post-images/1602497453813.png" alt="" loading="lazy"></p>
 <p>安装图片插件 官方建议单独新建一个容器去取加载插件而非直接在grafana容器中安装插件</p>
@@ -90,6 +97,8 @@ services:
     environment:
       ENABLE_METRICS: 'true'
 </code></pre>
+<p>结果为<br>
+<img src="https://chriswsq.github.io/post-images/1602668961665.png" alt="" loading="lazy"></p>
 <p>参考文档：<br>
 https://grafana.com/blog/2020/05/07/grafana-7.0-preview-new-image-renderer-plugin-to-replace-phantomjs/<br>
 https://www.jianshu.com/p/0982a8ee204c</p>

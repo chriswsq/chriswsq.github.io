@@ -19,7 +19,7 @@
 <div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 <div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
 <div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
-<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1602669349489" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1602825519717" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 </div></div>
 <script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
 
@@ -27,7 +27,7 @@
 <article class="post">
 <h2 class="post_title sm_margin"><a>生产环境部署fabric</a></h2>
 <script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
-<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-27</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/qakyVMdT2/" class="tag">fabric</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">1987字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">11 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-27</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/qakyVMdT2/" class="tag">fabric</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">2019字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">11 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
 </section>
 
 <div style="display:flex">
@@ -36,24 +36,13 @@
 <!-- more -->
 <h3 id="环境准备">环境准备</h3>
 <ul>
-<li>
-<p>ansible临时添加主机信息</p>
-</li>
-<li>
-<p>修改服务器密码</p>
-</li>
-<li>
-<p>docker</p>
-</li>
-<li>
-<p>docker-compose</p>
-</li>
-<li>
-<p>挂载数据盘</p>
-</li>
-<li>
-<p>传送镜像文件</p>
-</li>
+<li>ansible临时添加主机信息</li>
+<li>修改服务器密码</li>
+<li>关闭防火墙</li>
+<li>docker</li>
+<li>docker-compose</li>
+<li>挂载数据盘</li>
+<li>传送镜像文件</li>
 </ul>
 <h4 id="ansible临时添加主机信息">ansible临时添加主机信息</h4>
 <p>因为后续需要根据不同节点传递不同的镜像文件，所以先临时添加节点信息。</p>
@@ -73,6 +62,10 @@ z10     ansible_host=121.204.220.1
 [fz:vars]
 ansible_ssh_port=650
 ansible_ssh_pass='123456'
+</code></pre>
+<h4 id="关闭防火墙">关闭防火墙</h4>
+<pre><code class="language-bash">ansible fz -m shell -a &quot;systemctl stop firewalld.service&quot;
+ansible fz -m shell -a &quot;systemctl disable firewalld.service&quot;
 </code></pre>
 <h4 id="修改服务器密码">修改服务器密码</h4>
 <p>/application/ansible-playbook/optimization/</p>
@@ -389,6 +382,7 @@ docker exec cli peer chaincode install blocktx/cc_sys.3.0.pak
 <li><a href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87">环境准备</a>
 <ul>
 <li><a href="#ansible%E4%B8%B4%E6%97%B6%E6%B7%BB%E5%8A%A0%E4%B8%BB%E6%9C%BA%E4%BF%A1%E6%81%AF">ansible临时添加主机信息</a></li>
+<li><a href="#%E5%85%B3%E9%97%AD%E9%98%B2%E7%81%AB%E5%A2%99">关闭防火墙</a></li>
 <li><a href="#%E4%BF%AE%E6%94%B9%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AF%86%E7%A0%81">修改服务器密码</a></li>
 <li><a href="#%E5%AE%89%E8%A3%85docker">安装docker</a></li>
 <li><a href="#%E5%AE%89%E8%A3%85docker-compose">安装docker-compose</a></li>

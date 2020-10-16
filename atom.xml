@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-10-16T08:41:31.015Z</updated>
+    <updated>2020-10-16T10:06:38.120Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,185 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[docker-compsoe部署kafka集群]]></title>
+        <id>https://chriswsq.github.io/post/docker-compsoe-bu-shu-kafka-ji-qun/</id>
+        <link href="https://chriswsq.github.io/post/docker-compsoe-bu-shu-kafka-ji-qun/">
+        </link>
+        <updated>2020-10-16T10:00:49.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="前言">前言</h2>
+<p>kafka依赖于zookeeper存放元数据, 所以在创建kafka集群之前需要创建zookeeper; 更多关于zookeeper集群创建见: 使用Docker部署zookeeper集群</p>
+<h2 id="拉取镜像">拉取镜像</h2>
+<pre><code class="language-bash">docker pull zookeeper:3.4
+docker pull zookeeper:3.4 docker pull wurstmeister/kafka_2.13-2.6.0
+</code></pre>
+<blockquote>
+<p>其中kafka版本中的2.12为Scala版本</p>
+</blockquote>
+<h2 id="创建子网段">创建子网段</h2>
+<pre><code class="language-bash">docker network create --subnet 172.30.1.0/16 --gateway 172.30.0.1 kafka
+</code></pre>
+<pre><code class="language-yaml">version: '3'
+
+services: 
+    zoo1:
+        image: zookeeper:3.4
+        restart: always
+        hostname: zoo1
+        container_name: zoo1
+        ports:
+            - 2184:2181
+        volumes: 
+            - /home/zk/workspace/volumes/zkcluster/zoo1/data:/data
+            - /home/zk/workspace/volumes/zkcluster/zoo1/datalog:/datalog
+        environment: 
+            ZOO_MY_ID: 1
+            ZOO_SERVERS: server.1=0.0.0.0:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+        networks:
+            kafka:
+                ipv4_address: 172.30.0.11
+
+    zoo2:
+        image: zookeeper:3.4
+        restart: always
+        hostname: zoo2
+        container_name: zoo2
+        ports:
+            - 2185:2181
+        volumes: 
+            - /home/zk/workspace/volumes/zkcluster/zoo2/data:/data
+            - /home/zk/workspace/volumes/zkcluster/zoo2/datalog:/datalog
+        environment: 
+            ZOO_MY_ID: 2
+            ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zoo3:2888:3888
+        networks:
+            kafka:
+                ipv4_address: 172.30.0.12
+
+    zoo3:
+        image: zookeeper:3.4
+        restart: always
+        hostname: zoo3
+        container_name: zoo3
+        ports:
+            - 2186:2181
+        volumes: 
+            - /home/zk/workspace/volumes/zkcluster/zoo3/data:/data
+            - /home/zk/workspace/volumes/zkcluster/zoo3/datalog:/datalog
+        environment: 
+            ZOO_MY_ID: 3
+            ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=0.0.0.0:2888:3888
+        networks:
+            kafka:
+                ipv4_address: 172.30.0.13
+
+    kafka1:
+        image: wurstmeister/kafka
+        restart: always
+        hostname: kafka1
+        container_name: kafka1
+        privileged: true
+        ports:
+            - 9092:9092
+        environment:
+              KAFKA_ADVERTISED_HOST_NAME: kafka1
+              KAFKA_LISTENERS: PLAINTEXT://kafka1:9092
+              KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
+              KAFKA_ADVERTISED_PORT: 9092
+              KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+        volumes:
+            - /home/zk/workspace/volumes/kafkaCluster/kafka1/logs:/kafka
+        networks:
+            kafka:
+                ipv4_address: 172.30.1.11
+        extra_hosts: 
+            - zoo1:172.30.0.11
+            - zoo2:172.30.0.12
+            - zoo3:172.30.0.13
+        depends_on: 
+            - zoo1
+            - zoo2
+            - zoo3
+        external_links: 
+            - zoo1
+            - zoo2
+            - zoo3
+
+    kafka2:
+        image: wurstmeister/kafka
+        restart: always
+        hostname: kafka2
+        container_name: kafka2
+        privileged: true
+        ports:
+            - 9093:9093
+        environment:
+              KAFKA_ADVERTISED_HOST_NAME: kafka2
+              KAFKA_LISTENERS: PLAINTEXT://kafka2:9093
+              KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9093
+              KAFKA_ADVERTISED_PORT: 9093
+              KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+        volumes:
+            - /home/zk/workspace/volumes/kafkaCluster/kafka2/logs:/kafka
+        networks:
+            kafka:
+                ipv4_address: 172.30.1.12
+        extra_hosts: 
+            - zoo1:172.30.0.11
+            - zoo2:172.30.0.12
+            - zoo3:172.30.0.13                
+        depends_on: 
+            - zoo1
+            - zoo2
+            - zoo3                
+        external_links: 
+            - zoo1
+            - zoo2
+            - zoo3           
+
+    kafka3:
+        image: wurstmeister/kafka
+        restart: always
+        hostname: kafka3
+        container_name: kafka3
+        privileged: true
+        ports:
+            - 9094:9094
+        environment:
+              KAFKA_ADVERTISED_HOST_NAME: kafka3
+              KAFKA_LISTENERS: PLAINTEXT://kafka3:9094
+              KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9094
+              KAFKA_ADVERTISED_PORT: 9094
+              KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+        volumes:
+            - /home/zk/workspace/volumes/kafkaCluster/kafka3/logs:/kafka
+        networks:
+            kafka:
+                ipv4_address: 172.30.1.13
+        extra_hosts: 
+            - zoo1:172.30.0.11
+            - zoo2:172.30.0.12
+            - zoo3:172.30.0.13                
+        depends_on: 
+            - zoo1
+            - zoo2
+            - zoo3                
+        external_links: 
+            - zoo1
+            - zoo2
+            - zoo3
+
+networks: 
+  kafka:
+     ipam:
+       config:
+         - subnet: 172.30.0.0/16
+</code></pre>
+<blockquote>
+<p>在kafka服务中声明了depends_on, 所以在所有zookeeper启动之后才会真正启动kafka容器</p>
+</blockquote>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Loki配置邮件告警]]></title>
         <id>https://chriswsq.github.io/post/loki-pei-zhi-you-jian-gao-jing/</id>
@@ -1459,113 +1638,6 @@ ca-service   100Mi      RWX            Retain           Terminating   default/ca
 <p>直接删除k8s中的记录：</p>
 <pre><code class="language-bash">kubectl patch pv ca-service  -p '{&quot;metadata&quot;:{&quot;finalizers&quot;:null}}'
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[kubeadm部署k8s]]></title>
-        <id>https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/</id>
-        <link href="https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/">
-        </link>
-        <updated>2020-08-27T05:56:13.000Z</updated>
-        <content type="html"><![CDATA[<!-- more -->
-<h1 id="部署环境">部署环境</h1>
-<table>
-<thead>
-<tr>
-<th>主机名</th>
-<th>centos版本</th>
-<th>IP</th>
-<th>docker-version</th>
-<th>flanel-version</th>
-<th>keepalived-version</th>
-<th>主机配置</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>k8s-master1</td>
-<td>7.4</td>
-<td>192.168.40.6</td>
-<td>18.09.9</td>
-<td>v0.11.0</td>
-<td>v1.3.5</td>
-<td>2C4G</td>
-</tr>
-<tr>
-<td>k8s-node1</td>
-<td>7.4</td>
-<td>192.168.40.7</td>
-<td>18.09.9</td>
-<td>v0.11.0</td>
-<td>v1.3.5</td>
-<td>2C4G</td>
-</tr>
-<tr>
-<td>k8s-node2</td>
-<td>7.4</td>
-<td>192.168.40.8</td>
-<td>18.09.9</td>
-<td>v0.11.0</td>
-<td>v1.3.5</td>
-<td>2C4G</td>
-</tr>
-</tbody>
-</table>
-<p>二、高可用架构</p>
-<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1598507860493.jpg" alt="" loading="lazy"></figure>
-<p>注：此图为负载为loadbanacer为云上的负载方案</p>
-<p>在此就说下本人在这里犯的小错误</p>
-<p>1.拉镜像时各个节点都要拉取</p>
-<p>2.部署flannel时因为网络的原因可以先down下载，在执行   kubectl apply -f   kube-flannel.yml<br>
-wget https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml</p>
-<p>3.部署后会发现主节点Ready 而从节点都是NotReady，这是因为master节点的这个文件 /etc/cni/net.d/10-flannel.conflist 是因为安装flannel生成的，而node节点是通过master分配生成的所以少一个参数<br>
-&quot;cniVersion&quot;: &quot;0.3.1&quot;,</p>
-<p>直接把maser推过去到node节点，或者手动改下就可以了</p>
-<h2 id=""></h2>
-<p>kubeadm部署</p>
-<p>kubeadm join 192.168.154.6:6443 --token hum394.uf5ehv9ye6w661bz <br>
---discovery-token-ca-cert-hash sha256:6bd3388a191ae0afb2ca86102e655a2ced4c6e6b6bef82afebbdef8154a57b61</p>
-<p>node</p>
-<p>{<br>
-&quot;name&quot;: &quot;cbr0&quot;,<br>
-&quot;plugins&quot;: [<br>
-{<br>
-&quot;type&quot;: &quot;flannel&quot;,<br>
-&quot;delegate&quot;: {<br>
-&quot;hairpinMode&quot;: true,<br>
-&quot;isDefaultGateway&quot;: true<br>
-}<br>
-},<br>
-{<br>
-&quot;type&quot;: &quot;portmap&quot;,<br>
-&quot;capabilities&quot;: {<br>
-&quot;portMappings&quot;: true<br>
-}<br>
-}<br>
-]<br>
-}</p>
-<p>master</p>
-<p>{<br>
-&quot;name&quot;: &quot;cbr0&quot;,<br>
-&quot;cniVersion&quot;: &quot;0.3.1&quot;,<br>
-&quot;plugins&quot;: [<br>
-{<br>
-&quot;type&quot;: &quot;flannel&quot;,<br>
-&quot;delegate&quot;: {<br>
-&quot;hairpinMode&quot;: true,<br>
-&quot;isDefaultGateway&quot;: true<br>
-}<br>
-},<br>
-{<br>
-&quot;type&quot;: &quot;portmap&quot;,<br>
-&quot;capabilities&quot;: {<br>
-&quot;portMappings&quot;: true<br>
-}<br>
-}<br>
-]<br>
-}</p>
-<p>参考<br>
-https://www.kubernetes.org.cn/6632.html</p>
 ]]></content>
     </entry>
 </feed>

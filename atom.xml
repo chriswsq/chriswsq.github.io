@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-10-29T08:30:56.043Z</updated>
+    <updated>2020-10-29T09:35:08.689Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,22 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[cita链管理服务部署]]></title>
+        <id>https://chriswsq.github.io/post/cita-lian-guan-li-fu-wu-bu-shu/</id>
+        <link href="https://chriswsq.github.io/post/cita-lian-guan-li-fu-wu-bu-shu/">
+        </link>
+        <updated>2020-10-29T08:32:53.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="1链管理服务依赖环境">1.链管理服务依赖环境</h2>
+<p>•	python &gt;= 3.7.9<br>
+•	docker &gt;= 19.0</p>
+<ol>
+<li>安装3.7.9版本参考：https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/</li>
+</ol>
+<p>ln -s  /usr/local/python3/bin/pip3.7  /usr/bin/pip3</p>
+<h2 id="2链管理服务部署步骤">2.链管理服务部署步骤</h2>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[docker-compsoe部署kafka集群]]></title>
         <id>https://chriswsq.github.io/post/docker-compsoe-bu-shu-kafka-ji-qun/</id>
@@ -1615,29 +1631,6 @@ NAME             STATUS   VOLUME       CAPACITY   ACCESS MODES   STORAGECLASS   
 ca-service-pvc   Bound    ca-service   100Mi      RWX                           30m
 </code></pre>
 <p>已都正确绑定</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[k8s pv,pvc无法删除问题]]></title>
-        <id>https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/</id>
-        <link href="https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/">
-        </link>
-        <updated>2020-08-27T05:58:37.000Z</updated>
-        <summary type="html"><![CDATA[<p>解决k8s pv,pvc无法删除问题</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>解决k8s pv,pvc无法删除问题</p>
-<!-- more -->
-<p>一般删除步骤为：先删pod再删pvc最后删pv</p>
-<p>但是遇到pv始终处于“Terminating”状态，而且delete不掉。如下：</p>
-<pre><code class="language-bash">[root@test-1 pv]# kubectl get pv
-NAME         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS        CLAIM                    STORAGECLASS   REASON   AGE
-ca-service   100Mi      RWX            Retain           Terminating   default/ca-service-pvc                           17h
-
-</code></pre>
-<p>解决方法：</p>
-<p>直接删除k8s中的记录：</p>
-<pre><code class="language-bash">kubectl patch pv ca-service  -p '{&quot;metadata&quot;:{&quot;finalizers&quot;:null}}'
-</code></pre>
 ]]></content>
     </entry>
 </feed>

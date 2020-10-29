@@ -19,7 +19,7 @@
 <div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 <div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
 <div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
-<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1602842796053" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1603960252384" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 </div></div>
 <script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
 
@@ -39,7 +39,7 @@
 <h2 id="环境">环境</h2>
 <ul>
 <li>CentOS：7.6</li>
-<li>Python：3.6.9</li>
+<li>Python：3.7.9</li>
 <li>pip：19.3</li>
 <li>elastalert：0.2.0</li>
 <li>elk：7.7.0</li>
@@ -48,10 +48,10 @@
 <p>安装依赖包<br>
 <code>yum -y install wget openssl openssl-devel gcc gcc-c++</code></p>
 <p>下载包<br>
-<code>wget https://www.python.org/ftp/python/3.6.9/Python-3.6.9.tgz</code></p>
+<code>wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz</code></p>
 <p>安装</p>
-<pre><code>tar xf Python-3.6.9.tgz
-cd Python-3.6.9./configure --prefix=/usr/local/python --with-openssl
+<pre><code>tar xf Python-3.7.9.tgz
+cd Python-3.7.9;./configure --prefix=/usr/local/python  --enable-optimizations
 make &amp;&amp; make install
 </code></pre>
 <p>配置</p>
@@ -60,13 +60,13 @@ ln -s /usr/local/python/bin/python3 /usr/bin/python
 ln -s /usr/local/python/bin/pip3 /usr/bin/pip
 pip install --upgrade pip
 </code></pre>
-<p><strong>注意,所有依赖python2的脚本或者命令,需要更改为python2.7,因为现在默认的python版本为3.6,例如</strong></p>
+<p><strong>注意,所有依赖python2的脚本或者命令,需要更改为python2.7,因为现在默认的python版本为3.7,例如</strong></p>
 <pre><code>sed -i '1s/python/python2.7/g' /usr/bin/yum
 sed -i '1s/python/python2.7/g' /usr/libexec/urlgrabber-ext-down
 </code></pre>
 <p>验证</p>
 <pre><code>$ python -V
-    Python 3.6.9
+    Python 3.7.9
 $ pip -V 
 	pip 19.3 from /usr/local/python/lib/python3.6/site-packages/pip (python 3.6).
 </code></pre>

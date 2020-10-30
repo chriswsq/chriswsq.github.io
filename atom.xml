@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-10-29T10:02:52.729Z</updated>
+    <updated>2020-10-30T01:58:51.082Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -24,7 +24,10 @@
 https://blog.csdn.net/lkgCSDN/article/details/84403329<br>
 https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/</li>
 </ol>
-<p>ln -s  /usr/local/python3/bin/pip3  /usr/bin/pip3</p>
+<p>yum install sqlite-devel<br>
+pip install sqlalchemy<br>
+pip install sqlalchemy-migrate<br>
+ln -s  /usr/local/python3/bin/pip3  /usr/bin/pip3</p>
 <h2 id="2链管理服务部署步骤">2.链管理服务部署步骤</h2>
 <ul>
 <li>解压源码包并进入目录</li>

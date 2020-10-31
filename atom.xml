@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-10-30T02:08:57.174Z</updated>
+    <updated>2020-10-31T09:29:28.086Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,15 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[redis]]></title>
+        <id>https://chriswsq.github.io/post/redis/</id>
+        <link href="https://chriswsq.github.io/post/redis/">
+        </link>
+        <updated>2020-10-31T09:29:16.000Z</updated>
+        <content type="html"><![CDATA[<p>https://segmentfault.com/a/1190000022808576</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[cita链管理服务部署]]></title>
         <id>https://chriswsq.github.io/post/cita-lian-guan-li-fu-wu-bu-shu/</id>
@@ -24,10 +33,9 @@
 https://blog.csdn.net/lkgCSDN/article/details/84403329<br>
 https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/</li>
 </ol>
-<p>yum install sqlite-devel<br>
-pip install sqlalchemy<br>
-pip install sqlalchemy-migrate<br>
-ln -s  /usr/local/python3/bin/pip3  /usr/bin/pip3</p>
+<p>ln -s  /usr/local/python3/bin/pip3  /usr/bin/pip3<br>
+ln -s  /usr/local/python3  /usr/bin/python3<br>
+ln -s /usr/local/python3/bin/gunicorn /usr/bin/gunicorn</p>
 <h2 id="2链管理服务部署步骤">2.链管理服务部署步骤</h2>
 <ul>
 <li>解压源码包并进入目录</li>
@@ -1605,76 +1613,6 @@ services:
 https://juejin.im/post/6844903809517371406<br>
 https://blog.csdn.net/w342164796/article/details/105079231/<br>
 https://blog.csdn.net/aixiaoyang168/article/details/98474494</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[k8s 如何关联pvc到特定的pv?]]></title>
-        <id>https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/</id>
-        <link href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/">
-        </link>
-        <updated>2020-08-27T05:59:30.000Z</updated>
-        <summary type="html"><![CDATA[<p>部署有状态的应用时需要挂载相应的配置文件，了解下最常用的pv（nfs）和pvc绑定关系</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>部署有状态的应用时需要挂载相应的配置文件，了解下最常用的pv（nfs）和pvc绑定关系</p>
-<!-- more -->
-<p>首先肯定要在放置配置文件的地方配置nfs服务</p>
-<p>如何关联pvc到特定的pv?</p>
-<p>我们可以使用对 pv 打 label 的方式，具体如下：</p>
-<p>创建 pv，指定 label</p>
-<p><code>cat nfs-test-pv.yaml</code></p>
-<pre><code class="language-yaml">apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: nfs-test-pv
-#  namespace: test-pv-test
-  labels:
-    pv: nfs-test-pv
-spec:
-  capacity:
-    storage: 100Mi
-  accessModes:
-    - ReadWriteMany
-  nfs:
-    # FIXME: use the right IP
-    server: 192.168.40.6
-    path: &quot;/test/&quot;
-</code></pre>
-<p>然后创建 pvc，使用 matchLabel 来关联刚创建的 pv:nfs-test-pv</p>
-<p><code>cat nfs-test-pvc.yaml</code></p>
-<pre><code class="language-yaml">apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: nfs-test-pvc
-#  namespace: test-pv-test
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: &quot;&quot;
-  resources:
-    requests:
-      storage: 90Mi
-  selector:
-    matchLabels:
-      pv: nfs-test-pv
-</code></pre>
-<p>下面开始测试：</p>
-<p><strong>创建pv</strong></p>
-<p><code>kubectl apply -f nfs-test-pv.yaml</code></p>
-<p><strong>查看pv</strong></p>
-<pre><code>kubectl get pv
-[root@test-1 ~]# kubectl get pv
-NAME         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                    STORAGECLASS   REASON   AGE
-ca-service   100Mi      RWX            Retain           Bound    default/ca-service-pvc                           30m
-
-</code></pre>
-<p><strong>然后创建 pvc</strong><br>
-<code>kubectl apply -f nfs-test-pvc.yaml</code></p>
-<p><strong>查看pvc</strong></p>
-<pre><code>[root@test-1 ~]# kubectl get pvc
-NAME             STATUS   VOLUME       CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-ca-service-pvc   Bound    ca-service   100Mi      RWX                           30m
-</code></pre>
-<p>已都正确绑定</p>
 ]]></content>
     </entry>
 </feed>

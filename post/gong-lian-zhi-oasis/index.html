@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>关于Logstash中grok插件的正则表达式例子 | chris&#39;wang</title>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>公链之oasis | chris&#39;wang</title>
 <link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 <script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
 
 <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
 
-<link rel="canonical" href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/" />
+<link rel="canonical" href="https://chriswsq.github.io/post/gong-lian-zhi-oasis/" />
 </head>
 <body>
 <div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
@@ -25,322 +25,119 @@
 
 <div class="main"><div class="main-inner"><div class="content">
 <article class="post">
-<h2 class="post_title sm_margin"><a>关于Logstash中grok插件的正则表达式例子</a></h2>
+<h2 class="post_title sm_margin"><a>公链之oasis</a></h2>
 <script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
-<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-27</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="tag">ELK</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">1040字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">5 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-11-03</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px"></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">635字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">3 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
 </section>
 
 <div style="display:flex">
 <div class="md_block" id="md_block">
 <div class="round-shape-one"></div>
-<p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
-<!-- more -->
-<h2 id="grok提供的常用patterns说明及举例">Grok提供的常用Patterns说明及举例</h2>
-<p>大多数Linux使用人员都有过用正则表达式来查询机器中相关文件或文件里内容的经历，在Grok里，我们也是使用正则表达式来识别日志里的相关数据块。</p>
-<p>有两种方式来使用正则表达式：</p>
-<p>直接写正则来匹配<br>
-用Grok表达式映射正则来匹配</p>
-<h3 id="常用表达式">常用表达式</h3>
+<h2 id="网络参数">网络参数</h2>
+<ul>
+<li>推荐版本：</li>
+</ul>
+<p>​         -  <a href="https://github.com/oasisprotocol/oasis-core">Oasis Core</a> version:  20.10</p>
+<ul>
+<li>创世块文件：</li>
+</ul>
+<p>​          - https://github.com/oasisprotocol/mainnet-artifacts/releases/download/2020-10-01/genesis.json</p>
+<ul>
+<li>绿洲种子节点地址：</li>
+</ul>
+<p>​           - <code>E27F6B7A350B4CC2B48A6CBE94B0A02B0DCB0BF3@35.199.49.168:26656</code></p>
+<h2 id="运行节点">运行节点</h2>
+<h3 id="基础环境">基础环境</h3>
+<p><strong>硬件</strong></p>
+<p>2.0 GHz x86-64 CPU</p>
+<p>2 GB ECC内存</p>
+<p>500 GB高速存储</p>
+<p><strong>版本选择</strong></p>
+<p>下载二进制文件</p>
+<p>版本根据 “网络参数” 页面中提到的链接下载</p>
+<p><strong>基础依赖环境可用官方提供的镜像</strong></p>
+<p>oasisprotocol/oasis-core-dev:stable-20.12.x</p>
+<p>挂载出来数据目录和配置二进制文件等目录即可</p>
+<h3 id="运行非验证者节点">运行非验证者节点</h3>
+<p><strong>先决条件</strong></p>
+<p>在遵循本指南之前，请确保您已遵循《<a href="">先决条件指南》</a>并了解如何使用二进制文件。<code>oasis-node</code>c</p>
+<h2 id="创建工作目录">创建工作目录</h2>
+<p>我们将在选定的顶级目录（随意命名目录）中创建以下目录结构：<code>/node</code></p>
 <ul>
 <li>
-<p>GREEDYDATA<br>
-<strong>匹配任意字符</strong></p>
+<p><code>etc</code>：这将存储节点配置和生成文件。</p>
 </li>
 <li>
-<p>USERNAME 或 USER<br>
-<strong>用户名</strong>，由数字、大小写及特殊字符(._-)组成的字符串</p>
+<p><code>data</code>：这将存储正在运行的二进制文件所需的数据目录，包括完整的区块链状态。<code>oasis-node</code></p>
+<p>目录权限应为。<code>rwx------</code></p>
 </li>
 </ul>
-<blockquote>
-<p>比如：1234、Bob、Alex.Wong等</p>
-</blockquote>
-<ul>
-<li>EMAILLOCALPART<br>
-<strong>电子邮件用户名部分</strong>，首位由大小写字母组成，其他位由数字、大小写及特殊字符(_.+-=:)组成的字符串。注意，国内的QQ纯数字邮箱账号是无法匹配的，需要修改正则</li>
-</ul>
-<blockquote>
-<p>比如：stone、Gary_Lu、abc-123等</p>
-</blockquote>
-<ul>
-<li>EMAILADDRESS<br>
-<strong>电子邮件</strong></li>
-</ul>
-<blockquote>
-<p>比如：wwwwaf@abc.com、Gadf_adf@gmail.com、abc-123@163.com等</p>
-</blockquote>
-<ul>
-<li>
-<p>HTTPDUSER<br>
-Apache服务器的用户，可以是EMAILADDRESS或USERNAME</p>
-</li>
-<li>
-<p>INT<br>
-<strong>整数，包括0和正负整数</strong></p>
-</li>
-</ul>
-<blockquote>
-<p>比如：0、-123、43987等</p>
-</blockquote>
-<ul>
-<li>BASE10NUM 或 NUMBER<br>
-<strong>十进制数字，包括整数和小数</strong></li>
-</ul>
-<blockquote>
-<p>比如：0、18、5.23等</p>
-</blockquote>
-<ul>
-<li>BASE16NUM<br>
-<strong>十六进制数字，整数</strong></li>
-</ul>
-<blockquote>
-<p>比如：0x0045fa2d、-0x3F8709等</p>
-</blockquote>
-<ul>
-<li>WORD<br>
-<strong>字符串，包括数字和大小写字母</strong></li>
-</ul>
-<blockquote>
-<p>比如：String、3529345、ILoveYou等</p>
-</blockquote>
+<p>要创建目录结构，请使用以下命令：</p>
+<pre><code class="language-bash">mkdir -m700 -p /node/{etc,data}
+</code></pre>
+<h2 id="复制创世文件">复制创世文件</h2>
+<p>最新的创世文件可以在“<a href="">网络参数”中</a>找到。您应该下载最新文件并将其复制到我们刚刚创建的目录中。<code>genesis.json``/node/etc</code></p>
+<p>为了配置节点，请创建具有以下内容的文件：<code>/node/etc/config.yml</code></p>
+<pre><code class="language-yml">datadir: /node/data
+
+log:
+  level:
+    default: info
+    tendermint: info
+    tendermint/context: error
+  format: JSON
+
+genesis:
+  file: /node/etc/genesis.json
+
+consensus:
+  tendermint:
+    p2p:
+      # List of seed nodes to connect to.
+      # NOTE: You can add additional seed nodes to this list if you want.
+      seed:
+        - &quot;{{ seed_node_address }}&quot;
+
+</code></pre>
+<p>使用此配置之前，您应该收集以下信息来替换配置文件中存在的变量：</p>
 <ul>
 <li>
-<p>NOTSPACE<br>
-<strong>不带任何空格的字符串</strong></p>
-</li>
-<li>
-<p>SPACE<br>
-<strong>空格字符串</strong></p>
-</li>
-<li>
-<p>{SPACE}*<br>
-**匹配任意连续空格</p>
-</li>
-<li>
-<p>QUOTEDSTRING 或 QS<br>
-带引号的字符串</p>
+<p><code>{{ seed_node_address }}</code>：形式的种子节点地址。<code>ID@IP:port</code></p>
+<p>您可以在“<a href="">网络参数”中</a>找到当前的Oasis Seed节点地址。当前版本可参考上面的网络参数</p>
 </li>
 </ul>
 <blockquote>
-<p>比如：&quot;This is an apple&quot;、'What is your name?'等</p>
+<p>注意 “{{}}“ 符号位占位符</p>
 </blockquote>
-<ul>
-<li>UUID<br>
-<strong>标准UUID</strong></li>
-</ul>
-<blockquote>
-<p>比如：550E8400-E29B-11D4-A716-446655440000</p>
-</blockquote>
-<ul>
-<li>
-<p>MAC<br>
-<strong>MAC地址</strong>，可以是Cisco设备里的MAC地址，也可以是通用或者Windows系统的MAC地址</p>
-</li>
-<li>
-<p>IP<br>
-<strong>IP地址</strong>，IPv4或IPv6地址</p>
-</li>
-</ul>
-<blockquote>
-<p>比如：127.0.0.1、FE80:0000:0000:0000:AAAA:0000:00C2:0002等</p>
-</blockquote>
-<ul>
-<li>
-<p>HOSTNAME<br>
-<strong>主机名称</strong></p>
-</li>
-<li>
-<p>IPORHOST<br>
-<strong>IP或者主机名称</strong></p>
-</li>
-<li>
-<p>HOSTPORT<br>
-<strong>主机名(IP)+端口</strong></p>
-</li>
-</ul>
-<blockquote>
-<p>比如：127.0.0.1:3306、api.stozen.net:8000等</p>
-</blockquote>
-<ul>
-<li>PATH<br>
-<strong>路径</strong>，Unix系统或者Windows系统里的路径格式</li>
-</ul>
-<blockquote>
-<p>比如：/usr/local/nginx/sbin/nginx、c:\windows\system32\clr.exe等</p>
-</blockquote>
-<ul>
-<li>URIPROTO<br>
-<strong>URI协议</strong></li>
-</ul>
-<blockquote>
-<p>比如：http、ftp等</p>
-</blockquote>
-<ul>
-<li>URIHOST<br>
-<strong>URI主机</strong></li>
-</ul>
-<blockquote>
-<p>比如：www.baidu.net、10.0.0.1:22等</p>
-</blockquote>
-<ul>
-<li>URIPATH<br>
-<strong>URI路径</strong></li>
-</ul>
-<blockquote>
-<p>比如：<code>//www.baidu.net/abc/、/api.php</code>等</p>
-</blockquote>
-<ul>
-<li>URIPARAM<br>
-<strong>URI里的GET参数</strong></li>
-</ul>
-<blockquote>
-<p>比如：?a=1&amp;b=2&amp;c=3</p>
-</blockquote>
-<ul>
-<li>URIPATHPARAM<br>
-<strong>URI路径+GET参数</strong></li>
-</ul>
-<blockquote>
-<p>比如：<code>//www.google.net/abc/api.php?a=1&amp;b=2&amp;c=3</code></p>
-</blockquote>
-<ul>
-<li>URI<br>
-<strong>完整的URI</strong></li>
-</ul>
-<blockquote>
-<p>比如：<code>http://www.google.net/abc/api.php?a=1&amp;b=2&amp;c=3</code></p>
-</blockquote>
-<h3 id="日期时间表达式">日期时间表达式</h3>
-<ul>
-<li>MONTH<br>
-<strong>月份名称</strong></li>
-</ul>
-<blockquote>
-<p>比如：Jan、January等</p>
-</blockquote>
-<ul>
-<li>MONTHNUM<br>
-<strong>月份数字</strong></li>
-</ul>
-<blockquote>
-<p>比如：03、9、12等</p>
-</blockquote>
-<ul>
-<li>MONTHDAY<br>
-<strong>日期数字</strong></li>
-</ul>
-<blockquote>
-<p>比如：03、9、31等</p>
-</blockquote>
-<ul>
-<li>DAY<br>
-<strong>星期几名称</strong></li>
-</ul>
-<blockquote>
-<p>比如：Mon、Monday等</p>
-</blockquote>
-<ul>
-<li>YEAR<br>
-<strong>年份数字</strong></li>
-<li>HOUR<br>
-<strong>小时数字</strong></li>
-<li>MINUTE<br>
-<strong>分钟数字</strong></li>
-<li>SECOND<br>
-<strong>秒数字</strong></li>
-<li>TIME<br>
-<strong>时间</strong></li>
-</ul>
-<blockquote>
-<p>比如：00:01:23</p>
-</blockquote>
-<ul>
-<li>DATE_US<br>
-<strong>美国日期格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：10-15-1982、10/15/1982等</p>
-</blockquote>
-<ul>
-<li>DATE_EU<br>
-<strong>欧洲日期格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：15-10-1982、15/10/1982、15.10.1982等</p>
-</blockquote>
-<ul>
-<li>ISO8601_TIMEZONE<br>
-<strong>ISO8601时间格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：+10:23、-1023等</p>
-</blockquote>
-<ul>
-<li>TIMESTAMP_ISO8601<br>
-<strong>ISO8601时间戳格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：2016-07-03T00:34:06+08:00</p>
-</blockquote>
-<ul>
-<li>
-<p>DATE<br>
-<strong>日期</strong>，美国日期%{DATE_US}或者欧洲日期%{DATE_EU}</p>
-</li>
-<li>
-<p>DATESTAMP<br>
-<strong>完整日期+时间</strong></p>
-</li>
-</ul>
-<blockquote>
-<p>比如：07-03-2016 00:34:06</p>
-</blockquote>
-<ul>
-<li>HTTPDATE<br>
-<strong>http默认日期格式</strong></li>
-</ul>
-<blockquote>
-<p>比如：03/Jul/2016:00:36:53 +0800</p>
-</blockquote>
-<h3 id="log表达式">Log表达式</h3>
-<ul>
-<li>LOGLEVEL<br>
-<strong>日志等级</strong></li>
-</ul>
-<blockquote>
-<p>比如：Alert、alert、ALERT、Error等</p>
-</blockquote>
-<h2 id="创建自己的grok表达式">创建自己的Grok表达式</h2>
-<p>在业务领域中，可能会有越来越多的日志格式出现在我们眼前，而Grok的默认表达式显然已无法满足我们的需求（比如用户身份证号、手机号等信息），所以，我们需要自己动手添加些表达式。</p>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>正则表达式</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>DATE_CHS</td>
-<td>%{YEAR}[./-]%{MONTHNUM}[./-]%{MONTHDAY}</td>
-<td>中国人习惯的日期格式</td>
-</tr>
-<tr>
-<td>ZIPCODE_CHS</td>
-<td>[1-9]\d{5}</td>
-<td>国内邮政编码</td>
-</tr>
-<tr>
-<td>GAME_ACCOUNT</td>
-<td>[a-zA-Z][a-zA-Z0-9_]{4,15}</td>
-<td>游戏账号，首字符为字母，4-15位字母、数字、下划线组成</td>
-</tr>
-</tbody>
-</table>
-<h2 id="其他">其他</h2>
-<p>grok正则表达式：(?<temMsg>(.<em>)(?=Report)/?) 获取Report之前的字符<br>
-grok正则表达式：(?<temMsg>(?=Report)(.</em>)/?) 获取Report之后的字符</p>
-<p><a href="https://www.cnblogs.com/stozen/p/5638369.html">参考</a></p>
+<p>最后文件为</p>
+<pre><code class="language-yml">datadir: /node/data
+
+log:
+  level:
+    default: info
+    tendermint: info
+    tendermint/context: error
+  format: JSON
+
+genesis:
+  file: /node/etc/genesis.json
+
+consensus:
+  tendermint:
+    p2p:
+      # List of seed nodes to connect to.
+      # NOTE: You can add additional seed nodes to this list if you want.
+      seed:
+        - &quot;E27F6B7A350B4CC2B48A6CBE94B0A02B0DCB0BF3@35.199.49.168:26656&quot;
+</code></pre>
+<h2 id="启动绿洲节点">启动绿洲节点</h2>
+<p>您可以通过运行以下命令来启动节点：</p>
+<pre><code class="language-bash">oasis-node --config /node/etc/config.yml
+</code></pre>
+<h2 id="检查节点状态">检查节点状态</h2>
+<p>为确保您的节点正确连接到网络，可以在节点启动后运行以下命令：</p>
+<pre><code class="language-bash">oasis-node control status -a unix:/node/data/internal.sock
+</code></pre>
 
 <span id="footnote"></span>
 <div id = "warn"></div>
@@ -348,15 +145,17 @@ grok正则表达式：(?<temMsg>(?=Report)(.</em>)/?) 获取Report之后的字�
 <div class="toc-container"><ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#grok%E6%8F%90%E4%BE%9B%E7%9A%84%E5%B8%B8%E7%94%A8patterns%E8%AF%B4%E6%98%8E%E5%8F%8A%E4%B8%BE%E4%BE%8B">Grok提供的常用Patterns说明及举例</a>
+<li><a href="#%E7%BD%91%E7%BB%9C%E5%8F%82%E6%95%B0">网络参数</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E8%8A%82%E7%82%B9">运行节点</a>
 <ul>
-<li><a href="#%E5%B8%B8%E7%94%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F">常用表达式</a></li>
-<li><a href="#%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E8%A1%A8%E8%BE%BE%E5%BC%8F">日期时间表达式</a></li>
-<li><a href="#log%E8%A1%A8%E8%BE%BE%E5%BC%8F">Log表达式</a></li>
+<li><a href="#%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83">基础环境</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E9%9D%9E%E9%AA%8C%E8%AF%81%E8%80%85%E8%8A%82%E7%82%B9">运行非验证者节点</a></li>
 </ul>
 </li>
-<li><a href="#%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84grok%E8%A1%A8%E8%BE%BE%E5%BC%8F">创建自己的Grok表达式</a></li>
-<li><a href="#%E5%85%B6%E4%BB%96">其他</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95">创建工作目录</a></li>
+<li><a href="#%E5%A4%8D%E5%88%B6%E5%88%9B%E4%B8%96%E6%96%87%E4%BB%B6">复制创世文件</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E7%BB%BF%E6%B4%B2%E8%8A%82%E7%82%B9">启动绿洲节点</a></li>
+<li><a href="#%E6%A3%80%E6%9F%A5%E8%8A%82%E7%82%B9%E7%8A%B6%E6%80%81">检查节点状态</a></li>
 </ul>
 </li>
 </ul>
@@ -386,7 +185,7 @@ if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop)
 var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
 var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
 var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
-content="本文最后更新于2020-08-27，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-08-27 13:51:06";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+content="本文最后更新于2020-11-03，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-11-03 16:58:03";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
 </script>
 <style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
 <a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>

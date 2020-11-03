@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-11-03T08:58:52.500Z</updated>
+    <updated>2020-11-03T09:02:24.433Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -119,7 +119,54 @@ consensus:
 </code></pre>
 <h2 id="检查节点状态">检查节点状态</h2>
 <p>为确保您的节点正确连接到网络，可以在节点启动后运行以下命令：</p>
-<pre><code class="language-bash">oasis-node control status -a unix:/node/data/internal.sock
+<pre><code class="language-bash">[root@test-3 ~]# oasis-node control status -a unix:/node/data/internal.sock
+{
+  &quot;software_version&quot;: &quot;20.10&quot;,
+  &quot;identity&quot;: {
+    &quot;node&quot;: &quot;oUwYlx46W5BdwT2rvmvUDQtXpb14VREWI1T97d4vDd0=&quot;,
+    &quot;p2p&quot;: &quot;1XeX5KVu0kGjrqflnlsuk3Ad2KIGlufpfoZzkb7nKao=&quot;,
+    &quot;consensus&quot;: &quot;NwUrqaqOvkvDb7XhQwR4e4UG/1bKhZTms/WHrT1N6Zw=&quot;,
+    &quot;tls&quot;: [
+      &quot;iWWKvpswy8j4pxNZnt7PZWnHpg0QWBT9872CWw+BlU4=&quot;,
+      &quot;lqZ98iXrLaEJINwlHJZelQYpKx1EDcP3ViwGW/gV/js=&quot;
+    ]
+  },
+  &quot;consensus&quot;: {
+    &quot;consensus_version&quot;: &quot;1.0.0&quot;,
+    &quot;backend&quot;: &quot;tendermint&quot;,
+    &quot;features&quot;: 3,
+    &quot;node_peers&quot;: [
+      &quot;0f6a5be6c145400ff96485bd34a5a4c1f20e833f@124.70.199.1:26656&quot;,
+      &quot;9e6bd4c78f4e30adbb7b7ca51311085c7f137889@120.76.130.76:26656&quot;,
+      &quot;b7c38b98134fb29257d05145fd997645e9333484@118.26.39.169:26656&quot;,
+      &quot;53c9ffebd7c2e96c1302ebe7bcd31382a69e5348@135.181.2.18:26656&quot;,
+      &quot;136d2d3b17be220719ab23a0611bc68e52323e5a@95.217.204.115:26656&quot;,
+      &quot;bbfac1c724eb4e3f7787b6b2db96f99fda5d252d@135.181.21.55:26656&quot;,
+      &quot;3644e25d4b0211709ae7f2a2a0b1a54ca6575e47@161.35.48.60:26656&quot;,
+      &quot;256ac7529e57022b66c9addb69ec0367ad0dd617@167.86.110.247:26656&quot;,
+      &quot;9fb0071d9630e2e1592e912d52565933ee292549@95.217.203.59:26656&quot;,
+      &quot;7cb8aa1541b688b2a24ed18027e0da1813de93ad@51.15.34.59:26650&quot;,
+      &quot;ed98f109443389769b1a4a273c7e697e9d47891e@195.201.29.17:26656&quot;,
+      &quot;1c528988719e5a6a86a48de09f969d9ac3a81e9b@54.237.253.113:26656&quot;
+    ],
+    &quot;latest_height&quot;: 1357,
+    &quot;latest_hash&quot;: &quot;IG1FA6GPyFsxXiAOxVFf0XHTNci4S9ViUhV4bmURNYE=&quot;,
+    &quot;latest_time&quot;: &quot;2020-10-02T02:18:32+08:00&quot;,
+    &quot;latest_state_root&quot;: {
+      &quot;ns&quot;: &quot;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=&quot;,
+      &quot;version&quot;: 1356,
+      &quot;hash&quot;: &quot;9GC6jO1CKQc9yF+24tJ1hn0U0t5OJ7YRW1l83n1p5Nk=&quot;
+    },
+    &quot;genesis_height&quot;: 1,
+    &quot;genesis_hash&quot;: &quot;Bu07ETd9qkE7HjWhXYFovOTqDy+X5S2gjoqBVDnJjVY=&quot;,
+    &quot;is_validator&quot;: false
+  },
+  &quot;runtimes&quot;: {},
+  &quot;registration&quot;: {
+    &quot;last_registration&quot;: &quot;0001-01-01T00:00:00Z&quot;
+  }
+}
+
 </code></pre>
 ]]></content>
     </entry>

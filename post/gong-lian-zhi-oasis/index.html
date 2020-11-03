@@ -19,7 +19,7 @@
 <div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 <div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
 <div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
-<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1604393929947" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1604394142367" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
 </div></div>
 <script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
 
@@ -27,7 +27,7 @@
 <article class="post">
 <h2 class="post_title sm_margin"><a>公链之oasis</a></h2>
 <script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
-<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-11-03</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px"></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">635字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">3 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-11-03</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/0OaJlvEHw/" class="tag">公链</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">873字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">5 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
 </section>
 
 <div style="display:flex">
@@ -136,7 +136,54 @@ consensus:
 </code></pre>
 <h2 id="检查节点状态">检查节点状态</h2>
 <p>为确保您的节点正确连接到网络，可以在节点启动后运行以下命令：</p>
-<pre><code class="language-bash">oasis-node control status -a unix:/node/data/internal.sock
+<pre><code class="language-bash">[root@test-3 ~]# oasis-node control status -a unix:/node/data/internal.sock
+{
+  &quot;software_version&quot;: &quot;20.10&quot;,
+  &quot;identity&quot;: {
+    &quot;node&quot;: &quot;oUwYlx46W5BdwT2rvmvUDQtXpb14VREWI1T97d4vDd0=&quot;,
+    &quot;p2p&quot;: &quot;1XeX5KVu0kGjrqflnlsuk3Ad2KIGlufpfoZzkb7nKao=&quot;,
+    &quot;consensus&quot;: &quot;NwUrqaqOvkvDb7XhQwR4e4UG/1bKhZTms/WHrT1N6Zw=&quot;,
+    &quot;tls&quot;: [
+      &quot;iWWKvpswy8j4pxNZnt7PZWnHpg0QWBT9872CWw+BlU4=&quot;,
+      &quot;lqZ98iXrLaEJINwlHJZelQYpKx1EDcP3ViwGW/gV/js=&quot;
+    ]
+  },
+  &quot;consensus&quot;: {
+    &quot;consensus_version&quot;: &quot;1.0.0&quot;,
+    &quot;backend&quot;: &quot;tendermint&quot;,
+    &quot;features&quot;: 3,
+    &quot;node_peers&quot;: [
+      &quot;0f6a5be6c145400ff96485bd34a5a4c1f20e833f@124.70.199.1:26656&quot;,
+      &quot;9e6bd4c78f4e30adbb7b7ca51311085c7f137889@120.76.130.76:26656&quot;,
+      &quot;b7c38b98134fb29257d05145fd997645e9333484@118.26.39.169:26656&quot;,
+      &quot;53c9ffebd7c2e96c1302ebe7bcd31382a69e5348@135.181.2.18:26656&quot;,
+      &quot;136d2d3b17be220719ab23a0611bc68e52323e5a@95.217.204.115:26656&quot;,
+      &quot;bbfac1c724eb4e3f7787b6b2db96f99fda5d252d@135.181.21.55:26656&quot;,
+      &quot;3644e25d4b0211709ae7f2a2a0b1a54ca6575e47@161.35.48.60:26656&quot;,
+      &quot;256ac7529e57022b66c9addb69ec0367ad0dd617@167.86.110.247:26656&quot;,
+      &quot;9fb0071d9630e2e1592e912d52565933ee292549@95.217.203.59:26656&quot;,
+      &quot;7cb8aa1541b688b2a24ed18027e0da1813de93ad@51.15.34.59:26650&quot;,
+      &quot;ed98f109443389769b1a4a273c7e697e9d47891e@195.201.29.17:26656&quot;,
+      &quot;1c528988719e5a6a86a48de09f969d9ac3a81e9b@54.237.253.113:26656&quot;
+    ],
+    &quot;latest_height&quot;: 1357,
+    &quot;latest_hash&quot;: &quot;IG1FA6GPyFsxXiAOxVFf0XHTNci4S9ViUhV4bmURNYE=&quot;,
+    &quot;latest_time&quot;: &quot;2020-10-02T02:18:32+08:00&quot;,
+    &quot;latest_state_root&quot;: {
+      &quot;ns&quot;: &quot;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=&quot;,
+      &quot;version&quot;: 1356,
+      &quot;hash&quot;: &quot;9GC6jO1CKQc9yF+24tJ1hn0U0t5OJ7YRW1l83n1p5Nk=&quot;
+    },
+    &quot;genesis_height&quot;: 1,
+    &quot;genesis_hash&quot;: &quot;Bu07ETd9qkE7HjWhXYFovOTqDy+X5S2gjoqBVDnJjVY=&quot;,
+    &quot;is_validator&quot;: false
+  },
+  &quot;runtimes&quot;: {},
+  &quot;registration&quot;: {
+    &quot;last_registration&quot;: &quot;0001-01-01T00:00:00Z&quot;
+  }
+}
+
 </code></pre>
 
 <span id="footnote"></span>

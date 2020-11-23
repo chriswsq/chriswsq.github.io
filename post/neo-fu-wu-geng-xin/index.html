@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>k8s——apiVersion对照表 | chris&#39;wang</title>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>neo服务更新 | chris&#39;wang</title>
 <link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 <script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
 
 <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
 
-<link rel="canonical" href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/" />
+<link rel="canonical" href="https://chriswsq.github.io/post/neo-fu-wu-geng-xin/" />
 </head>
 <body>
 <div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
@@ -25,195 +25,63 @@
 
 <div class="main"><div class="main-inner"><div class="content">
 <article class="post">
-<h2 class="post_title sm_margin"><a>k8s——apiVersion对照表</a></h2>
+<h2 class="post_title sm_margin"><a>neo服务更新</a></h2>
 <script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
-<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-08-20</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px"></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">757字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">4 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-11-23</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/0OaJlvEHw/" class="tag">公链</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">155字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">1 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
 </section>
 
 <div style="display:flex">
 <div class="md_block" id="md_block">
 <div class="round-shape-one"></div>
-<!-- more -->
-<p>不同的控制器选用不同的apiVersion</p>
-<!-- more -->
-<h2 id="对照表">对照表</h2>
-<table>
-<thead>
-<tr>
-<th>kind</th>
-<th>apiVersion</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CertificateSigningRequest</td>
-<td>certificates.k8s.io/v1beta1</td>
-</tr>
-<tr>
-<td>ClusterRoleBinding</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>ClusterRole</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>ComponentStatus</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ConfigMap</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ControllerRevision</td>
-<td>apps/v1</td>
-</tr>
-<tr>
-<td>CronJob</td>
-<td>batch/v1beta1</td>
-</tr>
-<tr>
-<td>DaemonSet</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Deployment</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Endpoints</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>Event</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>HorizontalPodAutoscaler</td>
-<td>autoscaling/v1</td>
-</tr>
-<tr>
-<td>Ingress</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Job</td>
-<td>batch/v1</td>
-</tr>
-<tr>
-<td>LimitRange</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>Namespace</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>NetworkPolicy</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>Node</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PersistentVolumeClaim</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PersistentVolume</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PodDisruptionBudget</td>
-<td>policy/v1beta1</td>
-</tr>
-<tr>
-<td>Pod</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>PodSecurityPolicy</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>PodTemplate</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ReplicaSet</td>
-<td>extensions/v1beta1</td>
-</tr>
-<tr>
-<td>ReplicationController</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ResourceQuota</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>RoleBinding</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>Role</td>
-<td>rbac.authorization.k8s.io/v1</td>
-</tr>
-<tr>
-<td>Secret</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>ServiceAccount</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>Service</td>
-<td>v1</td>
-</tr>
-<tr>
-<td>StatefulSet</td>
-<td>apps/v1</td>
-</tr>
-</tbody>
-</table>
-<h2 id="apiversion分别是什么意思">apiVersion分别是什么意思？</h2>
-<p>名称中带有'alpha'的alpha API版本是Kubernetes中新功能的早期候选者。这些可能包含错误，并且不能保证将来能够正常工作。</p>
-<p><strong>测试</strong><br>
-在API版本名称意味着测试已取得进展过去的阿尔法水平，并且该功能最终将被列入Kubernetes“测试”。尽管其工作方式可能会发生变化，并且对象的定义方式可能会发生完全变化，但功能本身很有可能以某种形式将其纳入Kubernetes。</p>
-<p><strong>稳定名称中</strong><br>
-不包含“ alpha”或“ beta”。它们是安全使用的。</p>
-<hr>
-<p><strong>v1</strong><br>
-这是Kubernetes API的第一个稳定版本。它包含许多核心对象。</p>
-<p><strong>apps / v1</strong><br>
-apps是Kubernetes中最常见的API组，其中许多核心对象均来自v1。它包括与在Kubernetes上运行应用程序相关的功能，例如Deployments，RollingUpdates和ReplicaSets。</p>
-<p><strong>autoscaling / v1</strong><br>
-此API版本允许根据不同的资源使用量指标对pod进行自动缩放。此稳定版本仅支持CPU扩展，但是将来的alpha和beta版本将允许您根据内存使用情况和自定义指标进行扩展。</p>
-<p><strong>batch/v1</strong><br>
-的batchAPI组包含与批处理和作业样的任务（而不是应用类一样无限期运行Web服务器的任务）的对象。该apiVersion是这些API对象的第一个稳定版本。</p>
-<p><strong>batch / v1beta1</strong><br>
-Beta版本，用于Kubernetes中批处理对象的新功能，特别是包括CronJobs，它使您可以在特定的时间或周期性地运行Jobs。</p>
-<p><strong>certificate.k8s.io/v1beta1</strong><br>
-此API版本增加了用于验证网络证书以在群集中进行安全通信的功能。您可以阅读更多有关官方文档的信息。</p>
-<p><strong>extensions / v1beta1</strong><br>
-此版本的API包括Kubernetes的许多常用新功能。在此版本中，部署，DaemonSet，副本集和Ingress都进行了重大更改。</p>
-<p>请注意，在Kubernetes 1.6中，其中一些对象已从重新定位extensions到特定的API组（例如apps）。当这些对象移出测试版时，应将它们归入特定的API组，例如apps/v1。使用extensions/v1beta1正变得过时，尝试用在可能情况下，根据您的Kubernetes集群版本的特定API组。</p>
-<p><strong>policy / v1beta1</strong><br>
-此apiVersion增加了设置容器中断预算和有关容器安全性的新规则的功能。</p>
-<p><strong>rbac.authorization.k8s.io/v1</strong><br>
-此apiVersion包含用于Kubernetes基于角色的访问控制的附加功能。这可以帮助您保护群集。查看官方博客文章。</p>
+<h1 id="neo服务更新">neo服务更新</h1>
+<h2 id="清理旧数据">清理旧数据</h2>
+<pre><code class="language-bash">docker rm -f    neo-cli
+
+docker rmi neongd/neo-cli
+
+find ./ -type d | xargs rm -rf {} \;
+</code></pre>
+<h2 id="安装新版本neo">安装新版本neo</h2>
+<pre><code class="language-bash">docker pull neongd/neo-cli
+
+docker run --name=neo-cli -dit -p 10332-10334:10332-10334  -v /bsn/neo/chain.acc.zip:/neo-cli/chain.acc.zip -v /bsn/neo/ApplicationLogs_00746E41:/neo-cli/ApplicationLogs_00746E41 -v /bsn/neo/Chain_00746E41:/neo-cli/Chain_00746E41 -v /bsn/neo/Index_00746E41:/neo-cli/Index_00746E41 -v /bsn/neo/Nep5BalanceData:/neo-cli/Nep5BalanceData -v /bsn/neo/SystemAssetBalanceData:/neo-cli/SystemAssetBalanceData --restart=always neongd/neo-cli
+
+
+docker exec -it neo-cli bash
+
+screen -r node
+
+install SimplePolicy
+install RpcSecurity
+install ApplicationLogs
+install ImportBlocks
+install RpcWallet
+install RpcNep5Tracker
+install RpcSystemAsseTtracker
+install CoreMetrics
+install StatesDumper
+
+
+docker container restart neo-cli
+</code></pre>
+<h2 id="查看状态">查看状态</h2>
+<p>两个值在变动则为正常</p>
+<pre><code class="language-bash">docker exec -it node-cli
+
+screen -r node 
+
+shwo state
+</code></pre>
 
 <span id="footnote"></span>
 <div id = "warn"></div>
 </div>
 <div class="toc-container"><ul class="markdownIt-TOC">
-<li>
+<li><a href="#neo%E6%9C%8D%E5%8A%A1%E6%9B%B4%E6%96%B0">neo服务更新</a>
 <ul>
-<li><a href="#%E5%AF%B9%E7%85%A7%E8%A1%A8">对照表</a></li>
-<li><a href="#apiversion%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D">apiVersion分别是什么意思？</a></li>
+<li><a href="#%E6%B8%85%E7%90%86%E6%97%A7%E6%95%B0%E6%8D%AE">清理旧数据</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E6%96%B0%E7%89%88%E6%9C%ACneo">安装新版本neo</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E7%8A%B6%E6%80%81">查看状态</a></li>
 </ul>
 </li>
 </ul>
@@ -243,7 +111,7 @@ if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop)
 var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
 var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
 var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
-content="本文最后更新于2020-08-20，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-08-20 15:10:24";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+content="本文最后更新于2020-11-23，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-11-23 14:03:14";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
 </script>
 <style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
 <a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>

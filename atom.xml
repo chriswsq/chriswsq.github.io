@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-11-05T05:52:10.124Z</updated>
+    <updated>2020-11-23T06:03:48.362Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,53 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[neo服务更新]]></title>
+        <id>https://chriswsq.github.io/post/neo-fu-wu-geng-xin/</id>
+        <link href="https://chriswsq.github.io/post/neo-fu-wu-geng-xin/">
+        </link>
+        <updated>2020-11-23T06:03:14.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="neo服务更新">neo服务更新</h1>
+<h2 id="清理旧数据">清理旧数据</h2>
+<pre><code class="language-bash">docker rm -f    neo-cli
+
+docker rmi neongd/neo-cli
+
+find ./ -type d | xargs rm -rf {} \;
+</code></pre>
+<h2 id="安装新版本neo">安装新版本neo</h2>
+<pre><code class="language-bash">docker pull neongd/neo-cli
+
+docker run --name=neo-cli -dit -p 10332-10334:10332-10334  -v /bsn/neo/chain.acc.zip:/neo-cli/chain.acc.zip -v /bsn/neo/ApplicationLogs_00746E41:/neo-cli/ApplicationLogs_00746E41 -v /bsn/neo/Chain_00746E41:/neo-cli/Chain_00746E41 -v /bsn/neo/Index_00746E41:/neo-cli/Index_00746E41 -v /bsn/neo/Nep5BalanceData:/neo-cli/Nep5BalanceData -v /bsn/neo/SystemAssetBalanceData:/neo-cli/SystemAssetBalanceData --restart=always neongd/neo-cli
+
+
+docker exec -it neo-cli bash
+
+screen -r node
+
+install SimplePolicy
+install RpcSecurity
+install ApplicationLogs
+install ImportBlocks
+install RpcWallet
+install RpcNep5Tracker
+install RpcSystemAsseTtracker
+install CoreMetrics
+install StatesDumper
+
+
+docker container restart neo-cli
+</code></pre>
+<h2 id="查看状态">查看状态</h2>
+<p>两个值在变动则为正常</p>
+<pre><code class="language-bash">docker exec -it node-cli
+
+screen -r node 
+
+shwo state
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[公链之oasis]]></title>
         <id>https://chriswsq.github.io/post/gong-lian-zhi-oasis/</id>
@@ -796,24 +843,6 @@ qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am
 <p>这样容器就一直在发送ping包，不会退出。<br>
 意思就是然容器一直运行一个程序，不退出，容器就不会停止</p>
 <p>本文链接地址 https://www.rootop.org/pages/3736.html</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[记一次服务器内存过高问题]]></title>
-        <id>https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/</id>
-        <link href="https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/">
-        </link>
-        <updated>2020-09-10T09:40:31.000Z</updated>
-        <content type="html"><![CDATA[<!-- more -->
-<p>监控系统发邮件告警，一台服务器内存过高，已达 90% 以上，之前这台机器内存就高到85%以上，上去看了下服务正常 top 指令看了下没什么太高的进程占用，就重启了下上面的服务（前提是上面的服务重启是没什么影响的）。</p>
-<p>今天有来告警了，内存占用率已经到90%，照常上去看了下<br>
-使用 free -m 查看内存，一共是16G  已经用了 13G<br>
-top  查看进程占用资源情况，发现最高的应用占用也不过百分之五左右</p>
-<p>怀疑是被攻击了，看了下进程  ps  aux<br>
-发现进程很多   ps aux |wc  -l    进程都6000多了，大部分的进程都是 sshd: root@notty  的进程，网上查了下这是被 ssh 暴力破解了，很奇怪，端口号改了不是22 了 ，攻击者怎么知道的呢。。。。</p>
-<p>先解决问题吧</p>
-<pre><code class="language-bash"> for i in  `ps  aux | grep root@notty | more | awk  '{print $2}'` ;do kill $i ;done
-</code></pre>
 ]]></content>
     </entry>
 </feed>

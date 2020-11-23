@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-11-23T06:03:48.362Z</updated>
+    <updated>2020-11-23T06:06:17.346Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -22,7 +22,7 @@
 
 docker rmi neongd/neo-cli
 
-find ./ -type d | xargs rm -rf {} \;
+find  /bsn/neo/ -type d | xargs rm -rf {} \;
 </code></pre>
 <h2 id="安装新版本neo">安装新版本neo</h2>
 <pre><code class="language-bash">docker pull neongd/neo-cli

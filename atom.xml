@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-11-23T06:09:03.689Z</updated>
+    <updated>2020-12-03T05:36:30.727Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,489 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[linux 条件判断]]></title>
+        <id>https://chriswsq.github.io/post/linux-tiao-jian-pan-duan/</id>
+        <link href="https://chriswsq.github.io/post/linux-tiao-jian-pan-duan/">
+        </link>
+        <updated>2020-12-03T03:20:25.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="1-if-结构">1. if 结构</h2>
+<p>if 是最常用的条件判断结构，只有符合给定条件时，才会执行指定的命令。它的语法如下。</p>
+<pre><code class="language-bash">if commands; then
+  commands
+[elif commands; then
+  commands...]
+[else
+  commands]
+fi
+</code></pre>
+<p>这个命令分成三个部分：if、elif和else。其中，后两个部分是可选的。</p>
+<p>if 关键字后面是主要的判断条件，elif用来添加在主条件不成立时的其他判断条件，else则是所有条件都不成立时要执行的部分。</p>
+<pre><code class="language-bash">if test $USER = &quot;foo&quot;; then
+  echo &quot;Hello foo.&quot;
+else
+  echo &quot;You are not foo.&quot;
+fi
+</code></pre>
+<p>上面的例子中，判断条件是环境变量$USER是否等于foo，如果等于就输出Hello foo.，否则输出其他内容。</p>
+<p>if和then写在同一行时，需要分号分隔。分号是 Bash 的命令分隔符。它们也可以写成两行，这时不需要分号。</p>
+<pre><code class="language-bash">if true
+then
+  echo 'hello world'
+fi
+
+if false
+then
+  echo 'it is false' # 本行不会执行
+fi
+</code></pre>
+<p>上面的例子中，true和false是两个特殊命令，前者代表操作成功，后者代表操作失败。if true意味着命令部分总是会执行，if false意味着命令部分永远不会执行。</p>
+<p>除了多行的写法，if结构也可以写成单行。</p>
+<pre><code class="language-bash">$ if true; then echo 'hello world'; fi
+hello world
+
+$ if false; then echo &quot;It's true.&quot;; fi
+</code></pre>
+<p>注意，if关键字后面也可以是一条命令，该条命令执行成功（返回值0），就意味着判断条件成立。</p>
+<pre><code class="language-bash">$ if echo 'hi'; then echo 'hello world'; fi
+hi
+hello world
+</code></pre>
+<p>上面命令中，if后面是一条命令echo 'hi'。该命令会执行，如果返回值是0，则执行then的部分。</p>
+<p>if后面可以跟任意数量的命令。这时，所有命令都会执行，但是判断真伪只看最后一个命令，即使前面所有命令都失败，只要最后一个命令返回0，就会执行then的部分。</p>
+<pre><code class="language-bash">$ if false; true; then echo 'hello world'; fi
+hello world
+</code></pre>
+<p>上面例子中，if后面有两条命令（false;true;），第二条命令（true）决定了then的部分是否会执行。</p>
+<p>elif部分可以有多个。</p>
+<pre><code class="language-bash">#!/bin/bash
+
+echo -n &quot;输入一个1到3之间的数字（包含两端）&gt; &quot;
+read character
+if [ &quot;$character&quot; = &quot;1&quot; ]; then
+    echo 1
+elif [ &quot;$character&quot; = &quot;2&quot; ]; then
+    echo 2
+elif [ &quot;$character&quot; = &quot;3&quot; ]; then
+    echo 3
+else
+    echo 输入不符合要求
+fi
+</code></pre>
+<p>上面例子中，如果用户输入3，就会连续判断3次。</p>
+<h2 id="2-test-命令">2. test 命令</h2>
+<p>if结构的判断条件，一般使用test命令，有三种形式。</p>
+<pre><code class="language-bash"># 写法一
+test expression
+
+# 写法二
+[ expression ]
+
+# 写法三
+[[ expression ]]
+</code></pre>
+<p>上面三种形式是等价的，但是第三种形式还支持正则判断，前两种不支持。</p>
+<p>上面的expression是一个表达式。这个表达式为真，test命令执行成功（返回值为0）；表达式为伪，test命令执行失败（返回值为1）。注意，第二种和第三种写法，[和]与内部的表达式之间必须有空格。</p>
+<pre><code class="language-bash">$ test -f /etc/hosts
+$ echo $?
+0
+
+$ [ -f /etc/hosts ]
+$  echo $?
+0
+</code></pre>
+<p>上面的例子中，test命令采用两种写法，判断/etc/hosts文件是否存在，这两种写法是等价的。命令执行后，返回值为0，表示该文件确实存在。</p>
+<p>实际上，[这个字符是test命令的一种简写形式，可以看作是一个独立的命令，这解释了为什么它后面必须有空格。</p>
+<p>下面把test命令的三种形式，用在if结构中，判断一个文件是否存在。</p>
+<pre><code class="language-bash"># 写法一
+if test -e /tmp/foo.txt ; then
+  echo &quot;Found foo.txt&quot;
+fi
+
+# 写法二
+if [ -e /tmp/foo.txt ] ; then
+  echo &quot;Found foo.txt&quot;
+fi
+
+# 写法三
+if [[ -e /tmp/foo.txt ]] ; then
+  echo &quot;Found foo.txt&quot;
+fi
+</code></pre>
+<h2 id="3-判断表达式">3. 判断表达式</h2>
+<p>if关键字后面，跟的是一个命令。这个命令可以是test命令，也可以是其他命令。命令的返回值为0表示判断成立，否则表示不成立。因为这些命令主要是为了得到返回值，所以可以视为表达式。</p>
+<p>常用的判断表达式有下面这些。</p>
+<h3 id="31-文件判断">3.1 文件判断</h3>
+<p>以下表达式用来判断文件状态。</p>
+<ul>
+<li>[ -a file ]：如果 file 存在，则为true。</li>
+<li>[ -b file ]：如果 file 存在并且是一个块（设备）文件，则为true。</li>
+<li>[ -c file ]：如果 file 存在并且是一个字符（设备）文件，则为true。</li>
+<li>[ -d file ]：如果 file 存在并且是一个目录，则为true。</li>
+<li>[ -e file ]：如果 file 存在，则为true。</li>
+<li>[ -f file ]：如果 file 存在并且是一个普通文件，则为true。</li>
+<li>[ -g file ]：如果 file 存在并且设置了组 ID，则为true。</li>
+<li>[ -G file ]：如果 file 存在并且属于有效的组 ID，则为true。</li>
+<li>[ -h file ]：如果 file 存在并且是符号链接，则为true。</li>
+<li>[ -k file ]：如果 file 存在并且设置了它的“sticky bit”，则为true。</li>
+<li>[ -L file ]：如果 file 存在并且是一个符号链接，则为true。</li>
+<li>[ -N file ]：如果 file 存在并且自上次读取后已被修改，则为true。</li>
+<li>[ -O file ]：如果 file 存在并且属于有效的用户 ID，则为true。</li>
+<li>[ -p file ]：如果 file 存在并且是一个命名管道，则为true。</li>
+<li>[ -r file ]：如果 file 存在并且可读（当前用户有可读权限），则为true。</li>
+<li>[ -s file ]：如果 file 存在且其长度大于零，则为true。</li>
+<li>[ -S file ]：如果 file 存在且是一个网络 socket，则为true。</li>
+<li>[ -t fd ]：如果 fd 是一个文件描述符，并且重定向到终端，则为true。 这可以用来判断是否重定向了标准输入／输出错误。</li>
+<li>[ -u file ]：如果 file 存在并且设置了 setuid 位，则为true。</li>
+<li>[ -w file ]：如果 file 存在并且可写（当前用户拥有可写权限），则为true。</li>
+<li>[ -x file ]：如果 file 存在并且可执行（有效用户有执行／搜索权限），则为true。</li>
+<li>[ file1 -nt file2 ]：如果 FILE1 比 FILE2 的更新时间最近，或者 FILE1 存在而 FILE2 不存在，则为true。</li>
+<li>[ file1 -ot file2 ]：如果 FILE1 比 FILE2 的更新时间更旧，或者 FILE2 存在而 FILE1 不存在，则为true。</li>
+<li>[ FILE1 -ef FILE2 ]：如果 FILE1 和 FILE2 引用相同的设备和 inode 编号，则为true。<br>
+下面是一个示例。</li>
+</ul>
+<pre><code class="language-bash">#!/bin/bash
+
+FILE=~/.bashrc
+
+if [ -e &quot;$FILE&quot; ]; then
+  if [ -f &quot;$FILE&quot; ]; then
+    echo &quot;$FILE is a regular file.&quot;
+  fi
+  if [ -d &quot;$FILE&quot; ]; then
+    echo &quot;$FILE is a directory.&quot;
+  fi
+  if [ -r &quot;$FILE&quot; ]; then
+    echo &quot;$FILE is readable.&quot;
+  fi
+  if [ -w &quot;$FILE&quot; ]; then
+    echo &quot;$FILE is writable.&quot;
+  fi
+  if [ -x &quot;$FILE&quot; ]; then
+    echo &quot;$FILE is executable/searchable.&quot;
+  fi
+else
+  echo &quot;$FILE does not exist&quot;
+  exit 1
+fi
+</code></pre>
+<p>上面代码中，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi><mi>I</mi><mi>L</mi><mi>E</mi><mi mathvariant="normal">要</mi><mi mathvariant="normal">放</mi><mi mathvariant="normal">在</mi><mi mathvariant="normal">双</mi><mi mathvariant="normal">引</mi><mi mathvariant="normal">号</mi><mi mathvariant="normal">之</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">。</mi><mi mathvariant="normal">这</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">可</mi><mi mathvariant="normal">以</mi><mi mathvariant="normal">防</mi><mi mathvariant="normal">止</mi></mrow><annotation encoding="application/x-tex">FILE要放在双引号之中。这样可以防止</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord cjk_fallback">要</span><span class="mord cjk_fallback">放</span><span class="mord cjk_fallback">在</span><span class="mord cjk_fallback">双</span><span class="mord cjk_fallback">引</span><span class="mord cjk_fallback">号</span><span class="mord cjk_fallback">之</span><span class="mord cjk_fallback">中</span><span class="mord cjk_fallback">。</span><span class="mord cjk_fallback">这</span><span class="mord cjk_fallback">样</span><span class="mord cjk_fallback">可</span><span class="mord cjk_fallback">以</span><span class="mord cjk_fallback">防</span><span class="mord cjk_fallback">止</span></span></span></span>FILE为空，因为这时[ -e ]会判断为真。而放在双引号之中，返回的就总是一个空字符串，[ -e &quot;&quot; ]会判断为伪。</p>
+<h3 id="32-字符串判断">3.2 字符串判断</h3>
+<p>以下表达式用来判断字符串。</p>
+<p>[ string ]：如果string不为空（长度大于0），则判断为真。<br>
+[ -n string ]：如果字符串string的长度大于零，则判断为真。<br>
+[ -z string ]：如果字符串string的长度为零，则判断为真。<br>
+[ string1 = string2 ]：如果string1和string2相同，则判断为真。<br>
+[ string1 == string2 ] 等同于[ string1 = string2 ]。<br>
+[ string1 != string2 ]：如果string1和string2不相同，则判断为真。<br>
+[ string1 '&gt;' string2 ]：如果按照字典顺序string1排列在string2之后，则判断为真。<br>
+[ string1 '&lt;' string2 ]：如果按照字典顺序string1排列在string2之前，则判断为真。<br>
+注意，test命令内部的&gt;和&lt;，必须用引号引起来（或者是用反斜杠转义）。否则，它们会被 shell 解释为重定向操作符。</p>
+<p>下面是一个示例。</p>
+<pre><code class="language-bash">#!/bin/bash
+
+ANSWER=maybe
+
+if [ -z &quot;$ANSWER&quot; ]; then
+  echo &quot;There is no answer.&quot; &gt;&amp;2
+  exit 1
+fi
+if [ &quot;$ANSWER&quot; = &quot;yes&quot; ]; then
+  echo &quot;The answer is YES.&quot;
+elif [ &quot;$ANSWER&quot; = &quot;no&quot; ]; then
+  echo &quot;The answer is NO.&quot;
+elif [ &quot;$ANSWER&quot; = &quot;maybe&quot; ]; then
+  echo &quot;The answer is MAYBE.&quot;
+else
+  echo &quot;The answer is UNKNOWN.&quot;
+fi
+</code></pre>
+<p>上面代码中，首先确定<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mi>N</mi><mi>S</mi><mi>W</mi><mi>E</mi><mi>R</mi><mi mathvariant="normal">字</mi><mi mathvariant="normal">符</mi><mi mathvariant="normal">串</mi><mi mathvariant="normal">是</mi><mi mathvariant="normal">否</mi><mi mathvariant="normal">为</mi><mi mathvariant="normal">空</mi><mi mathvariant="normal">。</mi><mi mathvariant="normal">如</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">为</mi><mi mathvariant="normal">空</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">就</mi><mi mathvariant="normal">终</mi><mi mathvariant="normal">止</mi><mi mathvariant="normal">脚</mi><mi mathvariant="normal">本</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">并</mi><mi mathvariant="normal">把</mi><mi mathvariant="normal">退</mi><mi mathvariant="normal">出</mi><mi mathvariant="normal">状</mi><mi mathvariant="normal">态</mi><mi mathvariant="normal">设</mi><mi mathvariant="normal">为</mi><mn>1</mn><mi mathvariant="normal">。</mi><mi mathvariant="normal">注</mi><mi mathvariant="normal">意</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">这</mi><mi mathvariant="normal">里</mi><mi mathvariant="normal">的</mi><mi>e</mi><mi>c</mi><mi>h</mi><mi>o</mi><mi mathvariant="normal">命</mi><mi mathvariant="normal">令</mi><mi mathvariant="normal">把</mi><mi mathvariant="normal">错</mi><mi mathvariant="normal">误</mi><mi mathvariant="normal">信</mi><mi mathvariant="normal">息</mi><mi>T</mi><mi>h</mi><mi>e</mi><mi>r</mi><mi>e</mi><mi>i</mi><mi>s</mi><mi>n</mi><mi>o</mi><mi>a</mi><mi>n</mi><mi>s</mi><mi>w</mi><mi>e</mi><mi>r</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">重</mi><mi mathvariant="normal">定</mi><mi mathvariant="normal">向</mi><mi mathvariant="normal">到</mi><mi mathvariant="normal">标</mi><mi mathvariant="normal">准</mi><mi mathvariant="normal">错</mi><mi mathvariant="normal">误</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">这</mi><mi mathvariant="normal">是</mi><mi mathvariant="normal">处</mi><mi mathvariant="normal">理</mi><mi mathvariant="normal">错</mi><mi mathvariant="normal">误</mi><mi mathvariant="normal">信</mi><mi mathvariant="normal">息</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">常</mi><mi mathvariant="normal">用</mi><mi mathvariant="normal">方</mi><mi mathvariant="normal">法</mi><mi mathvariant="normal">。</mi><mi mathvariant="normal">如</mi><mi mathvariant="normal">果</mi></mrow><annotation encoding="application/x-tex">ANSWER字符串是否为空。如果为空，就终止脚本，并把退出状态设为1。注意，这里的echo命令把错误信息There is no answer.重定向到标准错误，这是处理错误信息的常用方法。如果</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord cjk_fallback">字</span><span class="mord cjk_fallback">符</span><span class="mord cjk_fallback">串</span><span class="mord cjk_fallback">是</span><span class="mord cjk_fallback">否</span><span class="mord cjk_fallback">为</span><span class="mord cjk_fallback">空</span><span class="mord cjk_fallback">。</span><span class="mord cjk_fallback">如</span><span class="mord cjk_fallback">果</span><span class="mord cjk_fallback">为</span><span class="mord cjk_fallback">空</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">就</span><span class="mord cjk_fallback">终</span><span class="mord cjk_fallback">止</span><span class="mord cjk_fallback">脚</span><span class="mord cjk_fallback">本</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">并</span><span class="mord cjk_fallback">把</span><span class="mord cjk_fallback">退</span><span class="mord cjk_fallback">出</span><span class="mord cjk_fallback">状</span><span class="mord cjk_fallback">态</span><span class="mord cjk_fallback">设</span><span class="mord cjk_fallback">为</span><span class="mord">1</span><span class="mord cjk_fallback">。</span><span class="mord cjk_fallback">注</span><span class="mord cjk_fallback">意</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">这</span><span class="mord cjk_fallback">里</span><span class="mord cjk_fallback">的</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">h</span><span class="mord mathdefault">o</span><span class="mord cjk_fallback">命</span><span class="mord cjk_fallback">令</span><span class="mord cjk_fallback">把</span><span class="mord cjk_fallback">错</span><span class="mord cjk_fallback">误</span><span class="mord cjk_fallback">信</span><span class="mord cjk_fallback">息</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">h</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault">n</span><span class="mord mathdefault">o</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord">.</span><span class="mord cjk_fallback">重</span><span class="mord cjk_fallback">定</span><span class="mord cjk_fallback">向</span><span class="mord cjk_fallback">到</span><span class="mord cjk_fallback">标</span><span class="mord cjk_fallback">准</span><span class="mord cjk_fallback">错</span><span class="mord cjk_fallback">误</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">这</span><span class="mord cjk_fallback">是</span><span class="mord cjk_fallback">处</span><span class="mord cjk_fallback">理</span><span class="mord cjk_fallback">错</span><span class="mord cjk_fallback">误</span><span class="mord cjk_fallback">信</span><span class="mord cjk_fallback">息</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">常</span><span class="mord cjk_fallback">用</span><span class="mord cjk_fallback">方</span><span class="mord cjk_fallback">法</span><span class="mord cjk_fallback">。</span><span class="mord cjk_fallback">如</span><span class="mord cjk_fallback">果</span></span></span></span>ANSWER字符串不为空，就判断它的值是否等于yes、no或者maybe。</p>
+<p>注意，字符串判断时，变量要放在双引号之中，比如[ -n &quot;$COUNT&quot; ]，否则变量替换成字符串以后，test命令可能会报错，提示参数过多。另外，如果不放在双引号之中，变量为空时，命令会变成[ -n ]，这时会判断为真。如果放在双引号之中，[ -n &quot;&quot; ]就判断为伪。</p>
+<h3 id="33-整数判断">3.3 整数判断</h3>
+<p>下面的表达式用于判断整数。</p>
+<ul>
+<li>[ integer1 -eq integer2 ]：如果integer1等于integer2，则为true。</li>
+<li>[ integer1 -ne integer2 ]：如果integer1不等于integer2，则为true。</li>
+<li>[ integer1 -le integer2 ]：如果integer1小于或等于integer2，则为true。</li>
+<li>[ integer1 -lt integer2 ]：如果integer1小于integer2，则为true。</li>
+<li>[ integer1 -ge integer2 ]：如果integer1大于或等于integer2，则为true。</li>
+<li>[ integer1 -gt integer2 ]：如果integer1大于integer2，则为true。<br>
+下面是一个用法的例子。</li>
+</ul>
+<pre><code class="language-bash">#!/bin/bash
+
+INT=-5
+
+if [ -z &quot;$INT&quot; ]; then
+  echo &quot;INT is empty.&quot; &gt;&amp;2
+  exit 1
+fi
+if [ $INT -eq 0 ]; then
+  echo &quot;INT is zero.&quot;
+else
+  if [ $INT -lt 0 ]; then
+    echo &quot;INT is negative.&quot;
+  else
+    echo &quot;INT is positive.&quot;
+  fi
+  if [ $((INT % 2)) -eq 0 ]; then
+    echo &quot;INT is even.&quot;
+  else
+    echo &quot;INT is odd.&quot;
+  fi
+fi
+</code></pre>
+<p>上面例子中，先判断变量$INT是否为空，然后判断是否为0，接着判断正负，最后通过求余数判断奇偶。</p>
+<h3 id="34-正则判断">3.4 正则判断</h3>
+<p>[[ expression ]]这种判断形式，支持正则表达式。</p>
+<pre><code class="language-bash">[[ string1 =~ regex ]]
+</code></pre>
+<p>上面的语法中，regex是一个正则表示式，=~是正则比较运算符。</p>
+<p>下面是一个例子。</p>
+<pre><code class="language-bash">#!/bin/bash
+
+INT=-5
+
+if [[ &quot;$INT&quot; =~ ^-?[0-9]+$ ]]; then
+  echo &quot;INT is an integer.&quot;
+  exit 0
+else
+  echo &quot;INT is not an integer.&quot; &gt;&amp;2
+  exit 1
+fi
+</code></pre>
+<p>上面代码中，先判断变量INT的字符串形式，是否满足^-?[0-9]+$的正则模式，如果满足就表明它是一个整数。</p>
+<h3 id="35-test-判断的逻辑运算">3.5 test 判断的逻辑运算</h3>
+<p>通过逻辑运算，可以把多个test判断表达式结合起来，创造更复杂的判断。三种逻辑运算AND，OR，和NOT，都有自己的专用符号。</p>
+<ul>
+<li>AND运算：符号&amp;&amp;，也可使用参数-a。</li>
+<li>OR运算：符号||，也可使用参数-o。</li>
+<li>NOT运算：符号!。<br>
+下面是一个AND的例子，判断整数是否在某个范围之内。</li>
+</ul>
+<pre><code class="language-bash">#!/bin/bash
+
+MIN_VAL=1
+MAX_VAL=100
+
+INT=50
+
+if [[ &quot;$INT&quot; =~ ^-?[0-9]+$ ]]; then
+  if [[ $INT -ge $MIN_VAL &amp;&amp; $INT -le $MAX_VAL ]]; then
+    echo &quot;$INT is within $MIN_VAL to $MAX_VAL.&quot;
+  else
+    echo &quot;$INT is out of range.&quot;
+  fi
+else
+  echo &quot;INT is not an integer.&quot; &gt;&amp;2
+  exit 1
+fi
+</code></pre>
+<p>上面例子中，&amp;&amp;用来连接两个判断条件：大于等于<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>M</mi><mi>I</mi><msub><mi>N</mi><mi>V</mi></msub><mi>A</mi><mi>L</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">并</mi><mi mathvariant="normal">且</mi><mi mathvariant="normal">小</mi><mi mathvariant="normal">于</mi><mi mathvariant="normal">等</mi><mi mathvariant="normal">于</mi></mrow><annotation encoding="application/x-tex">MIN_VAL，并且小于等于</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault">A</span><span class="mord mathdefault">L</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">并</span><span class="mord cjk_fallback">且</span><span class="mord cjk_fallback">小</span><span class="mord cjk_fallback">于</span><span class="mord cjk_fallback">等</span><span class="mord cjk_fallback">于</span></span></span></span>MAX_VAL。</p>
+<p>使用否定操作符!时，最好用圆括号确定转义的范围。</p>
+<pre><code class="language-bash">if [ ! \( $INT -ge $MIN_VAL -a $INT -le $MAX_VAL \) ]; then
+    echo &quot;$INT is outside $MIN_VAL to $MAX_VAL.&quot;
+else
+    echo &quot;$INT is in range.&quot;
+fi
+</code></pre>
+<p>上面例子中，test命令内部使用的圆括号，必须使用引号或者转义，否则会被 Bash 解释。</p>
+<h3 id="36-算术判断">3.6 算术判断</h3>
+<p>Bash 还提供了((...))作为算术条件，进行算术运算的判断。</p>
+<pre><code class="language-bash">if ((3 &gt; 2)); then
+  echo &quot;true&quot;
+fi
+</code></pre>
+<p>上面代码执行后，会打印出true。</p>
+<p>注意，算术判断不需要使用test命令，而是直接使用((...))结构。这个结构的返回值，决定了判断的真伪。</p>
+<p>如果算术计算的结果是非零值，则表示判断成立。这一点跟命令的返回值正好相反，需要小心。</p>
+<pre><code class="language-bash">$ if ((1)); then echo &quot;It is true.&quot;; fi
+It is true.
+$ if ((0)); then echo &quot;It is true.&quot;; else echo &quot;it is false.&quot;; fi
+It is false.
+</code></pre>
+<p>上面例子中，((1))表示判断成立，((0))表示判断不成立。</p>
+<p>算术条件((...))也可以用于变量赋值。</p>
+<pre><code class="language-bash">$ if (( foo = 5 ));then echo &quot;foo is $foo&quot;; fi
+foo is 5
+</code></pre>
+<p>上面例子中，(( foo = 5 ))完成了两件事情。首先把5赋值给变量foo，然后根据返回值5，判断条件为真。</p>
+<p>注意，赋值语句返回等号右边的值，如果返回的是0，则判断为假。</p>
+<pre><code class="language-bash">$ if (( foo = 0 ));then echo &quot;It is true.&quot;;else echo &quot;It is false.&quot;; fi
+It is false.
+</code></pre>
+<p>下面是用算术条件改写的数值判断脚本。</p>
+<pre><code class="language-bash">#!/bin/bash
+
+INT=-5
+
+if [[ &quot;$INT&quot; =~ ^-?[0-9]+$ ]]; then
+  if ((INT == 0)); then
+    echo &quot;INT is zero.&quot;
+  else
+    if ((INT &lt; 0)); then
+      echo &quot;INT is negative.&quot;
+    else
+      echo &quot;INT is positive.&quot;
+    fi
+    if (( ((INT % 2)) == 0)); then
+      echo &quot;INT is even.&quot;
+    else
+      echo &quot;INT is odd.&quot;
+    fi
+  fi
+else
+  echo &quot;INT is not an integer.&quot; &gt;&amp;2
+  exit 1
+fi
+</code></pre>
+<p>只要是算术表达式，都能用于((...))语法，详见《Bash 的算术运算》一章。</p>
+<h3 id="37-普通命令的逻辑运算">3.7 普通命令的逻辑运算</h3>
+<p>如果if结构使用的不是test命令，而是普通命令，比如上一节的((...))算术运算，或者test命令与普通命令混用，那么可以使用 Bash 的命令控制操作符&amp;&amp;（AND）和||（OR），进行多个命令的逻辑运算。</p>
+<pre><code class="language-bash">$ command1 &amp;&amp; command2
+$ command1 || command2
+</code></pre>
+<p>对于&amp;&amp;操作符，先执行command1，只有command1执行成功后， 才会执行command2。对于||操作符，先执行command1，只有command1执行失败后， 才会执行command2。</p>
+<pre><code class="language-bash">$ mkdir temp &amp;&amp; cd temp
+</code></pre>
+<p>上面的命令会创建一个名为temp的目录，执行成功后，才会执行第二个命令，进入这个目录。</p>
+<pre><code class="language-bash">$ [ -d temp ] || mkdir temp
+</code></pre>
+<p>上面的命令会测试目录temp是否存在，如果不存在，就会执行第二个命令，创建这个目录。这种写法非常有助于在脚本中处理错误。</p>
+<pre><code class="language-bash">[ ! -d temp ] &amp;&amp; exit 1
+</code></pre>
+<p>上面的命令中，如果temp子目录不存在，脚本会终止，并且返回值为1。</p>
+<p>下面就是if与&amp;&amp;结合使用的写法。</p>
+<pre><code class="language-bash">if [ condition ] &amp;&amp; [ condition ]; then
+  command
+fi
+</code></pre>
+<p>下面是一个示例。</p>
+<pre><code class="language-bash">#! /bin/bash
+
+filename=$1
+word1=$2
+word2=$3
+
+if grep $word1 $filename &amp;&amp; grep $word2 $filename
+then
+  echo &quot;$word1 and $word2 are both in $filename.&quot;
+fi
+</code></pre>
+<p>上面的例子只有在指定文件里面，同时存在搜索词word1和word2，就会执行if的命令部分。</p>
+<p>下面的示例演示如何将一个&amp;&amp;判断表达式，改写成对应的if结构。</p>
+<pre><code class="language-bash">[[ -d &quot;$dir_name&quot; ]] &amp;&amp; cd &quot;$dir_name&quot; &amp;&amp; rm *
+
+# 等同于
+
+if [[ ! -d &quot;$dir_name&quot; ]]; then
+  echo &quot;No such directory: '$dir_name'&quot; &gt;&amp;2
+  exit 1
+fi
+if ! cd &quot;$dir_name&quot;; then
+  echo &quot;Cannot cd to '$dir_name'&quot; &gt;&amp;2
+  exit 1
+fi
+if ! rm *; then
+  echo &quot;File deletion failed. Check results&quot; &gt;&amp;2
+  exit 1
+fi
+</code></pre>
+<h2 id="4-case-结构">4. case 结构</h2>
+<p>case结构用于多值判断，可以为每个值指定对应的命令，跟包含多个elif的if结构等价，但是语义更好。它的语法如下。</p>
+<pre><code class="language-bash">case expression in
+  pattern )
+    commands ;;
+  pattern )
+    commands ;;
+  ...
+esac
+</code></pre>
+<p>上面代码中，expression是一个表达式，pattern是表达式的值或者一个模式，可以有多条，用来匹配多个值，每条以两个分号（;）结尾。</p>
+<pre><code class="language-bash">#!/bin/bash
+
+echo -n &quot;输入一个1到3之间的数字（包含两端）&gt; &quot;
+read character
+case $character in
+  1 ) echo 1
+    ;;
+  2 ) echo 2
+    ;;
+  3 ) echo 3
+    ;;
+  * ) echo 输入不符合要求
+esac
+</code></pre>
+<p>上面例子中，最后一条匹配语句的模式是*，这个通配符可以匹配其他字符和没有输入字符的情况，类似if的else部分。</p>
+<p>下面是另一个例子。</p>
+<pre><code class="language-bash">#!/bin/bash
+
+OS=$(uname -s)
+
+case &quot;$OS&quot; in
+  FreeBSD) echo &quot;This is FreeBSD&quot; ;;
+  Darwin) echo &quot;This is Mac OSX&quot; ;;
+  AIX) echo &quot;This is AIX&quot; ;;
+  Minix) echo &quot;This is Minix&quot; ;;
+  Linux) echo &quot;This is Linux&quot; ;;
+  *) echo &quot;Failed to identify this OS&quot; ;;
+esac
+</code></pre>
+<p>上面的例子判断当前是什么操作系统。</p>
+<p>case的匹配模式可以使用各种通配符，下面是一些例子。</p>
+<ul>
+<li>a)：匹配a。</li>
+<li>a|b)：匹配a或b。</li>
+<li>[[:alpha:]])：匹配单个字母。</li>
+<li>???)：匹配3个字符的单词。</li>
+<li>*.txt)：匹配.txt结尾。</li>
+<li>*)：匹配任意输入，通过作为case结构的最后一个模式。</li>
+</ul>
+<pre><code class="language-bash">#!/bin/bash
+
+echo -n &quot;输入一个字母或数字 &gt; &quot;
+read character
+case $character in
+  [[:lower:]] | [[:upper:]] ) echo &quot;输入了字母 $character&quot;
+                              ;;
+  [0-9] )                     echo &quot;输入了数字 $character&quot;
+                              ;;
+  * )                         echo &quot;输入不符合要求&quot;
+esac
+</code></pre>
+<p>上面例子中，使用通配符[[:lower:]] | [[:upper:]]匹配字母，[0-9]匹配数字。</p>
+<p>Bash 4.0之前，case结构只能匹配一个条件，然后就会退出case结构。Bash 4.0之后，允许匹配多个条件，这时可以用;;&amp;终止每个条件块。</p>
+<pre><code class="language-bash">#!/bin/bash
+# test.sh
+
+read -n 1 -p &quot;Type a character &gt; &quot;
+echo
+case $REPLY in
+  [[:upper:]])    echo &quot;'$REPLY' is upper case.&quot; ;;&amp;
+  [[:lower:]])    echo &quot;'$REPLY' is lower case.&quot; ;;&amp;
+  [[:alpha:]])    echo &quot;'$REPLY' is alphabetic.&quot; ;;&amp;
+  [[:digit:]])    echo &quot;'$REPLY' is a digit.&quot; ;;&amp;
+  [[:graph:]])    echo &quot;'$REPLY' is a visible character.&quot; ;;&amp;
+  [[:punct:]])    echo &quot;'$REPLY' is a punctuation symbol.&quot; ;;&amp;
+  [[:space:]])    echo &quot;'$REPLY' is a whitespace character.&quot; ;;&amp;
+  [[:xdigit:]])   echo &quot;'$REPLY' is a hexadecimal digit.&quot; ;;&amp;
+esac
+</code></pre>
+<p>执行上面的脚本，会得到下面的结果。</p>
+<pre><code class="language-bash">$ test.sh
+Type a character &gt; a
+'a' is lower case.
+'a' is alphabetic.
+'a' is a visible character.
+'a' is a hexadecimal digit.
+</code></pre>
+<p>可以看到条件语句结尾添加了;;&amp;以后，在匹配一个条件之后，并没有退出case结构，而是继续判断下一个条件。</p>
+<h2 id="5-参考链接">5. 参考链接</h2>
+<p><a href="https://wangdoc.com/bash/condition.html">转载自</a><br>
+<a href="http://linuxcommand.org/tlcl.php">The Linux Command Line</a>, William Shotts</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[neo服务更新]]></title>
         <id>https://chriswsq.github.io/post/neo-fu-wu-geng-xin/</id>
@@ -816,33 +1299,6 @@ qaXhH7gJcdfpapmWkbHdLNqUFq3Vst6Am
 
 
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[docker容器保持后台运行的两种方式]]></title>
-        <id>https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/</id>
-        <link href="https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/">
-        </link>
-        <updated>2020-09-14T08:39:50.000Z</updated>
-        <content type="html"><![CDATA[<!-- more -->
-<p>有的服务支持服务后台运行，那么在用docker启动服务时可以使用前台运行的命令，除此之外一些服务器是不支持前台运行，那么就要靠其他方式使用进程挂在前台。</p>
-<ul>
-<li>方法1 ，run一个容器：</li>
-</ul>
-<pre><code class="language-bash">[root@localhost ~]# docker run -dit --hostname centos --name centos --restart always a8493f5f50ff /bin/bash
- 
--dit 是后台运行、交互模式、分配终端，容器启动后不会退出
- 如果没有it参数，run 一个容器以后，docker ps -a 容器状态就exited了
---restart always 容器可以随docker服务启动而启动
-</code></pre>
-<ul>
-<li>方法2， run 一个容器，并一直发送ping包</li>
-</ul>
-<pre><code class="language-bash">[root@localhost ~]# docker run -d --name test --hostname test a8493f5f50ff ping 127.0.0.1
-</code></pre>
-<p>这样容器就一直在发送ping包，不会退出。<br>
-意思就是然容器一直运行一个程序，不退出，容器就不会停止</p>
-<p>本文链接地址 https://www.rootop.org/pages/3736.html</p>
 ]]></content>
     </entry>
 </feed>

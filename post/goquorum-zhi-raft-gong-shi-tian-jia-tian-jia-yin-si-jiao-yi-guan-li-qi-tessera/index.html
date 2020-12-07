@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>GoQuorum之raft共识添加添加隐私交易管理器tessera | chris&#39;wang</title>
+<link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+<script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
+
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+
+<link rel="canonical" href="https://chriswsq.github.io/post/goquorum-zhi-raft-gong-shi-tian-jia-tian-jia-yin-si-jiao-yi-guan-li-qi-tessera/" />
+</head>
+<body>
+<div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
+<noscript><p class="warn" >本页面需要浏览器支持（启用）JavaScript</p></noscript><div class="header"><div class="logo_title"><div class="title animated fadeInDown"><a href="https://chriswsq.github.io"><img alt="logo" style="display:inline-block;" src="https://chriswsq.github.io/images/avatar.png"/></a><h1 title="chris&#39;wang" class="weaklink"><a  href="/">chris&#39;wang</a></h1>
+
+<div class="navbar weaklink">
+<div class="normal_nav">
+<div class="bitcron_nav_container"><div class="bitcron_nav"><div class="bitcron_nav"><div style="display:flex;justify-content:center;"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul></nav>
+<div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
+<div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1607329132400" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+</div></div>
+<script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
+
+<div class="main"><div class="main-inner"><div class="content">
+<article class="post">
+<h2 class="post_title sm_margin"><a>GoQuorum之raft共识添加添加隐私交易管理器tessera</a></h2>
+<script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-12-07</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px"></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">1715字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">10 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+</section>
+
+<div style="display:flex">
+<div class="md_block" id="md_block">
+<div class="round-shape-one"></div>
+<p>tessera</p>
+<h2 id="安装goquorum和tessera">安装GoQuorum和tessera</h2>
+<pre><code class="language-bash">$ git clone https://github.com/ConsenSys/quorum.git
+$ cd quorum
+$ make all
+$ export PATH=$(pwd)/build/bin:$PATH
+$ cd ..
+.... copy tessera jar to your desired destination and rename it as tessera
+$ mv tessera-app-20.10.0-app.jar tessera.jar
+</code></pre>
+<h2 id="生成新密钥">生成新密钥</h2>
+<pre><code class="language-bash">$ mkdir new-node-1t
+$ cd new-node-1t
+$ java -jar ../tessera.jar -keygen -filename new-node-1
+Enter a password if you want to lock the private key or leave blank
+
+Please re-enter the password (or lack of) to confirm
+
+10:32:51.256 [main] INFO  com.quorum.tessera.nacl.jnacl.Jnacl - Generating new keypair...
+10:32:51.279 [main] INFO  com.quorum.tessera.nacl.jnacl.Jnacl - Generated public key PublicKey[pnesVeDgs805ZPbnulzC5wokDzpdN7CeYKVUBXup/W4=] and private key REDACTED
+10:32:51.624 [main] INFO  c.q.t.k.generation.FileKeyGenerator - Saved public key to /Users/krish/fromscratch/new-node-1t/new-node-1.pub
+10:32:51.624 [main] INFO  c.q.t.k.generation.FileKeyGenerator - Saved private key to /Users/krish/fromscratch/new-node-1t/new-node-1.key
+</code></pre>
+<h2 id="创建configjson配置文件">创建config.json配置文件</h2>
+<pre><code class="language-bash">{
+   &quot;useWhiteList&quot;: false,
+   &quot;jdbc&quot;: {
+       &quot;username&quot;: &quot;sa&quot;,
+       &quot;password&quot;: &quot;&quot;,
+       &quot;url&quot;: &quot;jdbc:h2:/bsn/quorum/fromscratch/new-node-1t/db1;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0&quot;,
+       &quot;autoCreateTables&quot;: true
+   },
+   &quot;serverConfigs&quot;:[
+       {
+           &quot;app&quot;:&quot;ThirdParty&quot;,
+           &quot;enabled&quot;: true,
+           &quot;serverAddress&quot;: &quot;http://192.168.40.6:9081&quot;,
+           &quot;communicationType&quot; : &quot;REST&quot;
+       },
+       {
+           &quot;app&quot;:&quot;Q2T&quot;,
+           &quot;enabled&quot;: true,
+            &quot;serverAddress&quot;:&quot;unix:/bsn/quorum/fromscratch/new-node-1t/tm.ipc&quot;,
+           &quot;communicationType&quot; : &quot;REST&quot;
+       },
+       {
+           &quot;app&quot;:&quot;P2P&quot;,
+           &quot;enabled&quot;: true,
+           &quot;serverAddress&quot;:&quot;http://192.168.40.6:9001&quot;,
+           &quot;sslConfig&quot;: {
+               &quot;tls&quot;: &quot;OFF&quot;
+           },
+           &quot;communicationType&quot; : &quot;REST&quot;
+       }
+   ],
+   &quot;peer&quot;: [
+       {
+           &quot;url&quot;: &quot;http://192.168.40.6:9001&quot;
+       },
+       {
+           &quot;url&quot;: &quot;http://192.168.40.7:9002&quot;
+       }
+   ],
+   &quot;keys&quot;: {
+       &quot;passwords&quot;: [],
+       &quot;keyData&quot;: [
+           {
+               &quot;privateKeyPath&quot;: &quot;/bsn/quorum/fromscratch/new-node-1t/new-node-1.key&quot;,
+               &quot;publicKeyPath&quot;: &quot;/bsn/quorum/fromscratch/new-node-1t/new-node-1.pub&quot;
+           }
+       ]
+   },
+   &quot;alwaysSendTo&quot;: []
+}
+</code></pre>
+<h2 id="启动其他节点">启动其他节点</h2>
+<p>如果要启动另一个Tessera节点，请重复步骤2和步骤3</p>
+<pre><code class="language-bash">$ cd ..
+$ mkdir new-node-2t
+$ cd new-node-2t
+$ java -jar ../tessera.jar -keygen -filename new-node-2
+Enter a password if you want to lock the private key or leave blank
+
+Please re-enter the password (or lack of) to confirm
+
+10:45:02.567 [main] INFO  com.quorum.tessera.nacl.jnacl.Jnacl - Generating new keypair...
+10:45:02.585 [main] INFO  com.quorum.tessera.nacl.jnacl.Jnacl - Generated public key PublicKey[AeggpVlVsi+rxD6h9tcq/8qL/MsjyipUnkj1nvNPgTU=] and private key REDACTED
+10:45:02.926 [main] INFO  c.q.t.k.generation.FileKeyGenerator - Saved public key to /Users/krish/fromscratch/new-node-2t/new-node-2.pub
+10:45:02.926 [main] INFO  c.q.t.k.generation.FileKeyGenerator - Saved private key to /Users/krish/fromscratch/new-node-2t/new-node-2.key
+$
+$ vim config.json
+
+{
+   &quot;useWhiteList&quot;: false,
+   &quot;jdbc&quot;: {
+       &quot;username&quot;: &quot;sa&quot;,
+       &quot;password&quot;: &quot;&quot;,
+       &quot;url&quot;: &quot;jdbc:h2:/bsn/quorum/fromscratch/new-node-2t/db1;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0&quot;,
+       &quot;autoCreateTables&quot;: true
+   },
+   &quot;serverConfigs&quot;:[
+       {
+           &quot;app&quot;:&quot;ThirdParty&quot;,
+           &quot;enabled&quot;: true,
+           &quot;serverAddress&quot;: &quot;http://192.168.40.7:9082&quot;,
+           &quot;communicationType&quot; : &quot;REST&quot;
+       },
+       {
+           &quot;app&quot;:&quot;Q2T&quot;,
+           &quot;enabled&quot;: true,
+            &quot;serverAddress&quot;:&quot;unix:/bsn/quorum/fromscratch/new-node-2t/tm.ipc&quot;,
+           &quot;communicationType&quot; : &quot;REST&quot;
+       },
+       {
+           &quot;app&quot;:&quot;P2P&quot;,
+           &quot;enabled&quot;: true,
+           &quot;serverAddress&quot;:&quot;http://192.168.40.7:9002&quot;,
+           &quot;sslConfig&quot;: {
+               &quot;tls&quot;: &quot;OFF&quot;
+           },
+           &quot;communicationType&quot; : &quot;REST&quot;
+       }
+   ],
+   &quot;peer&quot;: [
+       {
+           &quot;url&quot;: &quot;http://192.168.40.6:9001&quot;
+       },
+       {
+           &quot;url&quot;: &quot;http://192.168.40.7:9002&quot;
+       }
+   ],
+   &quot;keys&quot;: {
+       &quot;passwords&quot;: [],
+       &quot;keyData&quot;: [
+           {
+               &quot;privateKeyPath&quot;: &quot;/bsn/quorum/fromscratch/new-node-2t/new-node-2.key&quot;,
+               &quot;publicKeyPath&quot;: &quot;/bsn/quorum/fromscratch/new-node-2t/new-node-2.pub&quot;
+           }
+       ]
+   },
+   &quot;alwaysSendTo&quot;: []
+}
+</code></pre>
+<h2 id="启动tessera节点">启动tessera节点</h2>
+<p>启动您的Tessera节点，然后发送到后台<br>
+分别在192.168.40.6   192.168.40.7执行</p>
+<pre><code class="language-bash">java -jar ../tessera.jar -configfile config.json &gt;&gt; tessera.log 2&gt;&amp;1 &amp;
+</code></pre>
+<h2 id="修改goquorum启动脚本">修改GoQuorum启动脚本</h2>
+<p>从上方启动连接到正在运行的Tessera节点的GoQuorum节点并将其发送到后台</p>
+<p>192.168.40.6</p>
+<pre><code class="language-bash">vim startnode1.sh
+#!/bin/bash
+PRIVATE_CONFIG=/bsn/quorum/fromscratch/new-node-1t/tm.ipc nohup geth --allow-insecure-unlock  --datadir new-node-1 --nodiscover --verbosity 5 --networkid 31337 --raft --raftport 50000 --rpc --rpcaddr 0.0.0.0 --rpcport 22000 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft --emitcheckpoints --port 21000 &gt;&gt; node.log 2&gt;&amp;1 &amp;
+</code></pre>
+<p>192.168.40.7</p>
+<pre><code class="language-bash">vim startnode1.sh
+#!/bin/bash
+PRIVATE_CONFIG=/bsn/quorum/fromscratch/new-node-2t/tm.ipc nohup geth --allow-insecure-unlock --datadir new-node-2 --nodiscover --verbosity 5 --networkid 31337 --raft --raftport 50000 --rpc --rpcaddr 0.0.0.0 --rpcport 22000 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft --emitcheckpoints --port 21000 &gt;&gt; node.log 2&gt;&amp;1 &amp;
+</code></pre>
+<blockquote>
+<p>注意：<br>
+Tessera IPC桥接器将位于您定义的文件名上config.json，通常以tm.ipc前缀中的名称命名PRIVATE_CONFIG=tm.ipc。您的节点现在可以发送和接收私人交易，播发的公共节点密钥将在new-node-1.pub文件中。Tessera提供了很多配置灵活性，有关完整和最新的配置选项，请参阅Tessera下的“配置”部分。<br>
+--allow-insecure-unlock  用于解锁用户</p>
+</blockquote>
+<h2 id="发送私人交易">发送私人交易</h2>
+<p>您的节点现在可以运行了，您可以附加到该节点geth attach new-node-1/geth.ipc以发送私人交易。</p>
+<pre><code class="language-bash">$ vim private-contract.js
+... create simple private contract to send transaction from new-node-1 private for new-node-2's tessera public key created in step 4
+a = eth.accounts[0]
+web3.eth.defaultAccount = a;
+
+// abi and bytecode generated from simplestorage.sol:
+// &gt; solcjs --bin --abi simplestorage.sol
+var abi = [{&quot;constant&quot;:true,&quot;inputs&quot;:[],&quot;name&quot;:&quot;storedData&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;constant&quot;:false,&quot;inputs&quot;:[{&quot;name&quot;:&quot;x&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;name&quot;:&quot;set&quot;,&quot;outputs&quot;:[],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;constant&quot;:true,&quot;inputs&quot;:[],&quot;name&quot;:&quot;get&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;retVal&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;inputs&quot;:[{&quot;name&quot;:&quot;initVal&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;constructor&quot;}];
+
+var bytecode = &quot;0x6060604052341561000f57600080fd5b604051602080610149833981016040528080519060200190919050505b806000819055505b505b610104806100456000396000f30060606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680632a1afcd914605157806360fe47b11460775780636d4ce63c146097575b600080fd5b3415605b57600080fd5b606160bd565b6040518082815260200191505060405180910390f35b3415608157600080fd5b6095600480803590602001909190505060c3565b005b341560a157600080fd5b60a760ce565b6040518082815260200191505060405180910390f35b60005481565b806000819055505b50565b6000805490505b905600a165627a7a72305820d5851baab720bba574474de3d09dbeaabc674a15f4dd93b974908476542c23f00029&quot;;
+
+var simpleContract = web3.eth.contract(abi);
+var simple = simpleContract.new(42, {from:web3.eth.accounts[0], data: bytecode, gas: 0x47b760, privateFor: [&quot;R5qs4JXQ+aiJqh2V98qgbPZj+rR82ZodCq2CAUyIJjw=&quot;]}, function(e, contract) {
+    if (e) {
+        console.log(&quot;err creating contract&quot;, e);
+    } else {
+        if (!contract.address) {
+            console.log(&quot;Contract transaction send: TransactionHash: &quot; + contract.transactionHash + &quot; waiting to be mined...&quot;);
+        } else {
+            console.log(&quot;Contract mined! Address: &quot; + contract.address);
+            console.log(contract);
+        }
+    }
+});
+$
+$
+</code></pre>
+<blockquote>
+<p>注意： 默认情况下，在geth中打开的帐户是锁定的，因此在发送交易之前，请先解锁帐户，所以启动需要加上--allow-insecure-unlock参数，不然解锁用户时会报错Error: account unlock with HTTP access is forbidden</p>
+</blockquote>
+<pre><code class="language-bash">
+[root@test-1 fromscratch]# geth attach new-node-1/geth.ipc
+Welcome to the Geth JavaScript console!
+
+instance: Geth/v1.9.7-stable-7b726385(quorum-v20.10.0)/linux-amd64/go1.15.1
+coinbase: 0x4cccda1f9bc42a72c7a704bdc07f5f384483ff65
+at block: 0 (Thu, 01 Jan 1970 08:00:00 CST)
+ datadir: /bsn/quorum/fromscratch/new-node-1
+ modules: admin:1.0 debug:1.0 eth:1.0 ethash:1.0 miner:1.0 net:1.0 personal:1.0 quorumExtension:1.0 raft:1.0 rpc:1.0 txpool:1.0 web3:1.0
+
+&gt; eth.accounts
+[&quot;0x4cccda1f9bc42a72c7a704bdc07f5f384483ff65&quot;, &quot;0x93f0b48f9d921f38dabff36cb682bfb208472221&quot;]
+&gt; personal.unlockAccount(&quot;0x4cccda1f9bc42a72c7a704bdc07f5f384483ff65&quot;);
+Unlock account 0x4cccda1f9bc42a72c7a704bdc07f5f384483ff65
+Password: 
+true
+&gt; loadScript(&quot;private-contract.js&quot;)
+Contract transaction send: TransactionHash: 0xfaf11707339302bc62bfbfe6968ea20e5b511fc1450f799a5ac95a91a512c8fa waiting to be mined...
+true
+&gt; Contract mined! Address: 0xb85f26e18472df8c33633990b8ba8eb7d012966c
+[object Object]
+
+</code></pre>
+<p>您已成功将私有事务从节点1发送到节点2！</p>
+<blockquote>
+<p>注意：如果private-contract.js中的数组中没有有效的公共密钥，则在加载脚本时会看到以下错误。</p>
+</blockquote>
+<pre><code class="language-bash">&gt; loadScript(&quot;private-contract.js&quot;)
+err creating contract Error: Non-200 status code: &amp;{Status:400 Bad Request StatusCode:400 Proto:HTTP/1.1 ProtoMajor:1      ProtoMinor:1 Header:map[Date:[Mon, 17 Jun 2019 15:23:53 GMT] Content-Type:[text/plain] Content-Length:[73] Server:[Jetty(9.4.z-SNAPSHOT)]] Body:0xc01997a580 ContentLength:73 TransferEncoding:[] Close:false Uncompressed:false Trailer:map[] Request:0xc019788200 TLS:&lt;nil&gt;}
+</code></pre>
+
+<span id="footnote"></span>
+<div id = "warn"></div>
+</div>
+<div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85goquorum%E5%92%8Ctessera">安装GoQuorum和tessera</a></li>
+<li><a href="#%E7%94%9F%E6%88%90%E6%96%B0%E5%AF%86%E9%92%A5">生成新密钥</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAconfigjson%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">创建config.json配置文件</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E5%85%B6%E4%BB%96%E8%8A%82%E7%82%B9">启动其他节点</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8tessera%E8%8A%82%E7%82%B9">启动tessera节点</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9goquorum%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC">修改GoQuorum启动脚本</a></li>
+<li><a href="#%E5%8F%91%E9%80%81%E7%A7%81%E4%BA%BA%E4%BA%A4%E6%98%93">发送私人交易</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="fullPage"><canvas id="canvas"></canvas></div>
+</article>
+<div id="eof"><span>EOF</span></div><div class="round-shape-one"></div>
+<section>
+<div class="doc_comments">
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+            appKey: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+			placeholder: '唠两块钱儿'
+        })
+    </script>
+
+</div></section>
+</div></div></div><script>
+"use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){n[s].innerHTML='<span class="line-number"></span>'+n[s].innerHTML+'<span class="cl"></span>';for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+content="本文最后更新于2020-12-07，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-12-07 15:37:57";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+</script>
+<style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
+<a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>
+<span style="display: inline;margin-right:15px;">👁<strong><span id="busuanzi_value_site_uv"></span></strong></span><span id="busuanzi_container_page_pv" style="display: inline;"><span>📚<strong>35</strong> posts</span></div></div>
+<script>
+console.log("\n %c \u26a1Theme: Bitcron-pro Author's Blog:https://blog.blinkstar.cn  Writen By Serence  \n\n", "color: #ffffff; background: rgba(49, 49, 49, 0.85); padding:5px 0;border-radius:5px;", );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/instant.page@3.0.0/instantpage.min.js" type="module" defer></script>
+<script type="text/javascript" async src="https://chriswsq.github.io/media/js/prism.js"></script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico" type="image/x-icon" /><meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="apple-mobile-web-app-capable"content="yes"/><meta name="apple-mobile-web-app-status-bar-style"content="black"/><meta name="format-detection"content="telephone=no"/><meta name="renderer"content="webkit"><meta name="description"content="当你觉得无所事事时，那你就是在虚度光阴"><meta charset="UTF-8"><title>二进制多机部署GoQuorum之raft共识 | chris&#39;wang</title>
+<link href="https://chriswsq.github.io/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://at.alicdn.com/t/font_1621793_zatzzgvf30g.css" type="text/css" rel="stylesheet" /><link rel="stylesheet" href="https://chriswsq.github.io/media/css/katex.css"><script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.min.js"></script><script src="https://chriswsq.github.io/media/js/magnify.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+<script type="text/javascript">function btn_toggle(){document.getElementById("hn").classList.contains("no-js")?document.getElementById("hn").classList.remove("no-js"):document.getElementById("hn").classList.add("no-js")}</script>
+
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+
+<link rel="canonical" href="https://chriswsq.github.io/post/er-jin-zhi-duo-ji-bu-shu-goquorum-zhi-raft-gong-shi/" />
+</head>
+<body>
+<div class="progress"></div><style>.progress{background:linear-gradient(to right,#87ceeb var(--scroll),transparent 0);background-repeat:no-repeat;position:fixed;width:100%;height:4px;z-index:1}</style><div class="darkmode-background"></div><div class="darkmode-layer"></div>
+<noscript><p class="warn" >本页面需要浏览器支持（启用）JavaScript</p></noscript><div class="header"><div class="logo_title"><div class="title animated fadeInDown"><a href="https://chriswsq.github.io"><img alt="logo" style="display:inline-block;" src="https://chriswsq.github.io/images/avatar.png"/></a><h1 title="chris&#39;wang" class="weaklink"><a  href="/">chris&#39;wang</a></h1>
+
+<div class="navbar weaklink">
+<div class="normal_nav">
+<div class="bitcron_nav_container"><div class="bitcron_nav"><div class="bitcron_nav"><div style="display:flex;justify-content:center;"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul></nav>
+<div style="float:right;margin-top:1em"><form id="gridea-search-form" data-update="1578893743252" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="Search..."></form></div><div style="margin-left:0.5em;margin-top:1.2em"><input id="switch_default" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+<div class="clear clear_nav_inline_end"></div></div></div><div class="clear clear_nav_end"></div></div></div><div class="hamberger" href="javascript:void(0)" onclick="btn_toggle();"><i class="iconfont icon-category"></i></div></div></div></div>
+<div id="hn" class="no-js hidden_nav animated fadeInDown"><div class="bitcron_nav_container"><div class="bitcron_nav"><nav class="mixed_site_nav_wrap site_nav_wrap"><ul class="mixed_site_nav site_nav sm sm-base">	<li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/" class="selected active current nav__item" >首页</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/archives" class="selected active current nav__item" >归档</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/tags" class="selected active current nav__item" >标签</a></li><li><a id="d2ef19af68cc211e98f8a0242ac110003" href="/post/about" class="selected active current nav__item" >关于</a></li></ul><div class="clear clear_nav_inline_end"></div></nav></div><div class="clear clear_nav_end"></div></div>
+<div style="display:flex;justify-content:center;inline-block;text-align:center;margin-top:7%"><div><form id="gridea-search-form" data-update="1607326238332" action="/search/index.html"><input class="search-input" autocomplete="off" spellcheck="false" name="q"  placeholder="Search..." /></form></div><div style="margin-left:0.5em"><input id="switch_default_h" onclick="mobileBtn()" type="checkbox" class="switch_default"><label for="switch_default" class="toggleBtn"></label></div></div>
+</div></div>
+<script>function enableDarkmode(){document.body.classList.add("darkmode"),document.getElementById("switch_default").checked=1,document.getElementById("switch_default_h").checked=1}function removeDarkmode(){document.body.classList.remove("darkmode"),document.getElementById("switch_default").checked=0,document.getElementById("switch_default_h").checked=0}function getCookie(a){var b,c=new RegExp("(^| )"+a+"=([^;]*)(;|$)");return(b=document.cookie.match(c))?unescape(b[2]):null}cookie=getCookie("darkmode"),"enable"==cookie&&enableDarkmode(),window.matchMedia("(prefers-color-scheme: dark)").matches&&"disable"!==cookie&&(enableDarkmode(),document.cookie="darkmode=enable; path=/");var mobileBtn=function(){1==document.getElementById("switch_default").checked?(enableDarkmode(),document.cookie="darkmode=enable; path=/"):(removeDarkmode(),document.cookie="darkmode=disable; path=/")};</script>
+
+<div class="main"><div class="main-inner"><div class="content">
+<article class="post">
+<h2 class="post_title sm_margin"><a>二进制多机部署GoQuorum之raft共识</a></h2>
+<script>function lan(){if(document.getElementById("lan").innerText=="繁"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_tw.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="简"}else{if(document.getElementById("lan").innerText=="簡"){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s)}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="https://cdn.jsdelivr.net/gh/qyxtim/Static@1.1/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s);document.getElementById("lan").innerHTML="繁"}}};</script>
+<section class="post_details"><i class="iconfont icon-calendar"></i><span style="margin-right:15px"> 2020-12-07</span><i class="iconfont icon-browse"></i><span style="margin-right:15px"> <span id="busuanzi_value_page_pv"></span> Views</span><i class="iconfont icon-category"></i><span class="weaklink" style="margin-right:15px">	<a href="https://chriswsq.github.io/tag/OsKJr9qE0/" class="tag">联盟链</a></span><i class="iconfont icon-caret-down"></i><span style="margin-right:15px">2081字</span><i class="iconfont icon-naozhong"></i><span style="margin-right:15px">12 min read</span><a id="lan" href="javascript:void(0);"onclick="lan();"title="调整简繁体" style="margin-right:15px;">繁</a>
+</section>
+
+<div style="display:flex">
+<div class="md_block" id="md_block">
+<div class="round-shape-one"></div>
+<h2 id="goquorum与raft达成共识">GoQuorum与Raft达成共识</h2>
+<h3 id="测试环境">测试环境</h3>
+<ul>
+<li>2台主机<br>
+192.168.40.6(test-1)           192.168.40.7(test-2)</li>
+</ul>
+<h3 id="下载安装程序文件">下载安装程序文件</h3>
+<pre><code class="language-bash"> git clone https://github.com/ConsenSys/quorum.git
+ cd quorum
+ make all
+ export PATH=$(pwd)/build/bin:$PATH
+</code></pre>
+<h3 id="创建服务目录">创建服务目录</h3>
+<pre><code class="language-bash">mkdir fromscratch
+cd fromscratch
+mkdir new-node-1
+</code></pre>
+<h3 id="创建账户">创建账户</h3>
+<p>为该节点生成一个或多个帐户并记下帐户地址。根据您要完成的工作，可能需要一个资金帐户</p>
+<pre><code class="language-bash">[root@test-1 fromscratch]#  geth --datadir new-node-1 account new
+INFO [12-07|11:29:07.567] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [12-07|11:29:07.567] Smartcard socket not found, disabling    err=&quot;stat /run/pcscd/pcscd.comm: no such file or directory&quot;
+Your new account is locked with a password. Please give a password. Do not forget this password.
+Password: 
+Repeat password: 
+
+Your new key was generated
+
+Public address of the key:   0x4ccCdA1f9bc42A72C7a704bDC07F5F384483ff65
+Path of the secret key file: new-node-1/keystore/UTC--2020-12-07T03-30-11.929565315Z--4cccda1f9bc42a72c7a704bdc07f5f384483ff65
+
+- You can share your public address with anyone. Others need it to interact with you.
+- You must NEVER share the secret key with anyone! The key controls access to your funds!
+- You must BACKUP your key file! Without the key, it's impossible to access account funds!
+- You must REMEMBER your password! Without the password, it's impossible to decrypt the key!
+
+[root@test-1 fromscratch]# geth --datadir new-node-1 account new
+INFO [12-07|11:33:09.552] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [12-07|11:33:09.552] Smartcard socket not found, disabling    err=&quot;stat /run/pcscd/pcscd.comm: no such file or directory&quot;
+Your new account is locked with a password. Please give a password. Do not forget this password.
+Password: 
+Repeat password: 
+
+Your new key was generated
+
+Public address of the key:   0x93F0B48f9D921f38dabFf36CB682bfB208472221
+Path of the secret key file: new-node-1/keystore/UTC--2020-12-07T03-33-12.115191344Z--93f0b48f9d921f38dabff36cb682bfb208472221
+
+- You can share your public address with anyone. Others need it to interact with you.
+- You must NEVER share the secret key with anyone! The key controls access to your funds!
+- You must BACKUP your key file! Without the key, it's impossible to access account funds!
+- You must REMEMBER your password! Without the password, it's impossible to decrypt the key!
+</code></pre>
+<h3 id="创世块文件">创世块文件</h3>
+<p>genesis.json使用此处的示例创建文件。唯一需要进行的更改将是将在上一步中生成的帐户添加到该alloc字段，并为它们预先注资。例如，在这里我们为帐户0x4ccCdA1f9bc42A72C7a704bDC07F5F384483ff65和0x93F0B48f9D921f38dabFf36CB682bfB208472221提供资金。</p>
+<pre><code class="language-bash">vim genesis.json
+
+{
+  &quot;alloc&quot;: {
+    &quot;0x4ccCdA1f9bc42A72C7a704bDC07F5F384483ff65&quot;: {
+      &quot;balance&quot;: &quot;1000000000000000000000000000&quot;
+    },
+    &quot;0x93F0B48f9D921f38dabFf36CB682bfB208472221&quot;: {
+      &quot;balance&quot;: &quot;1000000000000000000000000000&quot;
+    }
+  },
+  &quot;coinbase&quot;: &quot;0x0000000000000000000000000000000000000000&quot;,
+  &quot;config&quot;: {
+    &quot;homesteadBlock&quot;: 0,
+    &quot;byzantiumBlock&quot;: 0,
+    &quot;constantinopleBlock&quot;: 0,
+    &quot;chainId&quot;: 10,
+    &quot;eip150Block&quot;: 0,
+    &quot;eip155Block&quot;: 0,
+    &quot;eip150Hash&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;eip158Block&quot;: 0,
+    &quot;maxCodeSizeConfig&quot;: [
+      {
+        &quot;block&quot;: 0,
+        &quot;size&quot;: 35
+      }
+    ],
+    &quot;isQuorum&quot;: true
+  },
+  &quot;difficulty&quot;: &quot;0x0&quot;,
+  &quot;extraData&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;gasLimit&quot;: &quot;0xE0000000&quot;,
+  &quot;mixhash&quot;: &quot;0x00000000000000000000000000000000000000647572616c65787365646c6578&quot;,
+  &quot;nonce&quot;: &quot;0x0&quot;,
+  &quot;parentHash&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;timestamp&quot;: &quot;0x00&quot;
+}
+
+</code></pre>
+<h3 id="生成节点密钥">生成节点密钥</h3>
+<p>生成节点密钥并将其复制到datadir</p>
+<pre><code class="language-bash"> bootnode --genkey=nodekey
+ cp nodekey new-node-1/
+</code></pre>
+<h3 id="查看节点id">查看节点ID</h3>
+<p>执行以下命令以显示新节点的enode ID</p>
+<pre><code class="language-bash">bootnode --nodekey=new-node-1/nodekey --writeaddress &gt; new-node-1/enode
+cat new-node-1/enode
+f966b9a0cb82715fff5cc4b8f96c262c415181cb907cea5660bbd838c385976fd3a5389f40ea946d3dd02db2b5ac5f31bf760666d418cf7e340a8518bcdff03d
+</code></pre>
+<h3 id="创建static-nodesjson文件">创建static-nodes.json文件</h3>
+<p>创建一个名为的文件static-nodes.json并对其进行编辑以匹配此示例。您的文件应在您的节点中包含一行，并带有您的enode的ID以及将用于devp2p和Raft的端口。确保此文件在您的节点数据目录中</p>
+<pre><code class="language-bash"> vim static-nodes.json
+.... paste below lines with enode generated in previous step, port 21000;IP 127.0.0.1 and raft port set as 50000
+[
+  &quot;enode://f966b9a0cb82715fff5cc4b8f96c262c415181cb907cea5660bbd838c385976fd3a5389f40ea946d3dd02db2b5ac5f31bf760666d418cf7e340a8518bcdff03d@192.168.40.6:21000?discport=0&amp;raftport=50000&quot;
+]
+</code></pre>
+<h3 id="初始化新节点">初始化新节点</h3>
+<p>使用以下命令初始化新节点。</p>
+<pre><code class="language-bash">[root@test-1 fromscratch]# geth --datadir new-node-1 init genesis.json
+INFO [12-07|13:50:06.610] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [12-07|13:50:06.611] Smartcard socket not found, disabling    err=&quot;stat /run/pcscd/pcscd.comm: no such file or directory&quot;
+WARN [12-07|13:50:06.750] permission-config.json file is missing. Smart-contract-based permission service will be disabled error=&quot;stat new-node-1/permission-config.json: no such file or directory&quot;
+INFO [12-07|13:50:06.750] Allocated cache and file handles         database=/bsn/quorum/fromscratch/new-node-1/geth/chaindata cache=16.00MiB handles=16
+INFO [12-07|13:50:06.808] Writing custom genesis block 
+INFO [12-07|13:50:06.829] Persisted trie from memory database      nodes=3 size=417.00B time=247.639µs gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=0.00B
+INFO [12-07|13:50:06.850] Successfully wrote genesis state         database=chaindata hash=e1236e…5fecf7
+INFO [12-07|13:50:06.850] Allocated cache and file handles         database=/bsn/quorum/fromscratch/new-node-1/geth/lightchaindata cache=16.00MiB handles=16
+INFO [12-07|13:50:06.855] Writing custom genesis block 
+INFO [12-07|13:50:06.855] Persisted trie from memory database      nodes=3 size=417.00B time=92.049µs  gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=0.00B
+INFO [12-07|13:50:06.855] Successfully wrote genesis state         database=lightchaindata hash=e1236e…5fecf7
+</code></pre>
+<h3 id="创建启动脚本">创建启动脚本</h3>
+<p>通过首先创建如下脚本然后启动它来启动节点：</p>
+<pre><code class="language-bash"> vim startnode1.sh
+... paste below commands. It will start it in the background.
+#!/bin/bash
+PRIVATE_CONFIG=ignore nohup geth --datadir new-node-1 --nodiscover --verbosity 5 --networkid 31337 --raft --raftport 50000 --rpc --rpcaddr 0.0.0.0 --rpcport 22000 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft --emitcheckpoints --port 21000 &gt;&gt; node.log 2&gt;&amp;1 &amp;
+
+ chmod +x startnode1.sh
+ ./startnode1.sh
+</code></pre>
+<blockquote>
+<p>注意：如前缀所示PRIVATE_CONFIG=ignore，此配置将在没有隐私支持的情况下启动GoQuorum ，请参阅以下部分，了解如何通过隐私事务管理器启用隐私。</p>
+</blockquote>
+<p>您的节点现在可以运行了，您可以使用以下命令将其附加到该节点上。</p>
+<pre><code class="language-bash">[root@test-1 fromscratch]# geth attach new-node-1/geth.ipc
+Welcome to the Geth JavaScript console!
+
+instance: Geth/v1.9.7-stable-7b726385(quorum-v20.10.0)/linux-amd64/go1.15.1
+coinbase: 0x4cccda1f9bc42a72c7a704bdc07f5f384483ff65
+at block: 0 (Thu, 01 Jan 1970 08:00:00 CST)
+ datadir: /bsn/quorum/fromscratch/new-node-1
+ modules: admin:1.0 debug:1.0 eth:1.0 ethash:1.0 miner:1.0 net:1.0 personal:1.0 raft:1.0 rpc:1.0 txpool:1.0 web3:1.0
+
+&gt; raft.cluster
+[{
+    hostname: &quot;192.168.40.6&quot;,
+    nodeActive: true,
+    nodeId: &quot;f966b9a0cb82715fff5cc4b8f96c262c415181cb907cea5660bbd838c385976fd3a5389f40ea946d3dd02db2b5ac5f31bf760666d418cf7e340a8518bcdff03d&quot;,
+    p2pPort: 21000,
+    raftId: 1,
+    raftPort: 50000,
+    role: &quot;minter&quot;
+}]
+&gt; 
+&gt; 
+&gt; raft.leader
+&quot;f966b9a0cb82715fff5cc4b8f96c262c415181cb907cea5660bbd838c385976fd3a5389f40ea946d3dd02db2b5ac5f31bf760666d418cf7e340a8518bcdff03d&quot;
+&gt; raft.role
+&quot;minter&quot;
+&gt; exit
+</code></pre>
+<h2 id="添加其他节点">添加其他节点</h2>
+<h3 id="完成上一指南中的步骤1-2-5和6">完成上一指南中的步骤1、2、5和6</h3>
+<p>增加192.168.40.7为服务节点</p>
+<pre><code class="language-bash">mkdir new-node-2
+bootnode --genkey=nodekey2
+cp nodekey2 new-node-2/nodekey
+bootnode --nodekey=new-node-2/nodekey --writeaddress
+3f2fe908035fa1ddcc3d80d504d1f2358675ca5f4aa3de4f0c5457ea9a2ae7d9af57688b4ec9f5b2772aa1b5c3da1e76840d27ea35d1bc4c86578b09b8d1a19d
+</code></pre>
+<h3 id="调整static-nodesjson">调整static-nodes.json</h3>
+<pre><code class="language-bash">#在 192.168.40.6 上将static-nodes.json文件传至192.168.40.7
+scp  static-nodes.json    root@192.168.40.7:/bsn/quorum/fromscratch/new-node-2
+
+#编辑static-nodes.json并为您正在配置的新节点添加新条目（应该是最后一个）
+vim new-node-2/static-nodes.json
+[
+  &quot;enode://f966b9a0cb82715fff5cc4b8f96c262c415181cb907cea5660bbd838c385976fd3a5389f40ea946d3dd02db2b5ac5f31bf760666d418cf7e340a8518bcdff03d@192.168.40.6:21000?discport=0&amp;raftport=50000&quot;,
+  &quot;enode://3f2fe908035fa1ddcc3d80d504d1f2358675ca5f4aa3de4f0c5457ea9a2ae7d9af57688b4ec9f5b2772aa1b5c3da1e76840d27ea35d1bc4c86578b09b8d1a19d@192.168.40.7:21000?discport=0&amp;raftport=50000&quot;
+]
+</code></pre>
+<h3 id="初始化新节点-2">初始化新节点</h3>
+<pre><code class="language-bash">#将192.168.40.6的genesis.json文件拷贝至192.168.40.7
+scp  genesis.json    root@192.168.40.7:/bsn/quorum/fromscratch/
+[root@test-2 fromscratch]#  geth --datadir new-node-2 init genesis.json
+INFO [12-07|14:19:55.539] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [12-07|14:19:55.542] Smartcard socket not found, disabling    err=&quot;stat /run/pcscd/pcscd.comm: no such file or directory&quot;
+WARN [12-07|14:19:55.600] permission-config.json file is missing. Smart-contract-based permission service will be disabled error=&quot;stat new-node-2/permission-config.json: no such file or directory&quot;
+INFO [12-07|14:19:55.603] Allocated cache and file handles         database=/bsn/quorum/fromscratch/new-node-2/geth/chaindata cache=16.00MiB handles=16
+INFO [12-07|14:19:55.649] Writing custom genesis block 
+INFO [12-07|14:19:55.693] Persisted trie from memory database      nodes=3 size=417.00B time=200.749µs gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=0.00B
+INFO [12-07|14:19:55.694] Successfully wrote genesis state         database=chaindata hash=e1236e…5fecf7
+INFO [12-07|14:19:55.694] Allocated cache and file handles         database=/bsn/quorum/fromscratch/new-node-2/geth/lightchaindata cache=16.00MiB handles=16
+INFO [12-07|14:19:55.698] Writing custom genesis block 
+INFO [12-07|14:19:55.699] Persisted trie from memory database      nodes=3 size=417.00B time=1.166874ms gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=0.00B
+INFO [12-07|14:19:55.700] Successfully wrote genesis state         database=lightchaindata hash=e1236e…5fecf7
+</code></pre>
+<h3 id="连接到链中已运行的节点并执行raftaddpeer命令">连接到链中已运行的节点并执行RaftaddPeer命令。</h3>
+<p>在192.168.40.6上执行</p>
+<pre><code class="language-bash">&gt; raft.addPeer('enode://3f2fe908035fa1ddcc3d80d504d1f2358675ca5f4aa3de4f0c5457ea9a2ae7d9af57688b4ec9f5b2772aa1b5c3da1e76840d27ea35d1bc4c86578b09b8d1a19d@192.168.40.7:21000?discport=0&amp;raftport=50000')
+2
+&gt; raft.cluster
+[{
+    hostname: &quot;192.168.40.7&quot;,
+    nodeActive: false,
+    nodeId: &quot;3f2fe908035fa1ddcc3d80d504d1f2358675ca5f4aa3de4f0c5457ea9a2ae7d9af57688b4ec9f5b2772aa1b5c3da1e76840d27ea35d1bc4c86578b09b8d1a19d&quot;,
+    p2pPort: 21000,
+    raftId: 2,
+    raftPort: 50000,
+    role: &quot;verifier&quot;
+}, {
+    hostname: &quot;192.168.40.6&quot;,
+    nodeActive: true,
+    nodeId: &quot;f966b9a0cb82715fff5cc4b8f96c262c415181cb907cea5660bbd838c385976fd3a5389f40ea946d3dd02db2b5ac5f31bf760666d418cf7e340a8518bcdff03d&quot;,
+    p2pPort: 21000,
+    raftId: 1,
+    raftPort: 50000,
+    role: &quot;minter&quot;
+}]
+
+</code></pre>
+<blockquote>
+<p>新加的节点状态为false  因为还为启动节点二</p>
+</blockquote>
+<h3 id="编辑新增节点脚本">编辑新增节点脚本</h3>
+<pre><code class="language-bash">scp startnode1.sh   root@192.168.40.7:/bsn/quorum/fromscratch/
+
+ vim startnode1.sh
+..... paste below details
+#!/bin/bash
+PRIVATE_CONFIG=ignore nohup geth --datadir new-node-2 --nodiscover --verbosity 5 --networkid 31337 --raft --raftport 50001 --raftjoinexisting 2 --rpc --rpcaddr 0.0.0.0 --rpcport 22001 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft --emitcheckpoints --port 21001 2&gt;&gt;node2.log &amp;
+
+ ./startnode1.sh
+</code></pre>
+<p>此时去192.168.40.6上查看节点状态显示为true</p>
+<h3 id="可选static-nodesjson与所有其他连锁店参与者共享新的">可选：static-nodes.json与所有其他连锁店参与者共享新的</h3>
+<pre><code class="language-bash">cp new-node-2/static-nodes.json root@192.168.40.6:/bsn/quorum/fromscratch/new-node-1
+</code></pre>
+
+<span id="footnote"></span>
+<div id = "warn"></div>
+</div>
+<div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#goquorum%E4%B8%8Eraft%E8%BE%BE%E6%88%90%E5%85%B1%E8%AF%86">GoQuorum与Raft达成共识</a>
+<ul>
+<li><a href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83">测试环境</a></li>
+<li><a href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E7%A8%8B%E5%BA%8F%E6%96%87%E4%BB%B6">下载安装程序文件</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1%E7%9B%AE%E5%BD%95">创建服务目录</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E8%B4%A6%E6%88%B7">创建账户</a></li>
+<li><a href="#%E5%88%9B%E4%B8%96%E5%9D%97%E6%96%87%E4%BB%B6">创世块文件</a></li>
+<li><a href="#%E7%94%9F%E6%88%90%E8%8A%82%E7%82%B9%E5%AF%86%E9%92%A5">生成节点密钥</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E8%8A%82%E7%82%B9id">查看节点ID</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAstatic-nodesjson%E6%96%87%E4%BB%B6">创建static-nodes.json文件</a></li>
+<li><a href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B0%E8%8A%82%E7%82%B9">初始化新节点</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC">创建启动脚本</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E5%85%B6%E4%BB%96%E8%8A%82%E7%82%B9">添加其他节点</a>
+<ul>
+<li><a href="#%E5%AE%8C%E6%88%90%E4%B8%8A%E4%B8%80%E6%8C%87%E5%8D%97%E4%B8%AD%E7%9A%84%E6%AD%A5%E9%AA%A41-2-5%E5%92%8C6">完成上一指南中的步骤1、2、5和6</a></li>
+<li><a href="#%E8%B0%83%E6%95%B4static-nodesjson">调整static-nodes.json</a></li>
+<li><a href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B0%E8%8A%82%E7%82%B9-2">初始化新节点</a></li>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E5%88%B0%E9%93%BE%E4%B8%AD%E5%B7%B2%E8%BF%90%E8%A1%8C%E7%9A%84%E8%8A%82%E7%82%B9%E5%B9%B6%E6%89%A7%E8%A1%8Craftaddpeer%E5%91%BD%E4%BB%A4">连接到链中已运行的节点并执行RaftaddPeer命令。</a></li>
+<li><a href="#%E7%BC%96%E8%BE%91%E6%96%B0%E5%A2%9E%E8%8A%82%E7%82%B9%E8%84%9A%E6%9C%AC">编辑新增节点脚本</a></li>
+<li><a href="#%E5%8F%AF%E9%80%89static-nodesjson%E4%B8%8E%E6%89%80%E6%9C%89%E5%85%B6%E4%BB%96%E8%BF%9E%E9%94%81%E5%BA%97%E5%8F%82%E4%B8%8E%E8%80%85%E5%85%B1%E4%BA%AB%E6%96%B0%E7%9A%84">可选：static-nodes.json与所有其他连锁店参与者共享新的</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="fullPage"><canvas id="canvas"></canvas></div>
+</article>
+<div id="eof"><span>EOF</span></div><div class="round-shape-one"></div>
+<section>
+<div class="doc_comments">
+<div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
+            appKey: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
+			placeholder: '唠两块钱儿'
+        })
+    </script>
+
+</div></section>
+</div></div></div><script>
+"use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){n[s].innerHTML='<span class="line-number"></span>'+n[s].innerHTML+'<span class="cl"></span>';for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+content="本文最后更新于2020-12-07，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-12-07 10:38:48";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+</script>
+<style>#magnifyImg{position:fixed;left:0;top:0;text-align:center;width:100%;display:none;z-index:9999}#magnifyImg img{object-fit:contain;background:#eaecef;padding:15px;border-radius:10px;height:auto;width:auto;vertical-align:middle}</style>
+<a id="scrollUp" href="#top" style="position: fixed; z-index: 2147483647; display: block;"></a><div class="footer animated fadeInDown"><div class="site_footer"><div class="mysocials"><div class="my_socials"></div></div><div class="copyright"id="copyright">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>Copyright © 2018-2020 <a href="https://chriswsq.github.io" style="margin:0;">chris&#39;wang</a>.</div>
+<span style="display: inline;margin-right:15px;">👁<strong><span id="busuanzi_value_site_uv"></span></strong></span><span id="busuanzi_container_page_pv" style="display: inline;"><span>📚<strong>34</strong> posts</span></div></div>
+<script>
+console.log("\n %c \u26a1Theme: Bitcron-pro Author's Blog:https://blog.blinkstar.cn  Writen By Serence  \n\n", "color: #ffffff; background: rgba(49, 49, 49, 0.85); padding:5px 0;border-radius:5px;", );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/instant.page@3.0.0/instantpage.min.js" type="module" defer></script>
+<script type="text/javascript" async src="https://chriswsq.github.io/media/js/prism.js"></script>
+</body>
+</html>

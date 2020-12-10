@@ -1,187 +1,286 @@
 <!DOCTYPE html>
 <html>
-        <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <title>chris&#39;wang</title>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css" rel="stylesheet">
-         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-        <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
-         <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-         <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    <meta charset="utf-8" >
 
-    </head>
-    <body>
-          <header class="header mdui-m-b-5">      
-            <div class="container  ">
-                <div class="index-title animated fadeInDown mdui-text-center mdui-text-color-white mdui-m-b-2" style="animation-delay: 0.2s"><a href="https://chriswsq.github.io">chris&#39;wang</a></div>
-                <div class="mdui-text-color-white animated fadeInDown mdui-text-center  mdui-m-b-3" style="animation-delay: 0.4s">当你觉得无所事事时，那你就是在虚度光阴</div>
-           
-            <nav id="nav" class="mdui-text-center animated fadeInDown" style="animation-delay: 0.6s">
-                   
-                            <li><a href="/">首页</a>
-                                <span class="nav-style top"></span>
-                                <span class="nav-style bottom"></span>
-                                <span class="nav-style left"></span>
-                                <span class="nav-style right"></span>
-                                </li>
-                    
-                            <li><a href="/archives">归档</a>
-                                <span class="nav-style top"></span>
-                                <span class="nav-style bottom"></span>
-                                <span class="nav-style left"></span>
-                                <span class="nav-style right"></span>
-                                </li>
-                    
-                            <li><a href="/tags">标签</a>
-                                <span class="nav-style top"></span>
-                                <span class="nav-style bottom"></span>
-                                <span class="nav-style left"></span>
-                                <span class="nav-style right"></span>
-                                </li>
-                    
-                            <li><a href="/post/about">关于</a>
-                                <span class="nav-style top"></span>
-                                <span class="nav-style bottom"></span>
-                                <span class="nav-style left"></span>
-                                <span class="nav-style right"></span>
-                                </li>
-                    
-                  </nav>
+<title>chris&#39;wang</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607587434821">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+    
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://chriswsq.github.io">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1607587434821" class="site-logo">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      当你觉得无所事事时，那你就是在虚度光阴
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/">
+                  <h2 class="post-title">ELK告警之elastalert部署及配置</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-27
                 </div>
-        </header>
-        <div class="mdui-container ">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-8 mdui-col-offset-md-2 mdui-m-t-1">
-                         
-                                                         
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-27 13:51:57">2020-08-27</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/">ELK告警之elastalert部署及配置</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>ELK7版本的日志告警Elastalert配置</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-27 13:51:06">2020-08-27</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">关于Logstash中grok插件的正则表达式例子</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-27 13:40:46">2020-08-27</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/">生产环境部署fabric</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"></div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-26 17:28:40">2020-08-26</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/">Gridea添加Valine评论系统</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>给自己的博客添加评论系统</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-25 17:55:03">2020-08-25</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/cita-fu-wu/">cita服务</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>根据公司需求研究部署cita服务</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/cita-fu-wu/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-21 09:27:02">2020-08-21</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/">Kubernetes 基礎教學（三）Helm 介紹與建立 Chart</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>接下來在這篇文章中，我們會介紹一個建立 Kubernetes 應用變得輕鬆簡單的好幫手：Helm</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-20 18:02:28">2020-08-20</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-20 17:32:13">2020-08-20</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">kubernetes基础教学（一）原理</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。<br>
-更进一步地说，Kubernetes 想解决的问题是：「手动部署多个容器到多台机器上并监测管理这些容器的状态非常麻烦。」而Kubernetes 要提供的解法： 提供一个平台以较高层次的抽象化去自动化操作与管理容器们。</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-20 15:10:24">2020-08-20</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">k8s——apiVersion对照表</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"></div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-20 14:58:24">2020-08-20</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">NFS网络文件系统部署</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">Read More</a></div>
-                                </article>
-                                
-                                                            <nav class="mdui-m-t-5">
-                                
-                                <div class="index-yema mdui-float-left"><a href="https://chriswsq.github.io/page/2/">上一页</a></div>
-                                 
-                                
-                                <div class="index-yema mdui-float-right"><a href="https://chriswsq.github.io/page/4/">下一页</a></div>
-                                 
-                                </nav>     
+                <div class="post-abstract">
+                  <p>ELK7版本的日志告警Elastalert配置</p>
 
-                        </div>
-                      </div>
+                </div>
               </div>
-                <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      </ul>
-                    </nav>
-                    <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> <br/> Theme <a href="https://github.com/alterfang/gridea-theme-song/" target="_blank"  title="宋"  >Song</a> by <a href="https://shanbu.fun/" target="_blank"  title="山卜方" >shanbufun</a> </p>
-                  </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">
+                  <h2 class="post-title">关于Logstash中grok插件的正则表达式例子</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-27
+                </div>
+                <div class="post-abstract">
+                  <p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/">
+                  <h2 class="post-title">生产环境部署fabric</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-27
+                </div>
+                <div class="post-abstract">
                   
-              </footer>
-    </body>
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/">
+                  <h2 class="post-title">Gridea添加Valine评论系统</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-26
+                </div>
+                <div class="post-abstract">
+                  <p>给自己的博客添加评论系统</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/cita-fu-wu/">
+                  <h2 class="post-title">cita服务</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-25
+                </div>
+                <div class="post-abstract">
+                  <p>根据公司需求研究部署cita服务</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/">
+                  <h2 class="post-title">Kubernetes 基礎教學（三）Helm 介紹與建立 Chart</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-21
+                </div>
+                <div class="post-abstract">
+                  <p>接下來在這篇文章中，我們會介紹一個建立 Kubernetes 應用變得輕鬆簡單的好幫手：Helm</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">
+                  <h2 class="post-title">Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-20
+                </div>
+                <div class="post-abstract">
+                  <p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">
+                  <h2 class="post-title">kubernetes基础教学（一）原理</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-20
+                </div>
+                <div class="post-abstract">
+                  <p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。<br>
+更进一步地说，Kubernetes 想解决的问题是：「手动部署多个容器到多台机器上并监测管理这些容器的状态非常麻烦。」而Kubernetes 要提供的解法： 提供一个平台以较高层次的抽象化去自动化操作与管理容器们。</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">
+                  <h2 class="post-title">k8s——apiVersion对照表</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-20
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">
+                  <h2 class="post-title">NFS网络文件系统部署</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-20
+                </div>
+                <div class="post-abstract">
+                  <p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+
+          <div class="pagination-container">
+  
+    <a href="https://chriswsq.github.io/page/2/" class="prev"><i class="icon-arrow-ios-back-outline"></i> 上一页</a>
+  
+  
+    <a href="https://chriswsq.github.io/page/4/" class="next">下一页 <i class="icon-arrow-ios-forward-outline"></i></a>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
 </html>

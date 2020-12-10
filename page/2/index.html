@@ -1,183 +1,282 @@
 <!DOCTYPE html>
 <html>
-        <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <title>chris&#39;wang</title>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css" rel="stylesheet">
-         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-        <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
-         <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-         <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    <meta charset="utf-8" >
 
-    </head>
-    <body>
-          <header class="header mdui-m-b-5">      
-            <div class="container  ">
-                <div class="index-title animated fadeInDown mdui-text-center mdui-text-color-white mdui-m-b-2" style="animation-delay: 0.2s"><a href="https://chriswsq.github.io">chris&#39;wang</a></div>
-                <div class="mdui-text-color-white animated fadeInDown mdui-text-center  mdui-m-b-3" style="animation-delay: 0.4s">当你觉得无所事事时，那你就是在虚度光阴</div>
-           
-            <nav id="nav" class="mdui-text-center animated fadeInDown" style="animation-delay: 0.6s">
-                   
-                            <li><a href="/">首页</a>
-                                <span class="nav-style top"></span>
-                                <span class="nav-style bottom"></span>
-                                <span class="nav-style left"></span>
-                                <span class="nav-style right"></span>
-                                </li>
-                    
-                            <li><a href="/archives">归档</a>
-                                <span class="nav-style top"></span>
-                                <span class="nav-style bottom"></span>
-                                <span class="nav-style left"></span>
-                                <span class="nav-style right"></span>
-                                </li>
-                    
-                            <li><a href="/tags">标签</a>
-                                <span class="nav-style top"></span>
-                                <span class="nav-style bottom"></span>
-                                <span class="nav-style left"></span>
-                                <span class="nav-style right"></span>
-                                </li>
-                    
-                            <li><a href="/post/about">关于</a>
-                                <span class="nav-style top"></span>
-                                <span class="nav-style bottom"></span>
-                                <span class="nav-style left"></span>
-                                <span class="nav-style right"></span>
-                                </li>
-                    
-                  </nav>
+<title>chris&#39;wang</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607587434821">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+    
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://chriswsq.github.io">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1607587434821" class="site-logo">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      当你觉得无所事事时，那你就是在虚度光阴
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/xuperchian change Common node/">
+                  <h2 class="post-title">xuperchian  建链未成功手动修复</h2>
+                </a>
+                <div class="post-date">
+                  2020-09-18
                 </div>
-        </header>
-        <div class="mdui-container ">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-8 mdui-col-offset-md-2 mdui-m-t-1">
-                         
-                                                         
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-09-18 11:04:41">2020-09-18</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/xuperchian change Common node/">xuperchian  建链未成功手动修复</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"></div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/xuperchian change Common node/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-09-15 19:19:03">2020-09-15</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/xuperchian-change-Common-node/">xuperchian 增减共识节点、添加群组操作步骤</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"></div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/xuperchian-change-Common-node/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-09-14 16:39:50">2020-09-14</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/">docker容器保持后台运行的两种方式</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"></div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-09-10 17:40:31">2020-09-10</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/">记一次服务器内存过高问题</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"></div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-09-03 10:44:39">2020-09-03</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/docker-bu-shu-prometheus-jian-kong-fu-wu-qi-ji-rong-qi-bing-fa-song-gao-jing/">docker部署Prometheus监控服务器及容器并发送告警</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>记录一下利用prometheus监控服务器信息和容器服务并发送邮件告警</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/docker-bu-shu-prometheus-jian-kong-fu-wu-qi-ji-rong-qi-bing-fa-song-gao-jing/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-27 13:59:30">2020-08-27</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/">k8s 如何关联pvc到特定的pv?</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>部署有状态的应用时需要挂载相应的配置文件，了解下最常用的pv（nfs）和pvc绑定关系</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-27 13:58:37">2020-08-27</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/">k8s pv,pvc无法删除问题</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>解决k8s pv,pvc无法删除问题</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-27 13:56:13">2020-08-27</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/">kubeadm部署k8s</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"></div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-27 13:54:19">2020-08-27</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/logstash-pei-zhi/">logstash配置</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>补上一份自己在工作中用的一份logstash的配置文件，万变不离其宗，可以参看此内容</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/logstash-pei-zhi/">Read More</a></div>
-                                </article>
-                                
-                               <article class="mdui-p-a-5 index-list mdui-m-b-3 animated fadeIn" style="animation-delay: 0.8s;animation-duration: 2s">
-                                    <div class="mdui-typo-body-2 mdui-m-b-1" datetime="2020-08-27 13:52:58">2020-08-27</div>
-                                    <div class="mdui-typo-headline mdui-m-b-3 index-list-title index-guo"><a href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/">elk用户认证问题</a></div>
-                                    <div class="mdui-typo-subheading mdui-m-b-2 index-neirong"><p>elk7+的用户认证免费了，不过没有集成在安装包里，还需要自己再进行一些操作，在此记录下自己再配置用户认证时遇到的问题</p>
-</div>
-                                    <div class="index-list-rm index-guo"><a href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/">Read More</a></div>
-                                </article>
-                                
-                                                            <nav class="mdui-m-t-5">
-                                
-                                <div class="index-yema mdui-float-left"><a href="https://chriswsq.github.io/">上一页</a></div>
-                                 
-                                
-                                <div class="index-yema mdui-float-right"><a href="https://chriswsq.github.io/page/3/">下一页</a></div>
-                                 
-                                </nav>     
-
-                        </div>
-                      </div>
-              </div>
-                <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      
-                           
-                      </ul>
-                    </nav>
-                    <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> <br/> Theme <a href="https://github.com/alterfang/gridea-theme-song/" target="_blank"  title="宋"  >Song</a> by <a href="https://shanbu.fun/" target="_blank"  title="山卜方" >shanbufun</a> </p>
-                  </div>
+                <div class="post-abstract">
                   
-              </footer>
-    </body>
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/xuperchian-change-Common-node/">
+                  <h2 class="post-title">xuperchian 增减共识节点、添加群组操作步骤</h2>
+                </a>
+                <div class="post-date">
+                  2020-09-15
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/">
+                  <h2 class="post-title">docker容器保持后台运行的两种方式</h2>
+                </a>
+                <div class="post-date">
+                  2020-09-14
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/">
+                  <h2 class="post-title">记一次服务器内存过高问题</h2>
+                </a>
+                <div class="post-date">
+                  2020-09-10
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/docker-bu-shu-prometheus-jian-kong-fu-wu-qi-ji-rong-qi-bing-fa-song-gao-jing/">
+                  <h2 class="post-title">docker部署Prometheus监控服务器及容器并发送告警</h2>
+                </a>
+                <div class="post-date">
+                  2020-09-03
+                </div>
+                <div class="post-abstract">
+                  <p>记录一下利用prometheus监控服务器信息和容器服务并发送邮件告警</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/">
+                  <h2 class="post-title">k8s 如何关联pvc到特定的pv?</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-27
+                </div>
+                <div class="post-abstract">
+                  <p>部署有状态的应用时需要挂载相应的配置文件，了解下最常用的pv（nfs）和pvc绑定关系</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/">
+                  <h2 class="post-title">k8s pv,pvc无法删除问题</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-27
+                </div>
+                <div class="post-abstract">
+                  <p>解决k8s pv,pvc无法删除问题</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/">
+                  <h2 class="post-title">kubeadm部署k8s</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-27
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/logstash-pei-zhi/">
+                  <h2 class="post-title">logstash配置</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-27
+                </div>
+                <div class="post-abstract">
+                  <p>补上一份自己在工作中用的一份logstash的配置文件，万变不离其宗，可以参看此内容</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/">
+                  <h2 class="post-title">elk用户认证问题</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-27
+                </div>
+                <div class="post-abstract">
+                  <p>elk7+的用户认证免费了，不过没有集成在安装包里，还需要自己再进行一些操作，在此记录下自己再配置用户认证时遇到的问题</p>
+
+                </div>
+              </div>
+              
+            </article>
+          
+
+          <div class="pagination-container">
+  
+    <a href="https://chriswsq.github.io/" class="prev"><i class="icon-arrow-ios-back-outline"></i> 上一页</a>
+  
+  
+    <a href="https://chriswsq.github.io/page/3/" class="next">下一页 <i class="icon-arrow-ios-forward-outline"></i></a>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
 </html>

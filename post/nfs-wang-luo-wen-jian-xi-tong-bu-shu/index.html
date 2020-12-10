@@ -1,52 +1,92 @@
+
+<!DOCTYPE html>
 <html>
-      <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <meta name="referrer" content="never">
-        <title>NFS网络文件系统部署 | chris&#39;wang</title>
-        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
-        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-          <script src="https://chriswsq.github.io/media/scripts/mdui.min.js"></script>
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
-        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://chriswsq.github.io/media/scripts/script.js"></script>
-        <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>NFS网络文件系统部署 | chris&#39;wang</title>
+<meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607586983009">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://chriswsq.github.io">
+        <img class="avatar" src="https://chriswsq.github.io/images/avatar.png?v=1607586983009" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://chriswsq.github.io">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
         
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
 
-    </head>
-    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="index-img mdui-m-b-3" >
-                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
-                <ul class="mdui-menu" id="demo-attr-cascade">
-                
-                        <li class="mdui-menu-item">
-                          <a href="/" class="mdui-ripple">首页</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/archives" class="mdui-ripple">归档</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/tags" class="mdui-ripple">标签</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/post/about" class="mdui-ripple">关于</a>
-                        </li>
-                
-                      </ul>
 
-        </header>
-        <div class="mdui-container post">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
-                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
-                           <div class="mdui-typo-display-1 mdui-m-b-3">NFS网络文件系统部署</div>
-                           <a  class="index-list-biaoqian ">2020-08-20</a>
-                           <div class="mdui-typo mdui-m-t-3 post-neirong"><p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">NFS网络文件系统部署</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2020-08-20</span>
+            
+          </div>
+          <div class="post-content">
+            <p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
 <!-- more -->
 <h2 id="系统环境">系统环境</h2>
 <table>
@@ -181,126 +221,58 @@ df -h
 <pre><code>echo &quot;welcome to xuad.com&quot; &gt; /nfsdata/xuad.txt
 </code></pre>
 <p>在NFS服务器上查看/nfsdata目录下是否生成了此文件</p>
-</div>
-                              <div class="mdui-divider mdui-m-t-3"></div>
-                              <div class="mdui-row-xs-2 mdui-m-t-2">
-  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">k8s——apiVersion对照表</a></div></div>
- <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/sedandawk-bi-ji/">sed&amp;awk笔记</a></div> </div>
-                                </div>
-                                <div class="mdui-divider mdui-m-t-2"></div>
-   
- <script src="https://chriswsq.github.io/media/scripts/Valine.min.js"></script>
- <div class="comment"></div>
 
-<script>
-      new Valine({
-            el: '.comment',
-
-            app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
-
-
-            app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
-
-
-            placeholder: '没事儿说两句',
-            
-            path: window.location.pathname,
-            pageSize: 30,
-            avatar:'mm', 
-       })
-
-    </script> 
-<script>
-    if(window.location.hash){
-        var checkExist = setInterval(function() {
-           if ($(window.location.hash).length) {
-              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
-              clearInterval(checkExist);
-           }
-        }, 100);
-    }
-</script>
-                         </article>
-                 <div class="toc-container mdui-float-right">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83">系统环境</a></li>
-<li><a href="#nfs%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E5%8F%82%E6%95%B0">NFS服务配置文件的参数</a></li>
-<li><a href="#nfs%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%93%8D%E4%BD%9C">NFS服务器操作</a>
-<ul>
-<li><a href="#1-%E5%AE%89%E8%A3%85nfs">1、安装NFS</a></li>
-<li><a href="#2-%E5%88%9B%E5%BB%BA%E7%94%A8%E4%BA%8Enfs%E5%85%B1%E4%BA%AB%E7%9A%84%E7%9B%AE%E5%BD%95">2、创建用于NFS共享的目录</a></li>
-<li><a href="#3-%E7%BC%96%E8%BE%91nfs%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%A6%82%E4%B8%8B%E5%86%85%E5%AE%B9">3、编辑NFS的配置文件，添加如下内容</a></li>
-<li><a href="#4-%E5%90%AF%E5%8A%A8nfs%E6%9C%8D%E5%8A%A1%E5%B9%B6%E5%8A%A0%E5%85%A5%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8%E9%A1%B9">4、启动NFS服务，并加入开机启动项</a></li>
-<li><a href="#5-%E6%9F%A5%E7%9C%8Bnfs%E5%90%91rpc%E6%B3%A8%E5%86%8C%E7%9A%84%E7%AB%AF%E5%8F%A3%E4%BF%A1%E6%81%AF">5、查看nfs向rpc注册的端口信息</a></li>
-<li><a href="#6-%E9%85%8D%E7%BD%AEfirewalld%E9%98%B2%E7%81%AB%E5%A2%99%E5%85%81%E8%AE%B8nfs%E5%92%8Crpc%E7%AB%AF%E5%8F%A3">6、配置firewalld防火墙，允许nfs和rpc端口</a></li>
-</ul>
-</li>
-<li><a href="#nfs%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C">NFS客户端操作</a>
-<ul>
-<li><a href="#1-%E4%BD%BF%E7%94%A8showmount%E5%91%BD%E4%BB%A4%E6%9F%A5%E8%AF%A2nfs%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E8%BF%9C%E7%A8%8B%E5%85%B1%E4%BA%AB%E4%BF%A1%E6%81%AF">1、使用showmount命令查询NFS服务器的远程共享信息</a></li>
-<li><a href="#2-%E5%88%9B%E5%BB%BA%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95%E5%B9%B6%E6%8C%82%E8%BD%BD">2、创建挂载目录，并挂载</a></li>
-<li><a href="#3-%E5%B0%86%E6%8C%82%E8%BD%BD%E4%BF%A1%E6%81%AF%E5%86%99%E5%85%A5etcfstab%E6%96%87%E4%BB%B6%E4%B8%AD%E4%BB%A5%E4%BE%BF%E5%BC%80%E6%9C%BA%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD">3、将挂载信息写入/etc/fstab文件中，以便开机自动挂载</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
-
-                        </div>
-                 </div>
-          
+          </div>
         </div>
-        <script data-no-instant>
-    (function ($) {
-        $.extend({
-            adamsOverload: function () {
-                $.viewImage({
-                    'target'  : '.post-neirong img',
-                    'exclude' : '.vsmile-icons img , .song-links-item img',
-                    'delay'   : 300
-                });
-            }
-        });
-    })(jQuery);
-    jQuery.adamsOverload();
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://chriswsq.github.io/post/sedandawk-bi-ji/">
+              <h3 class="post-title">
+                下一篇：sed&amp;awk笔记
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">当你觉得无所事事时，那你就是在虚度光阴</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
 </script>
-        <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                      </ul>
-                    </nav>
-                  <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a></p>
-                  </div>
-              </footer>
-    </body>
+
+
+
+
+  </body>
 </html>

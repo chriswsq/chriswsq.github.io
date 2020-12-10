@@ -1,52 +1,102 @@
+
+<!DOCTYPE html>
 <html>
-      <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <meta name="referrer" content="never">
-        <title>生产环境部署fabric | chris&#39;wang</title>
-        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
-        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-          <script src="https://chriswsq.github.io/media/scripts/mdui.min.js"></script>
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
-        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://chriswsq.github.io/media/scripts/script.js"></script>
-        <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>生产环境部署fabric | chris&#39;wang</title>
+<meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607586983009">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://chriswsq.github.io">
+        <img class="avatar" src="https://chriswsq.github.io/images/avatar.png?v=1607586983009" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://chriswsq.github.io">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
         
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
 
-    </head>
-    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="index-img mdui-m-b-3" >
-                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
-                <ul class="mdui-menu" id="demo-attr-cascade">
-                
-                        <li class="mdui-menu-item">
-                          <a href="/" class="mdui-ripple">首页</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/archives" class="mdui-ripple">归档</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/tags" class="mdui-ripple">标签</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/post/about" class="mdui-ripple">关于</a>
-                        </li>
-                
-                      </ul>
 
-        </header>
-        <div class="mdui-container post">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
-                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
-                           <div class="mdui-typo-display-1 mdui-m-b-3">生产环境部署fabric</div>
-                           <a  class="index-list-biaoqian ">2020-08-27</a>
-                           <div class="mdui-typo mdui-m-t-3 post-neirong"><!-- more -->
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">生产环境部署fabric</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2020-08-27</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://chriswsq.github.io/tag/qakyVMdT2/">
+                    fabric
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content">
+            <!-- more -->
 <h3 id="环境准备">环境准备</h3>
 <ul>
 <li>ansible临时添加主机信息</li>
@@ -384,154 +434,58 @@ docker exec cli peer chaincode install blocktx/cc_sys.3.0.pak
 </code></pre>
 <h2 id="注意">注意</h2>
 <p>如果重启cd节点docker 服务时，因为ca-service启动比ca 数据库要快，所以需要等数据库起来后重启ca-service服务</p>
-</div>
-                              <div class="mdui-divider mdui-m-t-3"></div>
-                              <div class="mdui-row-xs-2 mdui-m-t-2">
-  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">关于Logstash中grok插件的正则表达式例子</a></div></div>
- <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/">Gridea添加Valine评论系统</a></div> </div>
-                                </div>
-                                <div class="mdui-divider mdui-m-t-2"></div>
-   
- <script src="https://chriswsq.github.io/media/scripts/Valine.min.js"></script>
- <div class="comment"></div>
 
-<script>
-      new Valine({
-            el: '.comment',
-
-            app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
-
-
-            app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
-
-
-            placeholder: '没事儿说两句',
-            
-            path: window.location.pathname,
-            pageSize: 30,
-            avatar:'mm', 
-       })
-
-    </script> 
-<script>
-    if(window.location.hash){
-        var checkExist = setInterval(function() {
-           if ($(window.location.hash).length) {
-              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
-              clearInterval(checkExist);
-           }
-        }, 100);
-    }
-</script>
-                         </article>
-                 <div class="toc-container mdui-float-right">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li>
-<ul>
-<li><a href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87">环境准备</a>
-<ul>
-<li><a href="#ansible%E4%B8%B4%E6%97%B6%E6%B7%BB%E5%8A%A0%E4%B8%BB%E6%9C%BA%E4%BF%A1%E6%81%AF">ansible临时添加主机信息</a></li>
-<li><a href="#%E5%85%B3%E9%97%AD%E9%98%B2%E7%81%AB%E5%A2%99">关闭防火墙</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AF%86%E7%A0%81">修改服务器密码</a></li>
-<li><a href="#%E5%AE%89%E8%A3%85docker">安装docker</a></li>
-<li><a href="#%E5%AE%89%E8%A3%85docker-compose">安装docker-compose</a></li>
-<li><a href="#%E6%8C%82%E8%BD%BD%E6%95%B0%E6%8D%AE%E7%9B%98">挂载数据盘</a></li>
-<li><a href="#%E4%BC%A0%E9%80%81%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6">传送镜像文件</a></li>
-</ul>
-</li>
-<li><a href="#%E9%83%A8%E7%BD%B2peer%E6%9C%8D%E5%8A%A1">部署peer服务</a>
-<ul>
-<li><a href="#%E4%BF%AE%E6%94%B9peer%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6">修改peer变量文件</a></li>
-<li><a href="#%E4%B8%8A%E4%BC%A0peer%E7%9B%B8%E5%85%B3%E6%96%87%E4%BB%B6">上传peer相关文件</a></li>
-<li><a href="#%E9%83%A8%E7%BD%B2peer1-2-3">部署peer1 2 3</a></li>
-</ul>
-</li>
-<li><a href="#%E9%83%A8%E7%BD%B2ca%E6%9C%8D%E5%8A%A1">部署ca服务</a>
-<ul>
-<li><a href="#%E4%BF%AE%E6%94%B9ca%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6">修改ca变量文件</a></li>
-<li><a href="#%E4%B8%8A%E4%BC%A0ca%E7%9B%B8%E5%85%B3%E6%96%87%E4%BB%B6">上传ca相关文件</a></li>
-<li><a href="#%E9%83%A8%E7%BD%B2ca-mysql">部署ca-mysql</a></li>
-<li><a href="#%E9%83%A8%E7%BD%B2ca-service">部署ca-service</a></li>
-<li><a href="#%E6%A3%80%E6%9F%A5%E7%8A%B6%E6%80%81">检查状态</a></li>
-</ul>
-</li>
-<li><a href="#%E9%83%A8%E7%BD%B2gateway%E6%9C%8D%E5%8A%A1">部署gateway服务</a>
-<ul>
-<li><a href="#%E4%BF%AE%E6%94%B9ca%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6-2">修改ca变量文件</a></li>
-<li><a href="#%E4%B8%8A%E4%BC%A0gateway%E7%9B%B8%E5%85%B3%E6%96%87%E4%BB%B6">上传gateway相关文件</a></li>
-<li><a href="#%E9%83%A8%E7%BD%B2gateway">部署gateway</a></li>
-</ul>
-</li>
-<li><a href="#%E9%83%A8%E7%BD%B2%E9%87%87%E9%9B%86%E5%99%A8%E6%9C%8D%E5%8A%A1">部署采集器服务</a>
-<ul>
-<li><a href="#%E4%BF%AE%E6%94%B9cjq%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6">修改cjq变量文件</a></li>
-<li><a href="#%E4%B8%8A%E4%BC%A0%E9%87%87%E9%9B%86%E5%99%A8%E7%9B%B8%E5%85%B3%E6%96%87%E4%BB%B6">上传采集器相关文件</a></li>
-<li><a href="#%E9%83%A8%E7%BD%B2cjq">部署CJQ</a></li>
-<li><a href="#%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E6%97%A5%E5%BF%97">查看服务日志</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#%E6%B3%A8%E6%84%8F">注意</a></li>
-</ul>
-</li>
-</ul>
-
-              </div>
-
-                        </div>
-                 </div>
-          
+          </div>
         </div>
-        <script data-no-instant>
-    (function ($) {
-        $.extend({
-            adamsOverload: function () {
-                $.viewImage({
-                    'target'  : '.post-neirong img',
-                    'exclude' : '.vsmile-icons img , .song-links-item img',
-                    'delay'   : 300
-                });
-            }
-        });
-    })(jQuery);
-    jQuery.adamsOverload();
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/">
+              <h3 class="post-title">
+                下一篇：Gridea添加Valine评论系统
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">当你觉得无所事事时，那你就是在虚度光阴</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
 </script>
-        <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                      </ul>
-                    </nav>
-                  <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a></p>
-                  </div>
-              </footer>
-    </body>
+
+
+
+
+  </body>
 </html>

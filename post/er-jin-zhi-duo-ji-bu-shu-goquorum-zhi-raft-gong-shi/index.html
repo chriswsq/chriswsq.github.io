@@ -1,52 +1,102 @@
+
+<!DOCTYPE html>
 <html>
-      <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <meta name="referrer" content="never">
-        <title>二进制多机部署GoQuorum之raft共识 | chris&#39;wang</title>
-        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
-        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-          <script src="https://chriswsq.github.io/media/scripts/mdui.min.js"></script>
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
-        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://chriswsq.github.io/media/scripts/script.js"></script>
-        <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>二进制多机部署GoQuorum之raft共识 | chris&#39;wang</title>
+<meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607586983009">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://chriswsq.github.io">
+        <img class="avatar" src="https://chriswsq.github.io/images/avatar.png?v=1607586983009" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://chriswsq.github.io">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
         
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
 
-    </head>
-    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="index-img mdui-m-b-3" >
-                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
-                <ul class="mdui-menu" id="demo-attr-cascade">
-                
-                        <li class="mdui-menu-item">
-                          <a href="/" class="mdui-ripple">首页</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/archives" class="mdui-ripple">归档</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/tags" class="mdui-ripple">标签</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/post/about" class="mdui-ripple">关于</a>
-                        </li>
-                
-                      </ul>
 
-        </header>
-        <div class="mdui-container post">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
-                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
-                           <div class="mdui-typo-display-1 mdui-m-b-3">二进制多机部署GoQuorum之raft共识</div>
-                           <a  class="index-list-biaoqian ">2020-12-07</a>
-                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h2 id="goquorum与raft达成共识">GoQuorum与Raft达成共识</h2>
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">二进制多机部署GoQuorum之raft共识</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2020-12-07</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://chriswsq.github.io/tag/OsKJr9qE0/">
+                    联盟链
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content">
+            <h2 id="goquorum与raft达成共识">GoQuorum与Raft达成共识</h2>
 <h3 id="测试环境">测试环境</h3>
 <ul>
 <li>2台主机<br>
@@ -292,131 +342,58 @@ PRIVATE_CONFIG=ignore nohup geth --datadir new-node-2 --nodiscover --verbosity 5
 <h3 id="可选static-nodesjson与所有其他连锁店参与者共享新的">可选：static-nodes.json与所有其他连锁店参与者共享新的</h3>
 <pre><code class="language-bash">cp new-node-2/static-nodes.json root@192.168.40.6:/bsn/quorum/fromscratch/new-node-1
 </code></pre>
-</div>
-                              <div class="mdui-divider mdui-m-t-3"></div>
-                              <div class="mdui-row-xs-2 mdui-m-t-2">
-  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://chriswsq.github.io/post/goquorum-zhi-raft-gong-shi-tian-jia-tian-jia-yin-si-jiao-yi-guan-li-qi-tessera/">GoQuorum之raft共识添加添加隐私交易管理器tessera</a></div></div>
- <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/linux-tiao-jian-pan-duan/">linux 条件判断</a></div> </div>
-                                </div>
-                                <div class="mdui-divider mdui-m-t-2"></div>
-   
- <script src="https://chriswsq.github.io/media/scripts/Valine.min.js"></script>
- <div class="comment"></div>
 
-<script>
-      new Valine({
-            el: '.comment',
-
-            app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
-
-
-            app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
-
-
-            placeholder: '没事儿说两句',
-            
-            path: window.location.pathname,
-            pageSize: 30,
-            avatar:'mm', 
-       })
-
-    </script> 
-<script>
-    if(window.location.hash){
-        var checkExist = setInterval(function() {
-           if ($(window.location.hash).length) {
-              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
-              clearInterval(checkExist);
-           }
-        }, 100);
-    }
-</script>
-                         </article>
-                 <div class="toc-container mdui-float-right">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#goquorum%E4%B8%8Eraft%E8%BE%BE%E6%88%90%E5%85%B1%E8%AF%86">GoQuorum与Raft达成共识</a>
-<ul>
-<li><a href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83">测试环境</a></li>
-<li><a href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E7%A8%8B%E5%BA%8F%E6%96%87%E4%BB%B6">下载安装程序文件</a></li>
-<li><a href="#%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1%E7%9B%AE%E5%BD%95">创建服务目录</a></li>
-<li><a href="#%E5%88%9B%E5%BB%BA%E8%B4%A6%E6%88%B7">创建账户</a></li>
-<li><a href="#%E5%88%9B%E4%B8%96%E5%9D%97%E6%96%87%E4%BB%B6">创世块文件</a></li>
-<li><a href="#%E7%94%9F%E6%88%90%E8%8A%82%E7%82%B9%E5%AF%86%E9%92%A5">生成节点密钥</a></li>
-<li><a href="#%E6%9F%A5%E7%9C%8B%E8%8A%82%E7%82%B9id">查看节点ID</a></li>
-<li><a href="#%E5%88%9B%E5%BB%BAstatic-nodesjson%E6%96%87%E4%BB%B6">创建static-nodes.json文件</a></li>
-<li><a href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B0%E8%8A%82%E7%82%B9">初始化新节点</a></li>
-<li><a href="#%E5%88%9B%E5%BB%BA%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC">创建启动脚本</a></li>
-</ul>
-</li>
-<li><a href="#%E6%B7%BB%E5%8A%A0%E5%85%B6%E4%BB%96%E8%8A%82%E7%82%B9">添加其他节点</a>
-<ul>
-<li><a href="#%E5%AE%8C%E6%88%90%E4%B8%8A%E4%B8%80%E6%8C%87%E5%8D%97%E4%B8%AD%E7%9A%84%E6%AD%A5%E9%AA%A41-2-5%E5%92%8C6">完成上一指南中的步骤1、2、5和6</a></li>
-<li><a href="#%E8%B0%83%E6%95%B4static-nodesjson">调整static-nodes.json</a></li>
-<li><a href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B0%E8%8A%82%E7%82%B9-2">初始化新节点</a></li>
-<li><a href="#%E8%BF%9E%E6%8E%A5%E5%88%B0%E9%93%BE%E4%B8%AD%E5%B7%B2%E8%BF%90%E8%A1%8C%E7%9A%84%E8%8A%82%E7%82%B9%E5%B9%B6%E6%89%A7%E8%A1%8Craftaddpeer%E5%91%BD%E4%BB%A4">连接到链中已运行的节点并执行RaftaddPeer命令。</a></li>
-<li><a href="#%E7%BC%96%E8%BE%91%E6%96%B0%E5%A2%9E%E8%8A%82%E7%82%B9%E8%84%9A%E6%9C%AC">编辑新增节点脚本</a></li>
-<li><a href="#%E5%8F%AF%E9%80%89static-nodesjson%E4%B8%8E%E6%89%80%E6%9C%89%E5%85%B6%E4%BB%96%E8%BF%9E%E9%94%81%E5%BA%97%E5%8F%82%E4%B8%8E%E8%80%85%E5%85%B1%E4%BA%AB%E6%96%B0%E7%9A%84">可选：static-nodes.json与所有其他连锁店参与者共享新的</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
-
-                        </div>
-                 </div>
-          
+          </div>
         </div>
-        <script data-no-instant>
-    (function ($) {
-        $.extend({
-            adamsOverload: function () {
-                $.viewImage({
-                    'target'  : '.post-neirong img',
-                    'exclude' : '.vsmile-icons img , .song-links-item img',
-                    'delay'   : 300
-                });
-            }
-        });
-    })(jQuery);
-    jQuery.adamsOverload();
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://chriswsq.github.io/post/linux-tiao-jian-pan-duan/">
+              <h3 class="post-title">
+                下一篇：linux 条件判断
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">当你觉得无所事事时，那你就是在虚度光阴</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
 </script>
-        <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                      </ul>
-                    </nav>
-                  <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a></p>
-                  </div>
-              </footer>
-    </body>
+
+
+
+
+  </body>
 </html>

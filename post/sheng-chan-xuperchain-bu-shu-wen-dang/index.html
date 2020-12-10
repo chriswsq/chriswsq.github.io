@@ -1,52 +1,102 @@
+
+<!DOCTYPE html>
 <html>
-      <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <meta name="referrer" content="never">
-        <title>生产xuperchain部署文档 | chris&#39;wang</title>
-        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
-        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-          <script src="https://chriswsq.github.io/media/scripts/mdui.min.js"></script>
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
-        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://chriswsq.github.io/media/scripts/script.js"></script>
-        <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>生产xuperchain部署文档 | chris&#39;wang</title>
+<meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607586983009">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://chriswsq.github.io">
+        <img class="avatar" src="https://chriswsq.github.io/images/avatar.png?v=1607586983009" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://chriswsq.github.io">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
         
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
 
-    </head>
-    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="index-img mdui-m-b-3" >
-                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
-                <ul class="mdui-menu" id="demo-attr-cascade">
-                
-                        <li class="mdui-menu-item">
-                          <a href="/" class="mdui-ripple">首页</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/archives" class="mdui-ripple">归档</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/tags" class="mdui-ripple">标签</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/post/about" class="mdui-ripple">关于</a>
-                        </li>
-                
-                      </ul>
 
-        </header>
-        <div class="mdui-container post">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
-                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
-                           <div class="mdui-typo-display-1 mdui-m-b-3">生产xuperchain部署文档</div>
-                           <a  class="index-list-biaoqian ">2020-08-20</a>
-                           <div class="mdui-typo mdui-m-t-3 post-neirong"><p>百度区块链部署xuperchain</p>
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">生产xuperchain部署文档</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2020-08-20</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://chriswsq.github.io/tag/ZheGLyv2M/">
+                    xuperchain
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content">
+            <p>百度区块链部署xuperchain</p>
 <!-- more -->
 <h2 id="部署信息">部署信息</h2>
 <p>**版本：**3.9.0<br>
@@ -233,125 +283,58 @@ nohup ./xchain &amp;
 <blockquote>
 <p>所有xchain-cli 命令默认都是只xuper链上执行操作，如需操作其他平行链需加 --name    参数</p>
 </blockquote>
-</div>
-                              <div class="mdui-divider mdui-m-t-3"></div>
-                              <div class="mdui-row-xs-2 mdui-m-t-2">
-  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://chriswsq.github.io/post/xuperchain-tian-jia-kuang-gong-jie-dian/">xuperchain添加旷工节点</a></div></div>
- <div class="mdui-col"><div class="mdui-text-right "><a href="https://chriswsq.github.io/post/ansible-xue-xi/">ansible学习</a></div> </div>
-                                </div>
-                                <div class="mdui-divider mdui-m-t-2"></div>
-   
- <script src="https://chriswsq.github.io/media/scripts/Valine.min.js"></script>
- <div class="comment"></div>
 
-<script>
-      new Valine({
-            el: '.comment',
-
-            app_id: 'nCwKjHbRmhxBO6Dl20UfM5yw-gzGzoHsz',
-
-
-            app_key: 'DiIo4l1dsGeJ9VKtPoGOjfN5',
-
-
-            placeholder: '没事儿说两句',
-            
-            path: window.location.pathname,
-            pageSize: 30,
-            avatar:'mm', 
-       })
-
-    </script> 
-<script>
-    if(window.location.hash){
-        var checkExist = setInterval(function() {
-           if ($(window.location.hash).length) {
-              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
-              clearInterval(checkExist);
-           }
-        }, 100);
-    }
-</script>
-                         </article>
-                 <div class="toc-container mdui-float-right">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#%E9%83%A8%E7%BD%B2%E4%BF%A1%E6%81%AF">部署信息</a></li>
-<li><a href="#1%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87">1.环境准备</a></li>
-<li><a href="#11-%E7%BC%96%E8%AF%91xuperchain">1.1. 编译XuperChain</a>
-<ul>
-<li><a href="#%E4%BF%AE%E6%94%B9outputconfpluginsconf-%E6%96%87%E4%BB%B6%E5%B0%86default%E7%9A%84%E5%8A%A0%E5%AF%86%E6%96%B9%E5%BC%8F%E6%94%B9%E4%B8%BA%E5%9B%BD%E5%AF%86%E6%96%B9%E5%BC%8F">修改/output/conf/plugins.conf 文件(将default的加密方式改为国密方式)</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9-outputconfxchainyaml%E6%96%87%E4%BB%B6">修改 /output/conf/xchain.yaml文件</a></li>
-<li><a href="#%E4%BF%AE%E6%94%B9outputdataconfigxuperjson%E6%96%87%E4%BB%B6%E6%8B%B7%E8%B4%9D%E8%87%B3%E5%85%B6%E4%BB%96%E8%8A%82%E7%82%B9%E9%80%89%E6%8B%A9%E6%8C%96%E7%9F%BF%E8%8A%82%E7%82%B9-%E6%8C%96%E7%9F%BF%E8%8A%82%E7%82%B9%E6%95%B0%E9%87%8F-address%E5%9C%B0%E5%9D%80%E4%B8%BA%E4%B8%BB%E8%8A%82%E7%82%B9%E5%8D%B3%E5%8F%AF-%E6%9B%B4%E6%94%B9%E6%97%B6%E9%97%B4%E6%88%B3-%E6%8C%96%E7%9F%BF%E8%8A%82%E7%82%B9neturl">修改/output/data/config/xuper.json文件，拷贝至其他节点（选择挖矿节点、挖矿节点数量、address地址为主节点即可、更改时间戳、挖矿节点netURL)</a></li>
-</ul>
-</li>
-<li><a href="#%E6%8B%B7%E8%B4%9D%E8%87%B3%E5%85%B6%E4%BB%96%E8%8A%82%E7%82%B9%E5%90%8E%E7%9A%84%E6%93%8D%E4%BD%9C">拷贝至其他节点后的操作</a></li>
-<li><a href="#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1">启动服务</a></li>
-<li><a href="#%E6%B3%A8">注</a></li>
-<li><a href="#%E5%88%9B%E5%BB%BA%E5%90%88%E7%BA%A6%E8%B4%A6%E5%8F%B7">创建合约账号</a>
-<ul>
-<li><a href="#%E5%88%9B%E5%BB%BA%E5%B9%B3%E8%A1%8C%E9%93%BE">创建平行链</a></li>
-</ul>
-</li>
-<li><a href="#%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4">基本命令</a></li>
-</ul>
-</li>
-</ul>
-
-              </div>
-
-                        </div>
-                 </div>
-          
+          </div>
         </div>
-        <script data-no-instant>
-    (function ($) {
-        $.extend({
-            adamsOverload: function () {
-                $.viewImage({
-                    'target'  : '.post-neirong img',
-                    'exclude' : '.vsmile-icons img , .song-links-item img',
-                    'delay'   : 300
-                });
-            }
-        });
-    })(jQuery);
-    jQuery.adamsOverload();
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://chriswsq.github.io/post/ansible-xue-xi/">
+              <h3 class="post-title">
+                下一篇：ansible学习
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">当你觉得无所事事时，那你就是在虚度光阴</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
 </script>
-        <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                      </ul>
-                    </nav>
-                  <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a></p>
-                  </div>
-              </footer>
-    </body>
+
+
+
+
+  </body>
 </html>

@@ -1,654 +1,504 @@
 <html>
-      <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <meta name="referrer" content="never">
-        <title>chris&#39;wang</title>
-        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
-        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-          <script src="https://chriswsq.github.io/media/scripts/mdui.min.js"></script>
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
-        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://chriswsq.github.io/media/scripts/script.js"></script>
-        <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>chris&#39;wang</title>
+<meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607586983009">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://chriswsq.github.io">
+        <img class="avatar" src="https://chriswsq.github.io/images/avatar.png?v=1607586983009" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://chriswsq.github.io">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
         
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
 
-    </head>
-    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="header mdui-m-b-3">
-                          <button class="mdui-btn daohang mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
-                <ul class="mdui-menu " id="demo-attr-cascade">
-                
-                        <li class="mdui-menu-item">
-                          <a href="/" class="mdui-ripple">首页</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/archives" class="mdui-ripple">归档</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/tags" class="mdui-ripple">标签</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/post/about" class="mdui-ripple">关于</a>
-                        </li>
-                
-                      </ul>
-                      <div class="mdui-text-center">
-                      <div class="mdui-typo-display-4 mdui-m-b-3 index-title">chris&#39;wang</div>
-                      <div class="mdui-typo-headline">当你觉得无所事事时，那你就是在虚度光阴</div>
-                      </div>
 
-        </header>
-        <div class="mdui-container">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-10 mdui-col-offset-md-1 ">
- 
-                           
+        <div class="content-container">
+          
+          
+
+<div class="archives-container">
   
-   
+    <h2 class="year">2020</h2>
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/goquorum-zhi-raft-gong-shi-tian-jia-tian-jia-yin-si-jiao-yi-guan-li-qi-tessera/">
+            <h2 class="post-title">
+              GoQuorum之raft共识添加添加隐私交易管理器tessera
+              <small>2020-12-07</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/er-jin-zhi-duo-ji-bu-shu-goquorum-zhi-raft-gong-shi/">
+            <h2 class="post-title">
+              二进制多机部署GoQuorum之raft共识
+              <small>2020-12-07</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/linux-tiao-jian-pan-duan/">
+            <h2 class="post-title">
+              linux 条件判断
+              <small>2020-12-03</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/neo-fu-wu-geng-xin/">
+            <h2 class="post-title">
+              neo服务更新
+              <small>2020-11-23</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/gong-lian-zhi-oasis/">
+            <h2 class="post-title">
+              公链之oasis
+              <small>2020-11-03</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/redis/">
+            <h2 class="post-title">
+              redis
+              <small>2020-10-31</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/cita-lian-guan-li-fu-wu-bu-shu/">
+            <h2 class="post-title">
+              cita链管理服务部署
+              <small>2020-10-29</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/docker-compsoe-bu-shu-kafka-ji-qun/">
+            <h2 class="post-title">
+              docker-compsoe部署kafka集群
+              <small>2020-10-16</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/loki-pei-zhi-you-jian-gao-jing/">
+            <h2 class="post-title">
+              Loki配置邮件告警
+              <small>2020-10-12</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/qing-liang-ji-ri-zhi-xi-tong-loki-yuan-li-jian-jie-he-shi-yong/">
+            <h2 class="post-title">
+              轻量级日志系统Loki原理简介和使用
+              <small>2020-10-12</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/xuperchian change Common node/">
+            <h2 class="post-title">
+              xuperchian  建链未成功手动修复
+              <small>2020-09-18</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/xuperchian-change-Common-node/">
+            <h2 class="post-title">
+              xuperchian 增减共识节点、添加群组操作步骤
+              <small>2020-09-15</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/">
+            <h2 class="post-title">
+              docker容器保持后台运行的两种方式
+              <small>2020-09-14</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/">
+            <h2 class="post-title">
+              记一次服务器内存过高问题
+              <small>2020-09-10</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/docker-bu-shu-prometheus-jian-kong-fu-wu-qi-ji-rong-qi-bing-fa-song-gao-jing/">
+            <h2 class="post-title">
+              docker部署Prometheus监控服务器及容器并发送告警
+              <small>2020-09-03</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/">
+            <h2 class="post-title">
+              k8s 如何关联pvc到特定的pv?
+              <small>2020-08-27</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/">
+            <h2 class="post-title">
+              k8s pv,pvc无法删除问题
+              <small>2020-08-27</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/">
+            <h2 class="post-title">
+              kubeadm部署k8s
+              <small>2020-08-27</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/logstash-pei-zhi/">
+            <h2 class="post-title">
+              logstash配置
+              <small>2020-08-27</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/">
+            <h2 class="post-title">
+              elk用户认证问题
+              <small>2020-08-27</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/">
+            <h2 class="post-title">
+              ELK告警之elastalert部署及配置
+              <small>2020-08-27</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">
+            <h2 class="post-title">
+              关于Logstash中grok插件的正则表达式例子
+              <small>2020-08-27</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/">
+            <h2 class="post-title">
+              生产环境部署fabric
+              <small>2020-08-27</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/">
+            <h2 class="post-title">
+              Gridea添加Valine评论系统
+              <small>2020-08-26</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/cita-fu-wu/">
+            <h2 class="post-title">
+              cita服务
+              <small>2020-08-25</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/">
+            <h2 class="post-title">
+              Kubernetes 基礎教學（三）Helm 介紹與建立 Chart
+              <small>2020-08-21</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">
+            <h2 class="post-title">
+              Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress
+              <small>2020-08-20</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">
+            <h2 class="post-title">
+              kubernetes基础教学（一）原理
+              <small>2020-08-20</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">
+            <h2 class="post-title">
+              k8s——apiVersion对照表
+              <small>2020-08-20</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">
+            <h2 class="post-title">
+              NFS网络文件系统部署
+              <small>2020-08-20</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/sedandawk-bi-ji/">
+            <h2 class="post-title">
+              sed&amp;awk笔记
+              <small>2020-08-20</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/xuperchain-tian-jia-kuang-gong-jie-dian/">
+            <h2 class="post-title">
+              xuperchain添加旷工节点
+              <small>2020-08-20</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/">
+            <h2 class="post-title">
+              生产xuperchain部署文档
+              <small>2020-08-20</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+      
+        <article class="post">
+          <a href="https://chriswsq.github.io/post/ansible-xue-xi/">
+            <h2 class="post-title">
+              ansible学习
+              <small>2020-08-19</small>
+            </h2>
+          </a>
+        </article>
+      
+    
+  
+</div>
 
 
-
-                               <div class="mdui-typo-display-1 mdui-m-b-2 mdui-m-l-1">
-                               <div class="mdui-row"><div class="mdui-col-xs-12">2020</div>
-                               </div>
-                                <div class="mdui-row-md-3 mdui-row-xs-1">
-                               
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/goquorum-zhi-raft-gong-shi-tian-jia-tian-jia-yin-si-jiao-yi-guan-li-qi-tessera/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">GoQuorum之raft共识添加添加隐私交易管理器tessera</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-12-07</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/er-jin-zhi-duo-ji-bu-shu-goquorum-zhi-raft-gong-shi/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">二进制多机部署GoQuorum之raft共识</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-12-07</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/linux-tiao-jian-pan-duan/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">linux 条件判断</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-12-03</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/neo-fu-wu-geng-xin/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">neo服务更新</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-11-23</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/gong-lian-zhi-oasis/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">公链之oasis</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-11-03</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/redis/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">redis</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-10-31</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/cita-lian-guan-li-fu-wu-bu-shu/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">cita链管理服务部署</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-10-29</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/docker-compsoe-bu-shu-kafka-ji-qun/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">docker-compsoe部署kafka集群</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-10-16</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/loki-pei-zhi-you-jian-gao-jing/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">Loki配置邮件告警</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-10-12</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/qing-liang-ji-ri-zhi-xi-tong-loki-yuan-li-jian-jie-he-shi-yong/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">轻量级日志系统Loki原理简介和使用</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-10-12</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/xuperchian change Common node/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">xuperchian  建链未成功手动修复</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-09-18</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/xuperchian-change-Common-node/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">xuperchian 增减共识节点、添加群组操作步骤</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-09-15</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/docker-rong-qi-bao-chi-hou-tai-yun-xing-de-liang-chong-fang-shi/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">docker容器保持后台运行的两种方式</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-09-14</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/ji-yi-ci-fu-wu-qi-nei-cun-guo-gao-wen-ti/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">记一次服务器内存过高问题</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-09-10</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/docker-bu-shu-prometheus-jian-kong-fu-wu-qi-ji-rong-qi-bing-fa-song-gao-jing/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">docker部署Prometheus监控服务器及容器并发送告警</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-09-03</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">k8s 如何关联pvc到特定的pv?</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-27</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/k8s-pvpvc-wu-fa-shan-chu-wen-ti/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">k8s pv,pvc无法删除问题</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-27</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">kubeadm部署k8s</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-27</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/logstash-pei-zhi/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">logstash配置</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-27</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">elk用户认证问题</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-27</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">ELK告警之elastalert部署及配置</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-27</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">关于Logstash中grok插件的正则表达式例子</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-27</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">生产环境部署fabric</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-27</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">Gridea添加Valine评论系统</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-26</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/cita-fu-wu/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">cita服务</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-25</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">Kubernetes 基礎教學（三）Helm 介紹與建立 Chart</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-21</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-20</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">kubernetes基础教学（一）原理</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-20</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">k8s——apiVersion对照表</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-20</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">NFS网络文件系统部署</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-20</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/sedandawk-bi-ji/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">sed&amp;awk笔记</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-20</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/xuperchain-tian-jia-kuang-gong-jie-dian/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">xuperchain添加旷工节点</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-20</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">生产xuperchain部署文档</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-20</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-        
-                                    <div class="mdui-col mdui-p-a-1">
-                                       <article class="archives-list mdui-shadow-15  mdui-hoverable ">
-                                           <a href="https://chriswsq.github.io/post/ansible-xue-xi/">
-                                           <div class="archives-img" >
-                                           </div>
-                                           <div class="mdui-p-a-2">
-                                           <div class="mdui-typo-headline mdui-text-truncate index-list-title">ansible学习</div>
-                                           <div class="mdui-typo-title mdui-m-t-1 mdui-text-color-blue-grey-200">2020-08-19</div>
-                                           </div>
-                                        </a>
-                                       </article> 
-                                    </div>
-                                    
-             
-            
-              
-                                  </div>
-                                    <nav class="mdui-m-y-3">
-                         
-                         
-                         </nav>
-                         
-                        </div>
-                 </div>
-          </div>
-          </div>
         </div>
-         </div>
-        <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                      </ul>
-                    </nav>
-                  <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a></p>
-                  </div>
-              </footer>
-    </body>
+
+        <div class="site-footer">
+  <div class="slogan">当你觉得无所事事时，那你就是在虚度光阴</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+      </div>
+      <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+    </div>
+  </body>
 </html>

@@ -1,314 +1,381 @@
+
 <html>
-      <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <meta name="referrer" content="never">
-        <title>chris&#39;wang</title>
-        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
-        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-          <script src="https://chriswsq.github.io/media/scripts/mdui.min.js"></script>
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
-        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://chriswsq.github.io/media/scripts/script.js"></script>
-        <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>chris&#39;wang</title>
+<meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607586983009">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://chriswsq.github.io">
+        <img class="avatar" src="https://chriswsq.github.io/images/avatar.png?v=1607586983009" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://chriswsq.github.io">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
         
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
 
-    </head>
-    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class=" mdui-m-b-3 header">
-                          <button class="mdui-btn daohang mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
-                <ul class="mdui-menu " id="demo-attr-cascade">
+
+      <div class="content-container">
+        
+        
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/">
+        <h2 class="post-title">ELK告警之elastalert部署及配置</h2>
+      </a>
+      <div class="post-abstract">
+        <p>ELK7版本的日志告警Elastalert配置</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-27</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/">
+                ELK
                 
-                        <li class="mdui-menu-item">
-                          <a href="/" class="mdui-ripple">首页</a>
-                        </li>
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">
+        <h2 class="post-title">关于Logstash中grok插件的正则表达式例子</h2>
+      </a>
+      <div class="post-abstract">
+        <p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-27</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/">
+                ELK
                 
-                        <li class="mdui-menu-item">
-                          <a href="/archives" class="mdui-ripple">归档</a>
-                        </li>
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/">
+        <h2 class="post-title">生产环境部署fabric</h2>
+      </a>
+      <div class="post-abstract">
+        
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-27</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/qakyVMdT2/">
+                fabric
                 
-                        <li class="mdui-menu-item">
-                          <a href="/tags" class="mdui-ripple">标签</a>
-                        </li>
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/">
+        <h2 class="post-title">Gridea添加Valine评论系统</h2>
+      </a>
+      <div class="post-abstract">
+        <p>给自己的博客添加评论系统</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-26</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/6CEN_Pc4w/">
+                gridea
                 
-                        <li class="mdui-menu-item">
-                          <a href="/post/about" class="mdui-ripple">关于</a>
-                        </li>
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/cita-fu-wu/">
+        <h2 class="post-title">cita服务</h2>
+      </a>
+      <div class="post-abstract">
+        <p>根据公司需求研究部署cita服务</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-25</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/vUYHfbEAx/">
+                cita
                 
-                      </ul>
-                      <div class="mdui-text-center">
-                      <div class="mdui-typo-display-4 mdui-m-b-3 index-title">chris&#39;wang</div>
-                      <div class="mdui-typo-headline">当你觉得无所事事时，那你就是在虚度光阴</div>
-                      </div>
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
 
-        </header >
-        <div class="mdui-container">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-6 mdui-col-offset-md-3 ">
-                                                     
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/" class="index-list-title">ELK告警之elastalert部署及配置</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>ELK7版本的日志告警Elastalert配置</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="index-list-biaoqian mdui-float-left yinying">ELK</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/" class="index-list-biaoqian mdui-float-right yinying">2020-08-27</a>
-                                              
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/">
+        <h2 class="post-title">Kubernetes 基礎教學（三）Helm 介紹與建立 Chart</h2>
+      </a>
+      <div class="post-abstract">
+        <p>接下來在這篇文章中，我們會介紹一個建立 Kubernetes 應用變得輕鬆簡單的好幫手：Helm</p>
 
-                                            </div>
-                                          </div>
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-21</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/09VioQtSo/">
+                kubernetes
+                
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
 
-                            </article>
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/">
+        <h2 class="post-title">Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress</h2>
+      </a>
+      <div class="post-abstract">
+        <p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
 
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/" class="index-list-title">关于Logstash中grok插件的正则表达式例子</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="index-list-biaoqian mdui-float-left yinying">ELK</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/" class="index-list-biaoqian mdui-float-right yinying">2020-08-27</a>
-                                              
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-20</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/09VioQtSo/">
+                kubernetes
+                
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
 
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/" class="index-list-title">生产环境部署fabric</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"></div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/qakyVMdT2/" class="index-list-biaoqian mdui-float-left yinying">fabric</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/sheng-chan-huan-jing-bu-shu-fabric/" class="index-list-biaoqian mdui-float-right yinying">2020-08-27</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/" class="index-list-title">Gridea添加Valine评论系统</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>给自己的博客添加评论系统</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/6CEN_Pc4w/" class="index-list-biaoqian mdui-float-left yinying">gridea</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/gridea-tian-jia-valine-ping-lun-xi-tong/" class="index-list-biaoqian mdui-float-right yinying">2020-08-26</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/cita-fu-wu/" class="index-list-title">cita服务</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>根据公司需求研究部署cita服务</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/vUYHfbEAx/" class="index-list-biaoqian mdui-float-left yinying">cita</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/cita-fu-wu/" class="index-list-biaoqian mdui-float-right yinying">2020-08-25</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/" class="index-list-title">Kubernetes 基礎教學（三）Helm 介紹與建立 Chart</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>接下來在這篇文章中，我們會介紹一個建立 Kubernetes 應用變得輕鬆簡單的好幫手：Helm</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/09VioQtSo/" class="index-list-biaoqian mdui-float-left yinying">kubernetes</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-san-helm-jie-shao-yu-jian-li-chart/" class="index-list-biaoqian mdui-float-right yinying">2020-08-21</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/" class="index-list-title">Kubernetes 基础教学（二）实作范例：Pod、Service、Deployment、Ingress</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>Kubernetes（K8S）是一個可以幫助我們管理微服務（microservices）的系統，他可以自動化地部署及管理多台機器上的多個容器（Container）。簡單來說，他可以做到：</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/09VioQtSo/" class="index-list-biaoqian mdui-float-left yinying">kubernetes</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-jiao-xue-er-shi-zuo-fan-li-podservicedeploymentingress/" class="index-list-biaoqian mdui-float-right yinying">2020-08-20</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/" class="index-list-title">kubernetes基础教学（一）原理</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。<br>
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/">
+        <h2 class="post-title">kubernetes基础教学（一）原理</h2>
+      </a>
+      <div class="post-abstract">
+        <p>Kubernetes（K8S）是一个可以帮助我们管理微服务（microservices）的系统，他可以自动化地部署及管理多台机器上的多个容器（Container）。<br>
 更进一步地说，Kubernetes 想解决的问题是：「手动部署多个容器到多台机器上并监测管理这些容器的状态非常麻烦。」而Kubernetes 要提供的解法： 提供一个平台以较高层次的抽象化去自动化操作与管理容器们。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-20</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/09VioQtSo/">
+                kubernetes
+                
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/">
+        <h2 class="post-title">k8s——apiVersion对照表</h2>
+      </a>
+      <div class="post-abstract">
+        
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-20</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/">
+        <h2 class="post-title">NFS网络文件系统部署</h2>
+      </a>
+      <div class="post-abstract">
+        <p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-20</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+
+<div class="pagination-container">
+  
+    <a href="https://chriswsq.github.io/page/2/" class="prev"><i class="icon-arrow-ios-back-outline"></i> 上一页</a>
+  
+  
+    <a href="https://chriswsq.github.io/page/4/" class="next">下一页 <i class="icon-arrow-ios-forward-outline"></i></a>
+  
 </div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/09VioQtSo/" class="index-list-biaoqian mdui-float-left yinying">kubernetes</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/kubernetes-ji-chu-xue-xi-yi-yuan-li/" class="index-list-biaoqian mdui-float-right yinying">2020-08-20</a>
-                                              
 
-                                            </div>
-                                          </div>
 
-                            </article>
+      </div>
 
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/" class="index-list-title">k8s——apiVersion对照表</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"></div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/post/k8s-apiversion-dui-zhao-biao/" class="index-list-biaoqian mdui-float-right yinying">2020-08-20</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/" class="index-list-title">NFS网络文件系统部署</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>FS（Network File System），即网络文件系统。NFS服务可以将远程Linux系统上的文件共享资源挂载到本地主机的目录上，从而使用本地主机（Linux客户端）像使用本地资源那样读写远程Linux系统上的共享资源。</p>
+      <div class="site-footer">
+  <div class="slogan">当你觉得无所事事时，那你就是在虚度光阴</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
 </div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/post/nfs-wang-luo-wen-jian-xi-tong-bu-shu/" class="index-list-biaoqian mdui-float-right yinying">2020-08-20</a>
-                                              
 
-                                            </div>
-                                          </div>
 
-                            </article>
+    </div>
+    <script type="application/javascript">
 
-                                                   <nav class="mdui-m-y-3">
-                         
-                          <button class="mdui-btn mdui-color-theme-500 yinying mdui-btn-icon mdui-float-left"><a href="https://chriswsq.github.io/page/2/"><i class="mdui-icon mdui-text-color-white material-icons">&#xe5c4;</i></a></button>
-                         
-                         
-                          <button class="mdui-btn mdui-color-theme-500 yinying mdui-btn-icon mdui-float-right"><a href="https://chriswsq.github.io/page/4/"><i class="mdui-icon mdui-text-color-white material-icons">&#xe5c8;</i></a></button>
-                          
-                         </nav>
+hljs.initHighlightingOnLoad()
 
-                        </div>
-                 </div>
-          
-        </div>
-        <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                      </ul>
-                    </nav>
-                  <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a></p>
-                  </div>
-              </footer>
-    </body>
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
 </html>

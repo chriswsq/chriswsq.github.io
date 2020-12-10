@@ -1,205 +1,270 @@
+
+<!DOCTYPE html>
 <html>
-      <head>
-        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
-        <meta charset="utf-8">
-        <meta name="referrer" content="never">
-        <title>chris&#39;wang</title>
-        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
-        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
-          <script src="https://chriswsq.github.io/media/scripts/mdui.min.js"></script>
-        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
-        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
-        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://chriswsq.github.io/media/scripts/script.js"></script>
-        <script >hljs.initHighlightingOnLoad();</script>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>ELK | chris&#39;wang</title>
+<meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607586983009">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://chriswsq.github.io">
+        <img class="avatar" src="https://chriswsq.github.io/images/avatar.png?v=1607586983009" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://chriswsq.github.io">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
         
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
 
-    </head>
-    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="header mdui-m-b-3">
-                          <button class="mdui-btn daohang mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
-                <ul class="mdui-menu " id="demo-attr-cascade">
-                
-                        <li class="mdui-menu-item">
-                          <a href="/" class="mdui-ripple">首页</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/archives" class="mdui-ripple">归档</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/tags" class="mdui-ripple">标签</a>
-                        </li>
-                
-                        <li class="mdui-menu-item">
-                          <a href="/post/about" class="mdui-ripple">关于</a>
-                        </li>
-                
-                      </ul>
-                      <div class="mdui-text-center">
-                      <div class="mdui-typo-display-4 mdui-m-b-3 index-title">chris&#39;wang</div>
-                      <div class="mdui-typo-headline">当你觉得无所事事时，那你就是在虚度光阴</div>
-                      </div>
 
-        </header>
-        <div class="mdui-container">
-                <div class="mdui-row">
-                        <div class="mdui-col-md-6 mdui-col-offset-md-3 ">
-                                                     
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/" class="index-list-title">k8s 如何关联pvc到特定的pv?</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>部署有状态的应用时需要挂载相应的配置文件，了解下最常用的pv（nfs）和pvc绑定关系</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="index-list-biaoqian mdui-float-left yinying">ELK</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/" class="index-list-biaoqian mdui-float-right yinying">2020-08-27</a>
-                                              
+      <div class="content-container">
 
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/logstash-pei-zhi/" class="index-list-title">logstash配置</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>补上一份自己在工作中用的一份logstash的配置文件，万变不离其宗，可以参看此内容</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="index-list-biaoqian mdui-float-left yinying">ELK</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/logstash-pei-zhi/" class="index-list-biaoqian mdui-float-right yinying">2020-08-27</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/" class="index-list-title">elk用户认证问题</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>elk7+的用户认证免费了，不过没有集成在安装包里，还需要自己再进行一些操作，在此记录下自己再配置用户认证时遇到的问题</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="index-list-biaoqian mdui-float-left yinying">ELK</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/" class="index-list-biaoqian mdui-float-right yinying">2020-08-27</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/" class="index-list-title">ELK告警之elastalert部署及配置</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>ELK7版本的日志告警Elastalert配置</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="index-list-biaoqian mdui-float-left yinying">ELK</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/" class="index-list-biaoqian mdui-float-right yinying">2020-08-27</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                            <article class="mdui-m-t-4 index-list mdui-shadow-15 mdui-hoverable mdui-p-a-2 q">
-                                    <div class="mdui-row">
-                                            <div class="mdui-col-xs-12 ">
-                                              <div class="mdui-row mdui-m-b-2">
-                                                <div class="mdui-col-xs-12 mdui-col-sm-8">
-                                                    <div class="mdui-typo-headline mdui-m-b-2"><a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/" class="index-list-title">关于Logstash中grok插件的正则表达式例子</a></div>
-                                                    <div class="mdui-typo-body-2 index-list-neirong"><p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
-</div>
-                                                </div>
-                                                <div class="mdui-col-xs-12 mdui-col-sm-4 "><div class="index-list-img mdui-shadow-8"></div></div>
-                                              </div>
-                                              
-                                              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/" class="index-list-biaoqian mdui-float-left yinying">ELK</a>
-                                               
-                                              <a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/" class="index-list-biaoqian mdui-float-right yinying">2020-08-27</a>
-                                              
-
-                                            </div>
-                                          </div>
-
-                            </article>
-
-                                                   <nav class="mdui-m-y-3">
-                         
-                         
-                         </nav>
-
-                        </div>
-                 </div>
-          
+        <div class="current-tag-container">
+          <h2 class="title">
+            <i class="icon icon-pricetags-outline"></i> ELK
+          </h2> 
         </div>
-        <footer class="footer mdui-m-t-5 mdui-text-center">
-               <nav class="social-links">
-                      <ul>
-                      
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                            
-                           
-                      </ul>
-                    </nav>
-                  <div class="copyright">
-                      <p>Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a></p>
-                  </div>
-              </footer>
-    </body>
+
+        
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/k8s-ru-he-guan-lian-pvc-dao-te-ding-de-pv/">
+        <h2 class="post-title">k8s 如何关联pvc到特定的pv?</h2>
+      </a>
+      <div class="post-abstract">
+        <p>部署有状态的应用时需要挂载相应的配置文件，了解下最常用的pv（nfs）和pvc绑定关系</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-27</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/">
+                ELK
+                
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/logstash-pei-zhi/">
+        <h2 class="post-title">logstash配置</h2>
+      </a>
+      <div class="post-abstract">
+        <p>补上一份自己在工作中用的一份logstash的配置文件，万变不离其宗，可以参看此内容</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-27</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/">
+                ELK
+                
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/elk-yong-hu-ren-zheng-wen-ti/">
+        <h2 class="post-title">elk用户认证问题</h2>
+      </a>
+      <div class="post-abstract">
+        <p>elk7+的用户认证免费了，不过没有集成在安装包里，还需要自己再进行一些操作，在此记录下自己再配置用户认证时遇到的问题</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-27</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/">
+                ELK
+                
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/">
+        <h2 class="post-title">ELK告警之elastalert部署及配置</h2>
+      </a>
+      <div class="post-abstract">
+        <p>ELK7版本的日志告警Elastalert配置</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-27</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/">
+                ELK
+                
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://chriswsq.github.io/post/guan-yu-logstash-zhong-grok-cha-jian-de-zheng-ze-biao-da-shi-li-zi/">
+        <h2 class="post-title">关于Logstash中grok插件的正则表达式例子</h2>
+      </a>
+      <div class="post-abstract">
+        <p>日志收集里最重要的就是logstash对日志的过滤，Logstash里提供了一系列的filter来让我们转换日志。Grok就是这些filters里最重要的一个插件，下面就了解下</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2020-08-27</span>
+        
+          <span>
+            <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="https://chriswsq.github.io/tag/Nqh1b7Zat/">
+                ELK
+                
+              </a>
+            
+          </span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+
+<div class="pagination-container">
+  
+  
+</div>
+
+
+      </div>
+
+      <div class="site-footer">
+  <div class="slogan">当你觉得无所事事时，那你就是在虚度光阴</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
 </html>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-12-14T08:26:01.470Z</updated>
+    <updated>2020-12-14T08:28:32.646Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -49,7 +49,7 @@ bft共识分为：验证节点和非验证节点。验证节点可以作为主�
 <p>cakeshop的配置文件为application.properties</p>
 </li>
 <li>
-<p>cakeshop连接quorum节点信息的文件为nodes.json</p>
+<p>cakeshop连接quorum节点连接信息的文件为nodes.json</p>
 </li>
 </ul>
 ]]></content>

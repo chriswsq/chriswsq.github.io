@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-12-14T08:10:10.563Z</updated>
+    <updated>2020-12-14T08:26:01.470Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,50 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[quorum、tessera、cakeshop服务基本知识]]></title>
+        <id>https://chriswsq.github.io/post/quorumtesseracakeshop-fu-wu-ji-ben-zhi-shi/</id>
+        <link href="https://chriswsq.github.io/post/quorumtesseracakeshop-fu-wu-ji-ben-zhi-shi/">
+        </link>
+        <updated>2020-12-14T08:10:18.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>
+<p>quorum分别有两个共识<br>
+raft、bft</p>
+</li>
+<li>
+<p>quorum依赖环境<br>
+go</p>
+</li>
+<li>
+<p>quorum节点分类<br>
+bft共识分为：验证节点和非验证节点。验证节点可以作为主节点的备份，非验证节点只同步数据</p>
+</li>
+<li>
+<p>tessera为私人交易管理器<br>
+通常的方式创建为彼岸准的以太坊交易，私有交易不会按标准的以太坊执行：在发送方的GoQuorum节点将交易传播到网络的其余部分之前，它将原始交易有效载荷替换为从Constellation / Tessera接收到的加密有效载荷的哈希值。参与交易的参与者将能够通过其Constellation / Tessera实例将哈希值替换为实际有效载荷，而未参与交易的参与者将只能看到哈希值。</p>
+</li>
+<li>
+<p>quorum创始块文件为genesis.json</p>
+</li>
+<li>
+<p>quorum集群连接信息配置在static-nodes.json文件</p>
+</li>
+<li>
+<p>tessera的配置文件为tessera-config.json</p>
+</li>
+<li>
+<p>Cakeshop 为quorum服务的web管理器</p>
+</li>
+<li>
+<p>cakeshop的配置文件为application.properties</p>
+</li>
+<li>
+<p>cakeshop连接quorum节点信息的文件为nodes.json</p>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[docker-compose启动quorum、tessera、cakeshop--raft共识]]></title>
         <id>https://chriswsq.github.io/post/docker-compose-qi-dong-quorumtesseracakeshop/</id>
@@ -1700,100 +1744,6 @@ networks:
 <blockquote>
 <p>在kafka服务中声明了depends_on, 所以在所有zookeeper启动之后才会真正启动kafka容器</p>
 </blockquote>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Loki配置邮件告警]]></title>
-        <id>https://chriswsq.github.io/post/loki-pei-zhi-you-jian-gao-jing/</id>
-        <link href="https://chriswsq.github.io/post/loki-pei-zhi-you-jian-gao-jing/">
-        </link>
-        <updated>2020-10-12T09:43:07.000Z</updated>
-        <summary type="html"><![CDATA[<p>监控的目的就是及时发现问题去解决处理，那么在告警就是必不可少的。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>监控的目的就是及时发现问题去解决处理，那么在告警就是必不可少的。</p>
-<!-- more -->
-<p>本次告警配置是loki结合grafana来进行邮件告警</p>
-<h2 id="grafana配置告警">grafana配置告警</h2>
-<p>1.通过标签定位到需要查看的服务,并通过关键字过滤出想要查看的日志内容<br>
-<img src="https://chriswsq.github.io/post-images/1602669342426.png" alt="" loading="lazy"></p>
-<p>为尽快得到告警邮件这里我们设置带有info字符的日志</p>
-<p>2.看下过去一段时间内，日志中带有info字段的趋势<br>
-<img src="https://chriswsq.github.io/post-images/1602496164171.png" alt="" loading="lazy"></p>
-<p>这里可以看到，日志在不停的打印带有info字段的日志</p>
-<p>在数据源中添加一个Prometheus类型，并在地址栏中填写上http://loki:3100/loki ,这样我们就能通过像查询prometheus一样查询日志的走势<br>
-<img src="https://chriswsq.github.io/post-images/1602496373242.png" alt="" loading="lazy"></p>
-<p>这时候再创建一个pannel来查询info日志的趋势就可以得到如下结果：</p>
-<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1602496436562.png" alt="" loading="lazy"></figure>
-<p>接下来的工作，就是在Grafana上添加一个Alert小铃铛，让它每分钟去Loki里面查询有没有出现info字段的日志出现，如果计算出来的结果大于0，就让Grafana通过邮件告警出来。</p>
-<figure data-type="image" tabindex="2"><img src="https://chriswsq.github.io/post-images/1602496637970.png" alt="" loading="lazy"></figure>
-<p>配置完成后不急保存，我们先Test rule看看rule是否能生效。</p>
-<p><img src="https://chriswsq.github.io/post-images/1602496687577.png" alt="" loading="lazy"><br>
-看到state:&quot;alerting&quot; 说明现在已经开始报警了</p>
-<h2 id="grafana配置邮件">grafana配置邮件</h2>
-<pre><code class="language-ini">[smtp]
-enabled = true
-host = smtp.163.com:25
-user = 你的邮箱
-# If the password contains # or ; you have to wrap it with triple quotes. Ex &quot;&quot;&quot;#password;&quot;&quot;&quot;
-password = 你的密码
-;cert_file =
-;key_file =
-;skip_verify = false
-from_address = 你的邮箱
-from_name = Grafana
-</code></pre>
-<p>修改后，保存退出，重启grafana服务</p>
-<ul>
-<li>登入grafana页面</li>
-</ul>
-<figure data-type="image" tabindex="3"><img src="https://chriswsq.github.io/post-images/1602496941499.png" alt="" loading="lazy"></figure>
-<ul>
-<li>创建邮件发送规则</li>
-</ul>
-<figure data-type="image" tabindex="4"><img src="https://chriswsq.github.io/post-images/1602497009120.png" alt="" loading="lazy"></figure>
-<p>可以为不同的业务组创建不同的通知通道，例如，运维通道为Ops，研发为Dev。然后可以为一个Metrics指定多个通知通道。</p>
-<p>Name为通道名称</p>
-<p>Type为通道类型，此处选Email，也可选择钉钉告警或者Alert Manager等告警类型。</p>
-<p>Default(send on all alerts)开启后，表示在所有Graph Panel中配置告警规则时默认都会选用此通道。该选项默认为关闭。</p>
-<p>Include image开启后，表示是发送告警图片。</p>
-<p>Disable Resove Message开启后，表示发送恢复邮件，默认关闭。</p>
-<p>Send reminders开启后，还需设置下方的发送间隔，表示发送告警邮件的间隔，默认关闭表示若某个告警发生后即使持续很长时间也仅发送一次邮件。</p>
-<p>多个邮箱地址间用分号&quot;;&quot;隔开。例：xxx@163.com;xxx@qq.com</p>
-<p>创建成功后，点击Send Test 按钮，测试邮件是否能发送成功。（如果发送不成功，可在grafana.log中查看日志信息）</p>
-<ul>
-<li>在告警中添加配置的告警邮件联系人组</li>
-</ul>
-<figure data-type="image" tabindex="5"><img src="https://chriswsq.github.io/post-images/1602497296964.png" alt="" loading="lazy"></figure>
-<ul>
-<li>收到告警邮件</li>
-</ul>
-<figure data-type="image" tabindex="6"><img src="https://chriswsq.github.io/post-images/1602497366975.png" alt="" loading="lazy"></figure>
-<p>也可以发送图片 ,根据提示安装插件即可<br>
-<img src="https://chriswsq.github.io/post-images/1602497453813.png" alt="" loading="lazy"></p>
-<p>安装图片插件 官方建议单独新建一个容器去取加载插件而非直接在grafana容器中安装插件</p>
-<pre><code class="language-yaml">version: '2'
-
-services:
-  grafana:
-    image: grafana/grafana:7.0.0-beta1
-    ports:
-      - 3000
-    environment:
-      GF_RENDERING_SERVER_URL: http://renderer:8081/render
-      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
-      GF_LOG_FILTERS: rendering:debug
-  renderer:
-    image: grafana/grafana-image-renderer:2.0.0-beta1
-    ports:
-      - 8081
-    environment:
-      ENABLE_METRICS: 'true'
-</code></pre>
-<p>结果为<br>
-<img src="https://chriswsq.github.io/post-images/1602668961665.png" alt="" loading="lazy"></p>
-<p>参考文档：<br>
-https://grafana.com/blog/2020/05/07/grafana-7.0-preview-new-image-renderer-plugin-to-replace-phantomjs/<br>
-https://www.jianshu.com/p/0982a8ee204c</p>
 ]]></content>
     </entry>
 </feed>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>联盟链 | chris&#39;wang</title>
+<title>quorum、tessera、cakeshop服务基本知识 | chris&#39;wang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -18,7 +18,23 @@
 
 
 
-    <meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+    <meta name="description" content="
+
+quorum分别有两个共识
+raft、bft
+
+
+quorum依赖环境
+go
+
+
+quorum节点分类
+bft共识分为：验证节点和非验证节点。验证节点可以作为主节点的备份，非验证节点只同步数据
+
+
+tessera为私人交易管理器
+通常的..." />
+    <meta name="keywords" content="" />
   </head>
   <body>
     <div id="app" class="main">
@@ -88,43 +104,64 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          <h2 class="current-tag">标签: 联盟链</h2>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://chriswsq.github.io/post/docker-compose-qi-dong-quorumtesseracakeshop/">
-                  <h2 class="post-title">docker-compose启动quorum、tessera、cakeshop--raft共识</h2>
-                </a>
-                <div class="post-date">
-                  2020-12-14
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://chriswsq.github.io/post/er-jin-zhi-duo-ji-bu-shu-goquorum-zhi-raft-gong-shi/">
-                  <h2 class="post-title">多机部署GoQuorum之raft共识--二进制</h2>
-                </a>
-                <div class="post-date">
-                  2020-12-07
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-            </article>
-          
+          <div class="post-detail">
+            <h2 class="post-title">quorum、tessera、cakeshop服务基本知识</h2>
+            <div class="post-date">2020-12-14</div>
+            
+            <div class="post-content" v-pre>
+              <ul>
+<li>
+<p>quorum分别有两个共识<br>
+raft、bft</p>
+</li>
+<li>
+<p>quorum依赖环境<br>
+go</p>
+</li>
+<li>
+<p>quorum节点分类<br>
+bft共识分为：验证节点和非验证节点。验证节点可以作为主节点的备份，非验证节点只同步数据</p>
+</li>
+<li>
+<p>tessera为私人交易管理器<br>
+通常的方式创建为彼岸准的以太坊交易，私有交易不会按标准的以太坊执行：在发送方的GoQuorum节点将交易传播到网络的其余部分之前，它将原始交易有效载荷替换为从Constellation / Tessera接收到的加密有效载荷的哈希值。参与交易的参与者将能够通过其Constellation / Tessera实例将哈希值替换为实际有效载荷，而未参与交易的参与者将只能看到哈希值。</p>
+</li>
+<li>
+<p>quorum创始块文件为genesis.json</p>
+</li>
+<li>
+<p>quorum集群连接信息配置在static-nodes.json文件</p>
+</li>
+<li>
+<p>tessera的配置文件为tessera-config.json</p>
+</li>
+<li>
+<p>Cakeshop 为quorum服务的web管理器</p>
+</li>
+<li>
+<p>cakeshop的配置文件为application.properties</p>
+</li>
+<li>
+<p>cakeshop连接quorum节点信息的文件为nodes.json</p>
+</li>
+</ul>
 
-          <div class="pagination-container">
-  
-  
-</div>
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://chriswsq.github.io/post/docker-compose-qi-dong-quorumtesseracakeshop/">
+                  <h3 class="post-title">
+                    docker-compose启动quorum、tessera、cakeshop--raft共识
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
 
         </div>
       </div>

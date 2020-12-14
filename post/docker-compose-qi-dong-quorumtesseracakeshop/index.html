@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>docker-compose启动quorum、tessera、cakeshop | chris&#39;wang</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607932647373">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="docker-compose文件
+version: &quot;3.6&quot;
+x-quorum-def:
+  &amp;quorum-def
+  restart: &quot;on-failure&quot;
+  image: quo..." />
+    <meta name="keywords" content="联盟链" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://chriswsq.github.io">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1607932647373" class="site-logo">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      当你觉得无所事事时，那你就是在虚度光阴
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">docker-compose启动quorum、tessera、cakeshop</h2>
+            <div class="post-date">2020-12-14</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="docker-compose文件">docker-compose文件</h2>
+<pre><code class="language-yml">version: &quot;3.6&quot;
+x-quorum-def:
+  &amp;quorum-def
+  restart: &quot;on-failure&quot;
+  image: quorumengineering/quorum:20.10.0
+  expose:
+    - &quot;21000&quot;
+    - &quot;50000&quot;
+  healthcheck:
+    test: [&quot;CMD&quot;, &quot;wget&quot;, &quot;--spider&quot;, &quot;--proxy&quot;, &quot;off&quot;, &quot;http://localhost:22000&quot;]
+    interval: 3s
+    timeout: 3s
+    retries: 10
+    start_period: 5s
+  labels:
+    com.quorum.consensus: raft
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      DDIR=/qdata/dd
+      cat $${DDIR}/static-nodes.json
+      GENESIS_FILE=&quot;$${DDIR}/genesis.json&quot;
+      NETWORK_ID=$$(cat $${GENESIS_FILE} | grep chainId | awk -F &quot; &quot; '{print $$2}' | awk -F &quot;,&quot; '{print $$1}')
+      geth --datadir $${DDIR} init $${GENESIS_FILE}
+      geth \
+        --identity node1-raft \
+        --datadir $${DDIR} \
+        --permissioned \
+        --nodiscover \
+        --verbosity 5 \
+        --networkid $${NETWORK_ID} \
+        --rpc \
+        --raft \
+        --raftport 50000 \
+        --rpcaddr 0.0.0.0 \
+        --rpcport 22000 \
+        --rpcapi admin,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft \
+        --port 21000 \
+        --unlock 0 \
+        --allow-insecure-unlock \
+        --nousb \
+        --password $${DDIR}/passwords.txt \
+x-tx-manager-def:
+  &amp;tx-manager-def
+  image: quorumengineering/tessera:20.10.0
+  expose:
+    - &quot;9000&quot;
+    - &quot;9080&quot;
+  restart: &quot;no&quot;
+  healthcheck:
+    test: [&quot;CMD-SHELL&quot;, &quot;[ -S /qdata/tm/tm.ipc ] || exit 1&quot;]
+    interval: 3s
+    timeout: 3s
+    retries: 20
+    start_period: 5s
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      if [ &quot;$${PRIVATE_CONFIG}&quot; == &quot;ignore&quot; ]; then
+        /bin/true
+        exit 0
+      fi
+      DDIR=/qdata/tm
+      mkdir -p $${DDIR}
+          #extract the tessera version from the jar
+          TESSERA_VERSION=$$(unzip -p /tessera/tessera-app.jar META-INF/MANIFEST.MF | grep Tessera-Version | cut -d&quot; &quot; -f2)
+          #generating the two config flavors
+          cat &lt;&lt;EOF &gt; $${DDIR}/tessera-config.json
+          {
+            &quot;useWhiteList&quot;: false,
+            &quot;jdbc&quot;: {
+              &quot;username&quot;: &quot;sa&quot;,
+              &quot;password&quot;: &quot;&quot;,
+              &quot;url&quot;: &quot;jdbc:h2:./$${DDIR}/db;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0&quot;,
+              &quot;autoCreateTables&quot;: true
+            },
+            &quot;serverConfigs&quot;:[
+            {
+              &quot;app&quot;:&quot;ThirdParty&quot;,
+              &quot;enabled&quot;: true,
+              &quot;serverAddress&quot;: &quot;http://192.168.40.6:9080&quot;,
+              &quot;communicationType&quot; : &quot;REST&quot;
+            },
+            {
+              &quot;app&quot;:&quot;Q2T&quot;,
+              &quot;enabled&quot;: true,
+              &quot;serverAddress&quot;: &quot;unix:$${DDIR}/tm.ipc&quot;,
+              &quot;communicationType&quot; : &quot;REST&quot;
+            },
+            {
+              &quot;app&quot;:&quot;P2P&quot;,
+              &quot;enabled&quot;: true,
+              &quot;serverAddress&quot;: &quot;http://192.168.40.6:9000&quot;,
+              &quot;sslConfig&quot;: {
+                &quot;tls&quot;: &quot;OFF&quot;
+              },
+              &quot;communicationType&quot; : &quot;REST&quot;
+            }
+            ],
+            &quot;peer&quot;: [
+               {
+                   &quot;url&quot;: &quot;http://192.168.40.6:9000&quot;
+               },
+               {
+                   &quot;url&quot;: &quot;http://192.168.40.7:9000&quot;
+               }
+            ],
+            &quot;keys&quot;: {
+              &quot;passwords&quot;: [],
+              &quot;keyData&quot;: [
+                {
+                  &quot;config&quot;: $$(cat $${DDIR}/tm.key),
+                  &quot;publicKey&quot;: &quot;$$(cat $${DDIR}/tm.pub)&quot;
+                }
+              ]
+            },
+            &quot;alwaysSendTo&quot;: []
+          }
+      EOF
+          cat $${DDIR}/tessera-config.json
+          java -Xms128M -Xmx128M -jar /tessera/tessera-app.jar -configfile $${DDIR}/tessera-config.json
+x-cakeshop-def:
+  &amp;cakeshop-def
+  image: &quot;${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.11.0}&quot;
+  expose:
+    - &quot;8999&quot;
+  restart: &quot;no&quot;
+  healthcheck:
+    test: [&quot;CMD&quot;, &quot;wget&quot;, &quot;--spider&quot;, &quot;--proxy=off&quot;, &quot;http://localhost:8999/actuator/health&quot;]
+    interval: 5s
+    timeout: 5s
+    retries: 20
+    start_period: 5s
+  entrypoint:
+    - /bin/sh
+    - -c
+    - |
+      DDIR=/qdata/cakeshop/local
+      mkdir -p $${DDIR}
+      DOCKER_IMAGE=&quot;${CAKESHOP_DOCKER_IMAGE:-quorumengineering/cakeshop:0.11.0}&quot;
+      java -Xms128M -Xmx128M -Dcakeshop.config.dir=/qdata/cakeshop -Dlogging.path=/qdata/logs/cakeshop -jar /opt/cakeshop/cakeshop.war
+      ;;
+services:
+  node1:
+    &lt;&lt; : *quorum-def
+    hostname: node1
+    ports:
+      - &quot;22000:22000&quot;
+      - &quot;21000:21000&quot;
+      - &quot;50000:50000&quot;
+    volumes:
+      - ./data:/qdata
+    depends_on:
+      - txmanager1
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.11
+  txmanager1:
+    &lt;&lt; : *tx-manager-def
+    hostname: txmanager1
+    ports:
+      - &quot;9080:9080&quot;
+    volumes:
+      - ./data:/qdata
+    networks:
+      quorum-examples-net:
+        ipv4_address: 172.16.239.101
+    environment:
+      - PRIVATE_CONFIG=${PRIVATE_CONFIG:-/qdata/tm/tm.ipc}
+
+  cakeshop:
+    &lt;&lt; : *cakeshop-def
+    hostname: cakeshop
+    ports:
+      - &quot;8999:8999&quot;
+    volumes:
+      - ./data:/qdata
+
+networks:
+  quorum-examples-net:
+    name: quorum-examples-net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.239.0/24
+</code></pre>
+<h2 id="挂载所需文件及目录">挂载所需文件及目录</h2>
+<p>当前目录为 /bsn/quorum</p>
+<p>data<br>
+|---  cakeshop<br>
+|         |-- local<br>
+|                 |-- application.properties<br>
+|                 |-- nodes.json<br>
+|<br>
+| --- dd<br>
+|       |-- genesis.json<br>
+|       |-- keystore<br>
+|       |         |-- key<br>
+|       |--  passwords.txt<br>
+|       |--  permissioned-nodes.json<br>
+|       |-- static-nodes.json<br>
+|       |-- disallowed-nodes.json<br>
+|<br>
+|---- tm<br>
+|-- tessera-config.json</p>
+<h3 id="cakeshop-挂载文件">cakeshop 挂载文件</h3>
+<p><strong>application.properties文件为cakeshop的配置文件，配置服务端口，链接文件，安全配置等</strong></p>
+<pre><code class="language-yml">#Mon Dec 14 07:18:51 UTC 2020
+spring.main.banner-mode=off
+security.ignored=/**
+geth.log=/logs
+spring.mvc.view.suffix=.jsp
+geth.auto.stop=false
+geth.identity=bradmcdermott
+geth.cors.url=
+endpoints.actuator.enabled=true
+security.basic.enabled=false
+nodejs.binary=node
+contract.poll.delay.millis=5000
+geth.mining=true
+cakeshop.initialnodes=qdata/cakeshop/local/nodes.json
+geth.node.port=30303
+geth.cors.enabled=false
+management.security.enabled=false
+server.port=8999
+geth.release.url=
+server.compression.enabled=true
+geth.url=http\://localhost\:8102
+geth.vote.contract.addr=0x0000000000000000000000000000000000000020
+cakeshop.hibernate.jdbc.batch_size=20
+cakeshop.database.vendor=hsqldb
+geth.consensus.mode=raft
+geth.tools.url=
+cakeshop.mvc.async.pool.threads.max=1000
+cakeshop.jdbc.user=sdk
+geth.transaction_manager.url=http\://localhost\:9102
+spring.mvc.view.prefix=/WEB-INF/jsp/
+geth.verbosity=
+geth.auto.start=false
+cakeshop.hibernate.hbm2ddl.auto=update
+cakeshop.selected_node=1
+geth.raft.network.id=
+geth.istanbul.url=
+server.compression.mime-types=application/json,application/xml,text/html,text/xml,text/plain
+geth.bootnode.address=
+cakeshop.mvc.async.pool.queue.max=2000
+cakeshop.mvc.async.pool.threads.core=250
+management.context-path=/manage
+geth.db.enabled=true
+geth.cred1=admin
+geth.datadir=/qdata/cakeshop/local/ethereum
+geth.raft.port=22000
+geth.cred2=$2a$10$dbGiTnfK/w8MhcpIj3XgROYXRsFMlEYJRWoUYArkr8aSPypUFV25G
+geth.params.extra=
+geth.raft.blocktime=100
+geth.bootnodes.list=
+geth.networkid=1006
+geth.bootnode.key=
+geth.startup.mode=standalone
+cakeshop.jdbc.pass=sdk
+geth.transaction_manager.peers=http\://localhost\:9102
+geth.rpcapi.list=admin,db,eth,debug,miner,net,shh,txpool,personal,web3
+log4j.rootLogger=DEBUG, stdout
+contract.registry.addr=
+geth.unlock.timeout=5000
+</code></pre>
+<p><strong>nodes.json 文件配置连接quorum服务节点的地址(也可可续在web页面添加)</strong></p>
+<pre><code class="language-json">[
+  {
+    &quot;name&quot;: &quot;node1&quot;,
+    &quot;rpcUrl&quot;: &quot;http://192.168.40.6:22000&quot;,
+    &quot;transactionManagerUrl&quot;: &quot;http://192.168.40.6:9080&quot;
+  },
+  {
+    &quot;name&quot;: &quot;node2&quot;,
+    &quot;rpcUrl&quot;: &quot;http://192.168.40.7:22000&quot;,
+    &quot;transactionManagerUrl&quot;: &quot;http://192.168.40.7:9080&quot;
+  },
+  {
+    &quot;name&quot;: &quot;node3&quot;,
+    &quot;rpcUrl&quot;: &quot;http://192.168.40.8:22000&quot;,
+    &quot;transactionManagerUrl&quot;: &quot;http://192.168.40.8:9080&quot;
+  }
+]
+</code></pre>
+<h3 id="quorum挂载文件">quorum挂载文件</h3>
+<ul>
+<li>disallowed-nodes.json：禁止访问定义</li>
+<li>keysstore/key：创建用户的账号key存储</li>
+<li>genesis.json：创世块文件</li>
+<li>passwords.txt：解锁密钥存储</li>
+<li>permissioned-nodes.json：允许访问定义列表</li>
+<li>static-nodes.json：集群节点连接信息</li>
+</ul>
+<p><strong>disallowed-nodes.json</strong></p>
+<pre><code class="language-bash">[
+]
+</code></pre>
+<p><strong>keysstore/key</strong><br>
+账户文件通过命令提前生成<br>
+生成的key名字可以更改，密码最好设置为空</p>
+<pre><code class="language-bash">geth --datadir dd account new
+ll data/dd/keystore/
+UTC--2020-12-07T03-33-12.115191344Z--93f0b48f9d921f38dabff36cb682bfb208472221
+</code></pre>
+<p><strong>genesis.json</strong></p>
+<p>文件内的alloc参数根据创建的账户文件生成的key来填写</p>
+<pre><code class="language-json">{
+  &quot;alloc&quot;: {
+    &quot;0xCcfaC6Cfb21D1f10C915d0e4189586765c30089e&quot;: {
+      &quot;balance&quot;: &quot;1000000000000000000000000000&quot;
+    },
+    &quot;0x1ff1a9c504703b8e623640be516e768f3d175d14&quot;: {
+      &quot;balance&quot;: &quot;1000000000000000000000000000&quot;
+    }
+  },
+  &quot;coinbase&quot;: &quot;0x0000000000000000000000000000000000000000&quot;,
+  &quot;config&quot;: {
+    &quot;homesteadBlock&quot;: 0,
+    &quot;byzantiumBlock&quot;: 0,
+    &quot;constantinopleBlock&quot;: 0,
+    &quot;petersburgBlock&quot;: 0,
+    &quot;istanbulBlock&quot;: 0,
+    &quot;chainId&quot;: 10,
+    &quot;eip150Block&quot;: 0,
+    &quot;eip155Block&quot;: 0,
+    &quot;eip150Hash&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;eip158Block&quot;: 0,
+    &quot;isQuorum&quot;: true,
+    &quot;maxCodeSizeConfig&quot; : [
+      {
+        &quot;block&quot; : 0,
+        &quot;size&quot; : 32
+      }
+    ]
+  },
+  &quot;difficulty&quot;: &quot;0x0&quot;,
+  &quot;extraData&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;gasLimit&quot;: &quot;0xE0000000&quot;,
+  &quot;mixhash&quot;: &quot;0x00000000000000000000000000000000000000647572616c65787365646c6578&quot;,
+  &quot;nonce&quot;: &quot;0x0&quot;,
+  &quot;parentHash&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;timestamp&quot;: &quot;0x00&quot;
+}
+</code></pre>
+<p><strong>passwords.txt</strong><br>
+最好为空，不然会与在页面创建的用户有冲突</p>
+<pre><code class="language-bash">test
+</code></pre>
+<p><strong>permissioned-nodes.json</strong><br>
+文件中的id使用命令提前生成</p>
+<pre><code class="language-bash"> bootnode --genkey=nodekey
+ cp nodekey 
+ bootnode --nodekey=nodekey --writeaddress
+</code></pre>
+<p>用户的id信息</p>
+<pre><code class="language-bash">[
+  &quot;enode://f966b9a0cb82715fff5cc4b8f96c262c415181cb907cea5660bbd838c385976fd3a5389f40ea946d3dd02db2b5ac5f31bf760666d418cf7e340a8518bcdff03d@192.168.40.6:21000?discport=0&amp;raftport=50000&quot;,
+  &quot;enode://3f2fe908035fa1ddcc3d80d504d1f2358675ca5f4aa3de4f0c5457ea9a2ae7d9af57688b4ec9f5b2772aa1b5c3da1e76840d27ea35d1bc4c86578b09b8d1a19d@192.168.40.7:21000?discport=0&amp;raftport=50000&quot;
+]
+</code></pre>
+<p><strong>static-nodes.json</strong></p>
+<pre><code class="language-bash">[
+  &quot;enode://f966b9a0cb82715fff5cc4b8f96c262c415181cb907cea5660bbd838c385976fd3a5389f40ea946d3dd02db2b5ac5f31bf760666d418cf7e340a8518bcdff03d@192.168.40.6:21000?discport=0&amp;raftport=50000&quot;,
+  &quot;enode://3f2fe908035fa1ddcc3d80d504d1f2358675ca5f4aa3de4f0c5457ea9a2ae7d9af57688b4ec9f5b2772aa1b5c3da1e76840d27ea35d1bc4c86578b09b8d1a19d@192.168.40.7:21000?discport=0&amp;raftport=50000&quot;
+]
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://chriswsq.github.io/tag/OsKJr9qE0/" class="tag">
+                    联盟链
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://chriswsq.github.io/post/goquorum-zhi-raft-gong-shi-tian-jia-tian-jia-yin-si-jiao-yi-guan-li-qi-tessera/">
+                  <h3 class="post-title">
+                    GoQuorum之raft共识添加添加隐私交易管理器tessera
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

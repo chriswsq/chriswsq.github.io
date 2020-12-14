@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-12-14T08:02:54.511Z</updated>
+    <updated>2020-12-14T08:07:32.458Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -212,21 +212,21 @@ networks:
 <p>当前目录为 /bsn/quorum</p>
 <p>data<br>
 |---  cakeshop<br>
-|         |-- local<br>
-|                 |-- application.properties<br>
-|                 |-- nodes.json<br>
+|-------|-- local<br>
+|------------|-- application.properties<br>
+|------------|-- nodes.json<br>
 |<br>
 | --- dd<br>
-|       |-- genesis.json<br>
-|       |-- keystore<br>
-|       |         |-- key<br>
-|       |--  passwords.txt<br>
-|       |--  permissioned-nodes.json<br>
-|       |-- static-nodes.json<br>
-|       |-- disallowed-nodes.json<br>
+|------|-- genesis.json<br>
+|------|-- keystore<br>
+|------|------|-- key<br>
+|------|-- passwords.txt<br>
+|------|--  permissioned-nodes.json<br>
+|------|-- static-nodes.json<br>
+|------|-- disallowed-nodes.json<br>
 |<br>
 |---- tm<br>
-|-- tessera-config.json</p>
+------|-- tessera-config.json</p>
 <h3 id="cakeshop-挂载文件">cakeshop 挂载文件</h3>
 <p><strong>application.properties文件为cakeshop的配置文件，配置服务端口，链接文件，安全配置等</strong></p>
 <pre><code class="language-yml">#Mon Dec 14 07:18:51 UTC 2020

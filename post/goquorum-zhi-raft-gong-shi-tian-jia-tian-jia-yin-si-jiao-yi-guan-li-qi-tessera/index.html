@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607932647373">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607932744894">
 <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
 
 
@@ -19,11 +19,9 @@
 
 
     <meta name="description" content="tessera
-安装GoQuorum和tessera
-$ git clone https://github.com/ConsenSys/quorum.git
-$ cd quorum
-$ make all
-$ export PATH=$(pw..." />
+公共与私人交易处理
+公共交易是以标准的以太坊方式执行的，因此，如果将公共交易发送到持有合同代码的账户，则每个参与者将执行相同的代码，并且其底层StateDB将相应地更新。
+但是，私有交易不会按标准的以太坊执行：在发送方的G..." />
     <meta name="keywords" content="" />
   </head>
   <body>
@@ -33,7 +31,7 @@ $ export PATH=$(pw..." />
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://chriswsq.github.io">
-        <img src="https://chriswsq.github.io/images/avatar.png?v=1607932647373" class="site-logo">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1607932744894" class="site-logo">
         <h1 class="site-title">chris&#39;wang</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -100,6 +98,10 @@ $ export PATH=$(pw..." />
             
             <div class="post-content" v-pre>
               <p>tessera</p>
+<p>公共与私人交易处理<br>
+公共交易是以标准的以太坊方式执行的，因此，如果将公共交易发送到持有合同代码的账户，则每个参与者将执行相同的代码，并且其底层StateDB将相应地更新。</p>
+<p>但是，私有交易不会按标准的以太坊执行：在发送方的GoQuorum节点将交易传播到网络的其余部分之前，它将原始交易有效载荷替换为从Constellation / Tessera接收到的加密有效载荷的哈希值。参与交易的参与者将能够通过其Constellation / Tessera实例将哈希值替换为实际有效载荷，而未参与交易的参与者将只能看到哈希值。</p>
+<p>结果是，如果将私人交易发送到持有合同代码的帐户，则那些不参与交易的参与者将最终跳过交易，因此不执行合同代码。但是，参与交易的那些参与者将在调用EVM执行之前将哈希替换为原始有效负载，并且其StateDB将相应地更新。如果没有对geth客户进行相应的更改，那么这两组参与者最终将拥有不同的StateDB，并且无法达成共识。为了支持合同状态的这种分叉，Quorum将公共合同的状态存储在全局同步的Public State Trie中，</p>
 <h2 id="安装goquorum和tessera">安装GoQuorum和tessera</h2>
 <pre><code class="language-bash">$ git clone https://github.com/ConsenSys/quorum.git
 $ cd quorum

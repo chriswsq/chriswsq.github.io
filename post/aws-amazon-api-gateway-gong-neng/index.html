@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>k8s pv,pvc无法删除问题 | chris&#39;wang</title>
+<title>aws-- Amazon  API  Gateway功能 | chris&#39;wang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -24,13 +24,14 @@
 
 
 
-    <meta name="description" content="解决k8s pv,pvc无法删除问题
-
-一般删除步骤为：先删pod再删pvc最后删pv
-但是遇到pv始终处于“Terminating”状态，而且delete不掉。如下：
-[root@test-1 pv]# kubectl get pv
-NA..." />
-    <meta name="keywords" content="kubernetes" />
+    <meta name="description" content="支持的API
+RESTful API、WebSocket API、HTTP API 和 REST API 私有 （只能从vpc访问的REST API）
+特点
+规则限流
+为API中每个HTTP方法设置限制规则，管理指向后端系统的流量
+监控
+A..." />
+    <meta name="keywords" content="" />
   </head>
   <body>
     <div id="app" class="main">
@@ -101,40 +102,50 @@ NA..." />
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">k8s pv,pvc无法删除问题</h2>
-            <div class="post-date">2020-08-27</div>
+            <h2 class="post-title">aws-- Amazon  API  Gateway功能</h2>
+            <div class="post-date">2020-12-24</div>
             
             <div class="post-content" v-pre>
-              <p>解决k8s pv,pvc无法删除问题</p>
-<!-- more -->
-<p>一般删除步骤为：先删pod再删pvc最后删pv</p>
-<p>但是遇到pv始终处于“Terminating”状态，而且delete不掉。如下：</p>
-<pre><code class="language-bash">[root@test-1 pv]# kubectl get pv
-NAME         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS        CLAIM                    STORAGECLASS   REASON   AGE
-ca-service   100Mi      RWX            Retain           Terminating   default/ca-service-pvc                           17h
-
-</code></pre>
-<p>解决方法：</p>
-<p>直接删除k8s中的记录：</p>
-<pre><code class="language-bash">kubectl patch pv ca-service  -p '{&quot;metadata&quot;:{&quot;finalizers&quot;:null}}'
-</code></pre>
+              <h2 id="支持的api">支持的API</h2>
+<p>RESTful API、WebSocket API、HTTP API 和 REST API 私有 （只能从vpc访问的REST API）</p>
+<h2 id="特点">特点</h2>
+<p><strong>规则限流</strong><br>
+为API中每个HTTP方法设置限制规则，管理指向后端系统的流量</p>
+<p><strong>监控</strong><br>
+API调用次数，延迟和错误率，设置自定义报警</p>
+<p><strong>授权</strong><br>
+身份认证，连接管理，访问策略，lambda函数验证持有者令牌，（jwt令牌或saml断言）</p>
+<p><strong>秘钥</strong><br>
+REST API 可在gateway上创建API 秘钥，并设置权限，将其分发给第三方开发人员以访问API</p>
+<p><strong>生成开发工具包</strong><br>
+REST API 可以为大量平台生成客户端开发工具包，测试新API，分发给第三方开发人员。API Gateway 可以生成适用于 Java、JavaScript、Java for Android、Objective-C 或 Swift for iOS 和 Ruby 的客户端开发工具包。可以使用 AWS CLI，通过调用 get-sdk 命令为支持的平台生成 API 的开发工具包并下载。</p>
+<p><strong>API 生命周期管理</strong><br>
+REST API，API Gateway 使您可以同时运行同一 API 的多个版本，管理每个 API 版本的多个发布阶段</p>
+<p><strong>功能</strong><br>
+<strong>REST API</strong><br>
+API网关提供了REST API管理功能，例如：<br>
+支持使用OpenAPI的API网关扩展来生成SDK和创建API文档<br>
+限制HTTP请求<br>
+<strong>WebSocket API</strong><br>
+API网关提供WebSocket API管理功能，例如：<br>
+监视和限制连接和消息<br>
+使用AWS X-Ray跟踪通过API传递到后端服务的消息<br>
+轻松与HTTP / HTTPS端点集成</p>
+<p>rest api<br>
+客户端证书，秘钥</p>
+<p>websocke  api<br>
+客户端证书</p>
+<p>http  api<br>
+限制（路由限制和突增限制）   能监控  日志</p>
 
             </div>
-            
-              <div class="tag-container">
-                
-                  <a href="https://chriswsq.github.io/tag/09VioQtSo/" class="tag">
-                    kubernetes
-                  </a>
-                
-              </div>
             
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://chriswsq.github.io/post/kubeadm-bu-shu-k8s/">
+                <a href="https://chriswsq.github.io/post/quorumtesseracakeshop-fu-wu-ji-ben-zhi-shi/">
                   <h3 class="post-title">
-                    kubeadm部署k8s
+                    quorum、tessera、cakeshop服务基本知识
                   </h3>
                 </a>
               </div>

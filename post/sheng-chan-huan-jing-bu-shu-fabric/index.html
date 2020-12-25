@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1607934729286">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1608887271599">
 <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
 
 
@@ -46,7 +46,7 @@ ansible临时添加主机信息
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://chriswsq.github.io">
-        <img src="https://chriswsq.github.io/images/avatar.png?v=1607934729286" class="site-logo">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1608887271599" class="site-logo">
         <h1 class="site-title">chris&#39;wang</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -448,8 +448,16 @@ docker exec cli peer channel join -b blocktx/netchannel.block
 #安装链码
 docker exec cli peer chaincode install blocktx/cc_sys.3.0.pak 
 </code></pre>
-<h2 id="注意">注意</h2>
+<h2 id="可能报错">可能报错</h2>
 <p>如果重启cd节点docker 服务时，因为ca-service启动比ca 数据库要快，所以需要等数据库起来后重启ca-service服务</p>
+<p><strong>服务</strong><br>
+ca-service服务<br>
+<strong>报错</strong><br>
+2020/12/25 16:48:53 [INFO] 192.168.0.171:55138 POST /enroll 401 23 &quot;Failed to get user: : scode: 404, code: 63, msg: Failed to get User: sql: no rows in result set&quot;<br>
+<strong>原因</strong><br>
+可能是第一次查询时失败，网关产生缓存<br>
+<strong>解决</strong><br>
+登录gateway服务器删除/bsn/go/src/certs/store文件即可，也可观察数据库是否有测试用户，如果没有则重新执行ca服务器上的/bsn/script/init.sh  脚本</p>
 
             </div>
             

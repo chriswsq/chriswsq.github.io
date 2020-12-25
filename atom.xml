@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-12-14T08:32:11.151Z</updated>
+    <updated>2020-12-25T09:07:56.296Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,45 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[aws-- Amazon  API  Gateway功能]]></title>
+        <id>https://chriswsq.github.io/post/aws-amazon-api-gateway-gong-neng/</id>
+        <link href="https://chriswsq.github.io/post/aws-amazon-api-gateway-gong-neng/">
+        </link>
+        <updated>2020-12-24T08:51:43.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="支持的api">支持的API</h2>
+<p>RESTful API、WebSocket API、HTTP API 和 REST API 私有 （只能从vpc访问的REST API）</p>
+<h2 id="特点">特点</h2>
+<p><strong>规则限流</strong><br>
+为API中每个HTTP方法设置限制规则，管理指向后端系统的流量</p>
+<p><strong>监控</strong><br>
+API调用次数，延迟和错误率，设置自定义报警</p>
+<p><strong>授权</strong><br>
+身份认证，连接管理，访问策略，lambda函数验证持有者令牌，（jwt令牌或saml断言）</p>
+<p><strong>秘钥</strong><br>
+REST API 可在gateway上创建API 秘钥，并设置权限，将其分发给第三方开发人员以访问API</p>
+<p><strong>生成开发工具包</strong><br>
+REST API 可以为大量平台生成客户端开发工具包，测试新API，分发给第三方开发人员。API Gateway 可以生成适用于 Java、JavaScript、Java for Android、Objective-C 或 Swift for iOS 和 Ruby 的客户端开发工具包。可以使用 AWS CLI，通过调用 get-sdk 命令为支持的平台生成 API 的开发工具包并下载。</p>
+<p><strong>API 生命周期管理</strong><br>
+REST API，API Gateway 使您可以同时运行同一 API 的多个版本，管理每个 API 版本的多个发布阶段</p>
+<p><strong>功能</strong><br>
+<strong>REST API</strong><br>
+API网关提供了REST API管理功能，例如：<br>
+支持使用OpenAPI的API网关扩展来生成SDK和创建API文档<br>
+限制HTTP请求<br>
+<strong>WebSocket API</strong><br>
+API网关提供WebSocket API管理功能，例如：<br>
+监视和限制连接和消息<br>
+使用AWS X-Ray跟踪通过API传递到后端服务的消息<br>
+轻松与HTTP / HTTPS端点集成</p>
+<p>rest api<br>
+客户端证书，秘钥</p>
+<p>websocke  api<br>
+客户端证书</p>
+<p>http  api<br>
+限制（路由限制和突增限制）   能监控  日志</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[quorum、tessera、cakeshop服务基本知识]]></title>
         <id>https://chriswsq.github.io/post/quorumtesseracakeshop-fu-wu-ji-ben-zhi-shi/</id>
@@ -1565,185 +1604,6 @@ TLS_PATH = '/opt'
 # solc 编译器镜像名称
 SOLC_IMAGE_VERSION = 'ethereum/solc:0.4.24'
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[docker-compsoe部署kafka集群]]></title>
-        <id>https://chriswsq.github.io/post/docker-compsoe-bu-shu-kafka-ji-qun/</id>
-        <link href="https://chriswsq.github.io/post/docker-compsoe-bu-shu-kafka-ji-qun/">
-        </link>
-        <updated>2020-10-16T10:00:49.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="前言">前言</h2>
-<p>kafka依赖于zookeeper存放元数据, 所以在创建kafka集群之前需要创建zookeeper; 更多关于zookeeper集群创建见: 使用Docker部署zookeeper集群</p>
-<h2 id="拉取镜像">拉取镜像</h2>
-<pre><code class="language-bash">docker pull zookeeper:3.4
-docker pull zookeeper:3.4 docker pull wurstmeister/kafka_2.13-2.6.0
-</code></pre>
-<blockquote>
-<p>其中kafka版本中的2.12为Scala版本</p>
-</blockquote>
-<h2 id="创建子网段">创建子网段</h2>
-<pre><code class="language-bash">docker network create --subnet 172.30.1.0/16 --gateway 172.30.0.1 kafka
-</code></pre>
-<pre><code class="language-yaml">version: '3'
-
-services: 
-    zoo1:
-        image: zookeeper:3.4
-        restart: always
-        hostname: zoo1
-        container_name: zoo1
-        ports:
-            - 2184:2181
-        volumes: 
-            - /home/zk/workspace/volumes/zkcluster/zoo1/data:/data
-            - /home/zk/workspace/volumes/zkcluster/zoo1/datalog:/datalog
-        environment: 
-            ZOO_MY_ID: 1
-            ZOO_SERVERS: server.1=0.0.0.0:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
-        networks:
-            kafka:
-                ipv4_address: 172.30.0.11
-
-    zoo2:
-        image: zookeeper:3.4
-        restart: always
-        hostname: zoo2
-        container_name: zoo2
-        ports:
-            - 2185:2181
-        volumes: 
-            - /home/zk/workspace/volumes/zkcluster/zoo2/data:/data
-            - /home/zk/workspace/volumes/zkcluster/zoo2/datalog:/datalog
-        environment: 
-            ZOO_MY_ID: 2
-            ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zoo3:2888:3888
-        networks:
-            kafka:
-                ipv4_address: 172.30.0.12
-
-    zoo3:
-        image: zookeeper:3.4
-        restart: always
-        hostname: zoo3
-        container_name: zoo3
-        ports:
-            - 2186:2181
-        volumes: 
-            - /home/zk/workspace/volumes/zkcluster/zoo3/data:/data
-            - /home/zk/workspace/volumes/zkcluster/zoo3/datalog:/datalog
-        environment: 
-            ZOO_MY_ID: 3
-            ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=0.0.0.0:2888:3888
-        networks:
-            kafka:
-                ipv4_address: 172.30.0.13
-
-    kafka1:
-        image: wurstmeister/kafka
-        restart: always
-        hostname: kafka1
-        container_name: kafka1
-        privileged: true
-        ports:
-            - 9092:9092
-        environment:
-              KAFKA_ADVERTISED_HOST_NAME: kafka1
-              KAFKA_LISTENERS: PLAINTEXT://kafka1:9092
-              KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
-              KAFKA_ADVERTISED_PORT: 9092
-              KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
-        volumes:
-            - /home/zk/workspace/volumes/kafkaCluster/kafka1/logs:/kafka
-        networks:
-            kafka:
-                ipv4_address: 172.30.1.11
-        extra_hosts: 
-            - zoo1:172.30.0.11
-            - zoo2:172.30.0.12
-            - zoo3:172.30.0.13
-        depends_on: 
-            - zoo1
-            - zoo2
-            - zoo3
-        external_links: 
-            - zoo1
-            - zoo2
-            - zoo3
-
-    kafka2:
-        image: wurstmeister/kafka
-        restart: always
-        hostname: kafka2
-        container_name: kafka2
-        privileged: true
-        ports:
-            - 9093:9093
-        environment:
-              KAFKA_ADVERTISED_HOST_NAME: kafka2
-              KAFKA_LISTENERS: PLAINTEXT://kafka2:9093
-              KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9093
-              KAFKA_ADVERTISED_PORT: 9093
-              KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
-        volumes:
-            - /home/zk/workspace/volumes/kafkaCluster/kafka2/logs:/kafka
-        networks:
-            kafka:
-                ipv4_address: 172.30.1.12
-        extra_hosts: 
-            - zoo1:172.30.0.11
-            - zoo2:172.30.0.12
-            - zoo3:172.30.0.13                
-        depends_on: 
-            - zoo1
-            - zoo2
-            - zoo3                
-        external_links: 
-            - zoo1
-            - zoo2
-            - zoo3           
-
-    kafka3:
-        image: wurstmeister/kafka
-        restart: always
-        hostname: kafka3
-        container_name: kafka3
-        privileged: true
-        ports:
-            - 9094:9094
-        environment:
-              KAFKA_ADVERTISED_HOST_NAME: kafka3
-              KAFKA_LISTENERS: PLAINTEXT://kafka3:9094
-              KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9094
-              KAFKA_ADVERTISED_PORT: 9094
-              KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
-        volumes:
-            - /home/zk/workspace/volumes/kafkaCluster/kafka3/logs:/kafka
-        networks:
-            kafka:
-                ipv4_address: 172.30.1.13
-        extra_hosts: 
-            - zoo1:172.30.0.11
-            - zoo2:172.30.0.12
-            - zoo3:172.30.0.13                
-        depends_on: 
-            - zoo1
-            - zoo2
-            - zoo3                
-        external_links: 
-            - zoo1
-            - zoo2
-            - zoo3
-
-networks: 
-  kafka:
-     ipam:
-       config:
-         - subnet: 172.30.0.0/16
-</code></pre>
-<blockquote>
-<p>在kafka服务中声明了depends_on, 所以在所有zookeeper启动之后才会真正启动kafka容器</p>
-</blockquote>
 ]]></content>
     </entry>
 </feed>

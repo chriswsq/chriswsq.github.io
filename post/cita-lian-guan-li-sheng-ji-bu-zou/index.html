@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>cita链管理服务部署 | chris&#39;wang</title>
+<title>cita链管理升级步骤 | chris&#39;wang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -24,12 +24,20 @@
 
 
 
-    <meta name="description" content="1.链管理服务依赖环境
-•	python &gt;= 3.7.9
-•	docker &gt;= 19.0
+    <meta name="description" content="链管理升级步骤：
 
-安装3.7.9版本参考：
-https://blog.csdn.net/lkgCSDN/article/details/8440332..." />
+
+停⽌链管理服务
+
+
+kill $(cat /bsn/cita-manager/bsn-cita-chain-manager-v0.1/gunicorn.pid) 
+
+
+
+备份程序文件
+
+
+cp -rf /bsn/cit..." />
     <meta name="keywords" content="" />
   </head>
   <body>
@@ -101,70 +109,83 @@ https://blog.csdn.net/lkgCSDN/article/details/8440332..." />
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">cita链管理服务部署</h2>
-            <div class="post-date">2020-10-29</div>
+            <h2 class="post-title">cita链管理升级步骤</h2>
+            <div class="post-date">2020-12-30</div>
             
             <div class="post-content" v-pre>
-              <h2 id="1链管理服务依赖环境">1.链管理服务依赖环境</h2>
-<p>•	python &gt;= 3.7.9<br>
-•	docker &gt;= 19.0</p>
+              <h1 id="链管理升级步骤">链管理升级步骤：</h1>
 <ol>
-<li>安装3.7.9版本参考：<br>
-https://blog.csdn.net/lkgCSDN/article/details/84403329<br>
-https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/</li>
+<li>
+<h3 id="停止链管理服务">停⽌链管理服务</h3>
+</li>
 </ol>
-<p>ln -s  /usr/local/python3/bin/pip3  /usr/bin/pip3<br>
-ln -s  /usr/local/python3  /usr/bin/python3<br>
-ln -s /usr/local/python3/bin/gunicorn /usr/bin/gunicorn</p>
-<h2 id="2链管理服务部署步骤">2.链管理服务部署步骤</h2>
-<ul>
-<li>解压源码包并进入目录</li>
-</ul>
-<pre><code class="language-bash">tar xzvf bsn-cita-chain-manager.tar.gz
-cd bsn-cita-chain-manager
+<pre><code>kill $(cat /bsn/cita-manager/bsn-cita-chain-manager-v0.1/gunicorn.pid) 
 </code></pre>
-<ul>
+<ol start="2">
 <li>
-<p>安装依赖包<br>
-<code>pip3 install -r requirements.txt -i https://pypi.douban.com/simple</code></p>
+<h3 id="备份程序文件">备份程序文件</h3>
 </li>
-<li>
-<p>生成pub_key、pri_key</p>
-</li>
-</ul>
-<p>通过cita-cli工具，执行 ./cita-cli key create --algorithm sm2，将 address 字段写入pub_key，将 private 字段写入pri_key</p>
-<ul>
-<li>修改配置文件</li>
-</ul>
-<pre><code class="language-bash">vim conf/config.py
-
-# 链节点密钥对的路径及文件名称
-PUBKEY_PATH = '/opt/pub_key'
-PRIKEY_PATH = '/opt/pri_key'
-
-# cita 镜像名称，rebirth 镜像名称以及 rebirth 依赖 mysql 的镜像名称（下文详细说明）
-CITA_IMAGE_VERSION = 'cita/cita-ee:1.3.1-sm2-sm3'
-MYSQL_IMAGE_VERSION = 'cita-for-bsn-mysql:5.7'
-REBIRTH_IMAGE_VERSION = 'cita-for-bsn-rebirth:0.1'
-
-# 链管理服务产生链配置的目录
-CHAIN_CONFIG_PATH = '/opt/all-chain-config'
-
-# 链节点 TLS 证书所在目录
-TLS_PATH = '/opt'
-
-# solc 编译器镜像名称
-SOLC_IMAGE_VERSION = 'ethereum/solc:0.4.24'
+</ol>
+<pre><code class="language-bash">cp -rf /bsn/cita-manager/bsn-cita-chain-manager-v0.1 /bsn/cita-manager/bsn-cita-chain-manager-v0.1.20201229
 </code></pre>
+<ol start="3">
+<li>
+<h3 id="解压新代码包并将文件拷至老目录">解压新代码包并将⽂件拷⻉⾄⽼⽬录</h3>
+</li>
+</ol>
+<pre><code class="language-shell">tar xzvf bsn-cita-chain-manager-develop.tar.gz
+
+yes | cp -rf bsn-cita-chain-manager-develop/.   /bsn/cita-manager/bsn-cita-chain-manager-v0.1
+</code></pre>
+<ol start="3">
+<li>修改数据库密码</li>
+</ol>
+<pre><code class="language-bash"> cd  /bsn/cita-manager/bsn-cita-chain-manager-v0.1
+ 修改cita.db中的表node  字段pwd
+ 
+xxxxxxxx
+
+加密后的字符串为:
+
+xxxxxxxxxxxxxxxxxxx
+</code></pre>
+<ol start="3">
+<li>
+<h3 id="进入原链管理服务目录执行升级命令">进⼊原链管理服务⽬录，执⾏升级命令</h3>
+</li>
+</ol>
+<pre><code class="language-shell"> cd /bsn/cita-manager/bsn-cita-chain-manager-v0.1
+
+ rm -rf logs 
+
+ make update 
+</code></pre>
+<ol start="4">
+<li>
+<h3 id="将原来产生的链配置复制到链管理服务目录">将原来产⽣的链配置复制到链管理服务⽬录</h3>
+</li>
+</ol>
+<pre><code class="language-shell">mkdir chain-config 
+
+cp -rf /opt/all-chain-config/. /bsn/cita-manager/bsn-cita-chain-manager-v0.1/chain-config/ 
+
+make start 
+</code></pre>
+<p>节点管理升级步骤：</p>
+<ol>
+<li>运行数据库脚本：   dml20201118/ddl.sql    dml20201118/dml.sql</li>
+<li>运行数据库脚本：  update tb_cita_nodeinfo set status=1;   先执行ddl  再执行dml</li>
+<li>重新部署war包</li>
+</ol>
 
             </div>
             
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://chriswsq.github.io/post/docker-compsoe-bu-shu-kafka-ji-qun/">
+                <a href="https://chriswsq.github.io/post/aws-amazon-api-gateway-gong-neng/">
                   <h3 class="post-title">
-                    docker-compsoe部署kafka集群
+                    aws-- Amazon  API  Gateway功能
                   </h3>
                 </a>
               </div>

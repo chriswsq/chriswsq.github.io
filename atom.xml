@@ -2,14 +2,337 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2020-12-25T09:07:56.296Z</updated>
+    <updated>2021-01-11T07:36:21.956Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
     <subtitle>当你觉得无所事事时，那你就是在虚度光阴</subtitle>
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, chris&apos;wang</rights>
+    <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[mongodb基础知识与部署]]></title>
+        <id>https://chriswsq.github.io/post/mongodb-ji-chu-zhi-shi-yu-bu-shu/</id>
+        <link href="https://chriswsq.github.io/post/mongodb-ji-chu-zhi-shi-yu-bu-shu/">
+        </link>
+        <updated>2021-01-11T06:55:47.000Z</updated>
+        <content type="html"><![CDATA[<p>我们在安装完mongodb之后，默认是没有开启权限认证的， 但是我们在生产环境权限认证是必不可少的</p>
+<h2 id="1-创建用户">1. 创建用户</h2>
+<p>启动mongo shell<br>
+我们先创建个管理员账号（该账号可以对所有数据库进行用户管理）</p>
+<pre><code class="language-bash">root@2613c68bd252:/# mongo     #进入命令行
+MongoDB shell version v4.2.6
+connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&amp;gssapiServiceName=mongodb
+Implicit session: session { &quot;id&quot; : UUID(&quot;4b9dd82a-5098-41f1-a265-45bcff0ad0e3&quot;) }
+MongoDB server version: 4.2.6
+&gt; use admin
+switched to db admin
+&gt; db.createUser(
+... {
+...   user: &quot;admin&quot;,
+...   pwd: &quot;123456&quot;,
+...   roles: [ { role: &quot;userAdminAnyDatabase&quot;, db: &quot;admin&quot;} ]
+... }
+... )
+Successfully added user: {
+        &quot;user&quot; : &quot;admin&quot;,
+        &quot;roles&quot; : [
+                {
+                        &quot;role&quot; : &quot;userAdminAnyDatabase&quot;,
+                        &quot;db&quot; : &quot;admin&quot;
+                }
+        ]
+}
+</code></pre>
+<h2 id="2-开启权限认证">2. 开启权限认证</h2>
+<p>修改conf文件</p>
+<pre><code class="language-conf">maxConns = 1000000
+fork = false
+port = 27017
+pidfilepath = /var/run/mongodb_27017.pid
+dbpath = /var/lib/mongodb/
+logpath = /var/log/mongodb/mongodb.log
+logappend = true
+bind_ip  = 0.0.0.0
+auth = true                         #启动认证模块
+journal = true
+</code></pre>
+<p>重新启动即可<br>
+如果是docker-compose启动可docker-entrypoint-initdb.d模块<br>
+如下：</p>
+<h2 id="docker-compose">docker-compose</h2>
+<pre><code class="language-yml">version: &quot;3&quot;
+services:
+  mongodb:
+    image: mongo:4.2.6
+    container_name: mongodb
+    volumes:
+      - /chris/mongodb/init/:/docker-entrypoint-initdb.d/
+      - /chris/mongodb/data:/var/lib/mongodb
+      - /chris/mongodb/conf/mongod.conf:/etc/mongod.conf
+      - /chris/mongodb/logs:/var/log/mongodb
+    ports:
+      - &quot;27017:27017&quot;
+    entrypoint: 'mongod -f /etc/mongod.conf'
+    restart: always
+</code></pre>
+<p><strong>init/init-admin.js</strong></p>
+<pre><code class="language-js">db.createUser(
+{
+    user: &quot;admin&quot;, 
+    pwd: &quot;123456&quot;, 
+    roles: [
+      { role: &quot;userAdminAnyDatabase&quot;, db: &quot;admin&quot;}
+    ]
+})
+</code></pre>
+<p><strong>conf/mongod.conf</strong></p>
+<pre><code class="language-conf">maxConns = 1000000
+fork = false
+port = 27017
+pidfilepath = /var/run/mongodb_27017.pid
+dbpath = /var/lib/mongodb/
+logpath = /var/log/mongodb/mongodb.log
+logappend = true
+bind_ip  = 0.0.0.0
+auth = true
+journal = true
+</code></pre>
+<h2 id="3-创建其他的账号">3. 创建其他的账号</h2>
+<blockquote>
+<p>use admin<br>
+switched to db admin<br>
+db.auth(&quot;admin&quot;, &quot;123456&quot;)<br>
+1<br>
+db.createUser(<br>
+... {<br>
+...  user : &quot;my_tester&quot;,<br>
+...  pwd : &quot;123456&quot;,<br>
+...  roles: [ { role : &quot;readWrite&quot;, db : &quot;test&quot; }  ]<br>
+... }<br>
+... )<br>
+Successfully added user: {<br>
+&quot;user&quot; : &quot;my_tester&quot;,<br>
+&quot;roles&quot; : [<br>
+{<br>
+&quot;role&quot; : &quot;readWrite&quot;,<br>
+&quot;db&quot; : &quot;test&quot;<br>
+}<br>
+]<br>
+}</p>
+</blockquote>
+<h2 id="权限说明基于角色的权限控制">权限说明（基于角色的权限控制）</h2>
+<h3 id="数据库用户角色">数据库用户角色</h3>
+<p>read: 只读数据权限<br>
+readWrite:学些数据权限<br>
+<strong>数据库管理角色</strong></p>
+<ul>
+<li>dbAdmin: 在当前db中执行管理操作的权限</li>
+<li>dbOwner: 在当前db中执行任意操作</li>
+<li>userADmin: 在当前db中管理user的权限<br>
+<strong>备份和还原角色</strong></li>
+<li>backup</li>
+<li>restore<br>
+<strong>夸库角色</strong></li>
+<li>readAnyDatabase: 在所有数据库上都有读取数据的权限</li>
+<li>readWriteAnyDatabase: 在所有数据库上都有读写数据的权限</li>
+<li>userAdminAnyDatabase: 在所有数据库上都有管理user的权限</li>
+<li>dbAdminAnyDatabase: 管理所有数据库的权限<br>
+<strong>集群管理</strong></li>
+<li>clusterAdmin: 管理机器的最高权限</li>
+<li>clusterManager: 管理和监控集群的权限</li>
+<li>clusterMonitor: 监控集群的权限</li>
+<li>hostManager: 管理Server<br>
+<strong>超级权限</strong></li>
+<li>root: 超级用户</li>
+</ul>
+<h3 id="52-自定义角色">5.2 自定义角色</h3>
+<p>内置角色只能控制User在DB级别上执行的操作，管理员可以创建自定义角色，控制用户在集合级别（Collection-Level）上执行的操作，即，控制User在当前DB的特定集合上执行特定的操作</p>
+<p>参考自：https://www.jianshu.com/p/62736bff7e2e</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[shell脚本输出带颜色字体]]></title>
+        <id>https://chriswsq.github.io/post/shell-jiao-ben-shu-chu-dai-yan-se-zi-ti/</id>
+        <link href="https://chriswsq.github.io/post/shell-jiao-ben-shu-chu-dai-yan-se-zi-ti/">
+        </link>
+        <updated>2020-12-30T09:45:10.000Z</updated>
+        <content type="html"><![CDATA[<p>输出特效格式控制：<br>
+\033[0m  关闭所有属性<br>
+\033[1m   设置高亮度<br>
+\03[4m   下划线<br>
+\033[5m   闪烁<br>
+\033[7m   反显<br>
+\033[8m   消隐<br>
+\033[30m   --   \033[37m   设置前景色<br>
+\033[40m   --   \033[47m   设置背景色</p>
+<p>光标位置等的格式控制：<br>
+\033[nA  光标上移n行<br>
+\03[nB   光标下移n行<br>
+\033[nC   光标右移n行<br>
+\033[nD   光标左移n行<br>
+\033[y;xH设置光标位置<br>
+\033[2J   清屏<br>
+\033[K   清除从光标到行尾的内容<br>
+\033[s   保存光标位置<br>
+\033[u   恢复光标位置<br>
+\033[?25l   隐藏光标</p>
+<p>\33[?25h   显示光标</p>
+<p>整理：<br>
+编码 颜色/动作<br>
+　　0   重新设置属性到缺省设置<br>
+　　1   设置粗体<br>
+　　2   设置一半亮度(模拟彩色显示器的颜色)<br>
+　　4   设置下划线(模拟彩色显示器的颜色)<br>
+　　5   设置闪烁<br>
+　　7   设置反向图象<br>
+　　22 设置一般密度<br>
+　　24 关闭下划线<br>
+　　25 关闭闪烁<br>
+　　27 关闭反向图象<br>
+　　30 设置黑色前景<br>
+　　31 设置红色前景<br>
+　　32 设置绿色前景<br>
+　　33 设置棕色前景<br>
+　　34 设置蓝色前景<br>
+　　35 设置紫色前景<br>
+　　36 设置青色前景<br>
+　　37 设置白色前景<br>
+　　38 在缺省的前景颜色上设置下划线<br>
+　　39 在缺省的前景颜色上关闭下划线<br>
+　　40 设置黑色背景<br>
+　　41 设置红色背景<br>
+　　42 设置绿色背景<br>
+　　43 设置棕色背景<br>
+　　44 设置蓝色背景<br>
+　　45 设置紫色背景<br>
+　　46 设置青色背景<br>
+　　47 设置白色背景<br>
+　　49 设置缺省黑色背景<br>
+特效可以叠加，需要使用“;”隔开，例如：闪烁+下划线+白底色+黑字为   \033[5;4;47;30m闪烁+下划线+白底色+黑字为\033[0m<br>
+下面是一段小例子</p>
+<p>[plain] view plain copy<br>
+#!/bin/bash</p>
+<h1 id=""></h1>
+<p>#下面是字体输出颜色及终端格式控制<br>
+#字体色范围：30-37<br>
+echo -e &quot;\033[30m 黑色字 \033[0m&quot;<br>
+echo -e &quot;\033[31m 红色字 \033[0m&quot;<br>
+echo -e &quot;\033[32m 绿色字 \033[0m&quot;<br>
+echo -e &quot;\033[33m 黄色字 \033[0m&quot;<br>
+echo -e &quot;\033[34m 蓝色字 \033[0m&quot;<br>
+echo -e &quot;\033[35m 紫色字 \033[0m&quot;<br>
+echo -e &quot;\033[36m 天蓝字 \033[0m&quot;<br>
+echo -e &quot;\033[37m 白色字 \033[0m&quot;<br>
+#字背景颜色范围：40-47<br>
+echo -e &quot;\033[40;37m 黑底白字 \033[0m&quot;<br>
+echo -e &quot;\033[41;30m 红底黑字 \033[0m&quot;<br>
+echo -e &quot;\033[42;34m 绿底蓝字 \033[0m&quot;<br>
+echo -e &quot;\033[43;34m 黄底蓝字 \033[0m&quot;<br>
+echo -e &quot;\033[44;30m 蓝底黑字 \033[0m&quot;<br>
+echo -e &quot;\033[45;30m 紫底黑字 \033[0m&quot;<br>
+echo -e &quot;\033[46;30m 天蓝底黑字 \033[0m&quot;<br>
+echo -e &quot;\033[47;34m 白底蓝字 \033[0m&quot;</p>
+<p>#控制选项说明<br>
+#\033[0m 关闭所有属性<br>
+#\033[1m 设置高亮度<br>
+#\033[4m 下划线<br>
+echo -e &quot;\033[4;31m 下划线红字 \033[0m&quot;<br>
+#闪烁<br>
+echo -e &quot;\033[5;34m 红字在闪烁 \033[0m&quot;<br>
+#反影<br>
+echo -e &quot;\033[8m 消隐 \033[0m &quot;</p>
+<p>#\033[30m-\033[37m 设置前景色<br>
+#\033[40m-\033[47m 设置背景色<br>
+#\033[nA光标上移n行<br>
+#\033[nB光标下移n行<br>
+echo -e &quot;\033[4A 光标上移4行 \033[0m&quot;<br>
+#\033[nC光标右移n行<br>
+#\033[nD光标左移n行<br>
+#\033[y;xH设置光标位置<br>
+#\033[2J清屏<br>
+#\033[K清除从光标到行尾的内容<br>
+echo -e &quot;\033[K 清除光标到行尾的内容 \033[0m&quot;<br>
+#\033[s 保存光标位置<br>
+#\033[u 恢复光标位置<br>
+#\033[?25| 隐藏光标<br>
+#\033[?25h 显示光标<br>
+echo -e &quot;\033[?25l 隐藏光标 \033[0m&quot;<br>
+echo -e &quot;\033[?25h 显示光标 \033[0m&quot;</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[cita链管理升级步骤]]></title>
+        <id>https://chriswsq.github.io/post/cita-lian-guan-li-sheng-ji-bu-zou/</id>
+        <link href="https://chriswsq.github.io/post/cita-lian-guan-li-sheng-ji-bu-zou/">
+        </link>
+        <updated>2020-12-30T09:21:24.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="链管理升级步骤">链管理升级步骤：</h1>
+<ol>
+<li>
+<h3 id="停止链管理服务">停⽌链管理服务</h3>
+</li>
+</ol>
+<pre><code>kill $(cat /bsn/cita-manager/bsn-cita-chain-manager-v0.1/gunicorn.pid) 
+</code></pre>
+<ol start="2">
+<li>
+<h3 id="备份程序文件">备份程序文件</h3>
+</li>
+</ol>
+<pre><code class="language-bash">cp -rf /bsn/cita-manager/bsn-cita-chain-manager-v0.1 /bsn/cita-manager/bsn-cita-chain-manager-v0.1.20201229
+</code></pre>
+<ol start="3">
+<li>
+<h3 id="解压新代码包并将文件拷至老目录">解压新代码包并将⽂件拷⻉⾄⽼⽬录</h3>
+</li>
+</ol>
+<pre><code class="language-shell">tar xzvf bsn-cita-chain-manager-develop.tar.gz
+
+yes | cp -rf bsn-cita-chain-manager-develop/.   /bsn/cita-manager/bsn-cita-chain-manager-v0.1
+</code></pre>
+<ol start="3">
+<li>修改数据库密码</li>
+</ol>
+<pre><code class="language-bash"> cd  /bsn/cita-manager/bsn-cita-chain-manager-v0.1
+ 修改cita.db中的表node  字段pwd
+ 
+xxxxxxxx
+
+加密后的字符串为:
+
+xxxxxxxxxxxxxxxxxxx
+</code></pre>
+<ol start="3">
+<li>
+<h3 id="进入原链管理服务目录执行升级命令">进⼊原链管理服务⽬录，执⾏升级命令</h3>
+</li>
+</ol>
+<pre><code class="language-shell"> cd /bsn/cita-manager/bsn-cita-chain-manager-v0.1
+
+ rm -rf logs 
+
+ make update 
+</code></pre>
+<ol start="4">
+<li>
+<h3 id="将原来产生的链配置复制到链管理服务目录">将原来产⽣的链配置复制到链管理服务⽬录</h3>
+</li>
+</ol>
+<pre><code class="language-shell">mkdir chain-config 
+
+cp -rf /opt/all-chain-config/. /bsn/cita-manager/bsn-cita-chain-manager-v0.1/chain-config/ 
+
+make start 
+</code></pre>
+<p>节点管理升级步骤：</p>
+<ol>
+<li>运行数据库脚本：   dml20201118/ddl.sql    dml20201118/dml.sql</li>
+<li>运行数据库脚本：  update tb_cita_nodeinfo set status=1;   先执行ddl  再执行dml</li>
+<li>重新部署war包</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[aws-- Amazon  API  Gateway功能]]></title>
         <id>https://chriswsq.github.io/post/aws-amazon-api-gateway-gong-neng/</id>
@@ -1495,114 +1818,6 @@ docker container restart neo-cli
 screen -r node 
 
 show state
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[公链之oasis]]></title>
-        <id>https://chriswsq.github.io/post/gong-lian-zhi-oasis/</id>
-        <link href="https://chriswsq.github.io/post/gong-lian-zhi-oasis/">
-        </link>
-        <updated>2020-11-03T08:58:03.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="非验证节点">非验证节点</h2>
-<p>填写绿洲P2P地址，同步公链数据</p>
-<p>（普通节点）</p>
-<h2 id="验证节点">验证节点</h2>
-<p>需要创建实体，控制网络上的个人或组织的奖金</p>
-<p>需要下载oasis app ，生成账户的公私钥</p>
-<p>（共识节点）</p>
-<h2 id="paratime节点">ParaTime节点</h2>
-<p>目前还是测试版本</p>
-<ol>
-<li>
-<p>要运行ParaTime节点，您必须已经是具有在网络上注册的实体ID的Oasis验证器。您可能已经在运行：</p>
-<ul>
-<li>
-<p>一个或多个验证器节点</p>
-<p>也就是需要至少有一个共识节点</p>
-</li>
-<li>
-<p>可选的非验证者节点</p>
-</li>
-</ul>
-</li>
-</ol>
-<h2 id="非验证节点-2">非验证节点</h2>
-<p>根据实际需求我们需要使用非验证节点，但非验证节点启动时没有rpc端口，所以要借助网关来代理出去端<br>
-口，</p>
-<p>参考<br>
-https://docs.oasis.dev/general/run-a-node/set-up-your-node/run-non-validator<br>
-https://docs.oasis.dev/oasis-core/high-level-components/oasis-node/rpc<br>
-https://docs.oasis.dev/general/oasis-network/network-parameters<br>
-https://github.com/oasisprotocol/oasis-core/releases/tag/v20.10<br>
-https://github.com/oasisprotocol/oasis-core-rosetta-gateway</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[redis]]></title>
-        <id>https://chriswsq.github.io/post/redis/</id>
-        <link href="https://chriswsq.github.io/post/redis/">
-        </link>
-        <updated>2020-10-31T09:29:16.000Z</updated>
-        <content type="html"><![CDATA[<p>https://segmentfault.com/a/1190000022808576</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[cita链管理服务部署]]></title>
-        <id>https://chriswsq.github.io/post/cita-lian-guan-li-fu-wu-bu-shu/</id>
-        <link href="https://chriswsq.github.io/post/cita-lian-guan-li-fu-wu-bu-shu/">
-        </link>
-        <updated>2020-10-29T08:32:53.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="1链管理服务依赖环境">1.链管理服务依赖环境</h2>
-<p>•	python &gt;= 3.7.9<br>
-•	docker &gt;= 19.0</p>
-<ol>
-<li>安装3.7.9版本参考：<br>
-https://blog.csdn.net/lkgCSDN/article/details/84403329<br>
-https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/</li>
-</ol>
-<p>ln -s  /usr/local/python3/bin/pip3  /usr/bin/pip3<br>
-ln -s  /usr/local/python3  /usr/bin/python3<br>
-ln -s /usr/local/python3/bin/gunicorn /usr/bin/gunicorn</p>
-<h2 id="2链管理服务部署步骤">2.链管理服务部署步骤</h2>
-<ul>
-<li>解压源码包并进入目录</li>
-</ul>
-<pre><code class="language-bash">tar xzvf bsn-cita-chain-manager.tar.gz
-cd bsn-cita-chain-manager
-</code></pre>
-<ul>
-<li>
-<p>安装依赖包<br>
-<code>pip3 install -r requirements.txt -i https://pypi.douban.com/simple</code></p>
-</li>
-<li>
-<p>生成pub_key、pri_key</p>
-</li>
-</ul>
-<p>通过cita-cli工具，执行 ./cita-cli key create --algorithm sm2，将 address 字段写入pub_key，将 private 字段写入pri_key</p>
-<ul>
-<li>修改配置文件</li>
-</ul>
-<pre><code class="language-bash">vim conf/config.py
-
-# 链节点密钥对的路径及文件名称
-PUBKEY_PATH = '/opt/pub_key'
-PRIKEY_PATH = '/opt/pri_key'
-
-# cita 镜像名称，rebirth 镜像名称以及 rebirth 依赖 mysql 的镜像名称（下文详细说明）
-CITA_IMAGE_VERSION = 'cita/cita-ee:1.3.1-sm2-sm3'
-MYSQL_IMAGE_VERSION = 'cita-for-bsn-mysql:5.7'
-REBIRTH_IMAGE_VERSION = 'cita-for-bsn-rebirth:0.1'
-
-# 链管理服务产生链配置的目录
-CHAIN_CONFIG_PATH = '/opt/all-chain-config'
-
-# 链节点 TLS 证书所在目录
-TLS_PATH = '/opt'
-
-# solc 编译器镜像名称
-SOLC_IMAGE_VERSION = 'ethereum/solc:0.4.24'
 </code></pre>
 ]]></content>
     </entry>

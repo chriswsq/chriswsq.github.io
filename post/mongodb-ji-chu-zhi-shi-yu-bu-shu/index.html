@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1610353176110">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1610353276596">
 <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
 
 
@@ -39,7 +39,7 @@ root@2613c6..." />
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://chriswsq.github.io">
-        <img src="https://chriswsq.github.io/images/avatar.png?v=1610353176110" class="site-logo">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1610353276596" class="site-logo">
         <h1 class="site-title">chris&#39;wang</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -201,28 +201,27 @@ mongo
 db.createUser({ user: 'admin', pwd: 'admin', roles: [ { role: &quot;userAdminAnyDatabase&quot;, db: &quot;admin&quot; } ] })
 </code></pre>
 <h2 id="3-创建其他的账号">3. 创建其他的账号</h2>
-<blockquote>
-<p>use admin<br>
-switched to db admin<br>
-db.auth(&quot;admin&quot;, &quot;admin&quot;)<br>
-1<br>
-db.createUser(<br>
-... {<br>
-...  user : &quot;my_tester&quot;,<br>
-...  pwd : &quot;123456&quot;,<br>
-...  roles: [ { role : &quot;readWrite&quot;, db : &quot;test&quot; }  ]<br>
-... }<br>
-... )<br>
-Successfully added user: {<br>
-&quot;user&quot; : &quot;my_tester&quot;,<br>
-&quot;roles&quot; : [<br>
-{<br>
-&quot;role&quot; : &quot;readWrite&quot;,<br>
-&quot;db&quot; : &quot;test&quot;<br>
-}<br>
-]<br>
-}</p>
-</blockquote>
+<pre><code class="language-bash">&gt; use admin
+switched to db admin
+&gt; db.auth(&quot;admin&quot;, &quot;admin&quot;)
+1
+&gt; db.createUser(
+... {
+...  user : &quot;my_tester&quot;,
+...  pwd : &quot;123456&quot;,
+...  roles: [ { role : &quot;readWrite&quot;, db : &quot;test&quot; }  ]
+... }
+... )
+Successfully added user: {
+        &quot;user&quot; : &quot;my_tester&quot;,
+        &quot;roles&quot; : [
+                {
+                        &quot;role&quot; : &quot;readWrite&quot;,
+                        &quot;db&quot; : &quot;test&quot;
+                }
+        ]
+}
+</code></pre>
 <h2 id="权限说明基于角色的权限控制">权限说明（基于角色的权限控制）</h2>
 <h3 id="数据库用户角色">数据库用户角色</h3>
 <p>read: 只读数据权限<br>

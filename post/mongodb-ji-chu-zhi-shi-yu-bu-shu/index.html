@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1610350579720">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1610353080878">
 <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
 
 
@@ -25,10 +25,11 @@
 
 
     <meta name="description" content="我们在安装完mongodb之后，默认是没有开启权限认证的， 但是我们在生产环境权限认证是必不可少的
+命令行部署
 1. 创建用户
 启动mongo shell
 我们先创建个管理员账号（该账号可以对所有数据库进行用户管理）
-root@2613c68bd252..." />
+root@2613c6..." />
     <meta name="keywords" content="databases" />
   </head>
   <body>
@@ -38,7 +39,7 @@ root@2613c68bd252..." />
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://chriswsq.github.io">
-        <img src="https://chriswsq.github.io/images/avatar.png?v=1610350579720" class="site-logo">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1610353080878" class="site-logo">
         <h1 class="site-title">chris&#39;wang</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -105,6 +106,7 @@ root@2613c68bd252..." />
             
             <div class="post-content" v-pre>
               <p>我们在安装完mongodb之后，默认是没有开启权限认证的， 但是我们在生产环境权限认证是必不可少的</p>
+<h1 id="命令行部署">命令行部署</h1>
 <h2 id="1-创建用户">1. 创建用户</h2>
 <p>启动mongo shell<br>
 我们先创建个管理员账号（该账号可以对所有数据库进行用户管理）</p>
@@ -145,52 +147,64 @@ bind_ip  = 0.0.0.0
 auth = true                         #启动认证模块
 journal = true
 </code></pre>
-<p>重新启动即可<br>
-如果是docker-compose启动可docker-entrypoint-initdb.d模块<br>
-如下：</p>
+<p>重新启动即可</p>
+<h1 id="docker部署">docker部署</h1>
 <h2 id="docker-compose">docker-compose</h2>
-<pre><code class="language-yml">version: &quot;3&quot;
+<pre><code class="language-yml">version: '2'
 services:
   mongodb:
-    image: mongo:4.2.6
-    container_name: mongodb
+    image: mongo
+    ports:
+        - 27017:27017
     volumes:
-      - /chris/mongodb/init/:/docker-entrypoint-initdb.d/
-      - /chris/mongodb/data:/var/lib/mongodb
-      - /chris/mongodb/conf/mongod.conf:/etc/mongod.conf
-      - /chris/mongodb/logs:/var/log/mongodb
+        - &quot;./data/configdb:/data/configdb&quot;
+        - &quot;./data/db:/data/db&quot;
+    command: mongod --auth
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root       #初始化管理员用户名和密码
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+    tty: true
+</code></pre>
+<h2 id="带上mongo-expressweb管理页面">带上mongo-express，web管理页面。</h2>
+<pre><code class="language-yml"># Use root/example as user/password credentials
+version: '3.1'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    # command: [&quot;--bind_ip_all&quot;]
     ports:
       - &quot;27017:27017&quot;
-    entrypoint: 'mongod -f /etc/mongod.conf'
+
+  mongo-express:
+    image: mongo-express
     restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
 </code></pre>
-<p><strong>init/init-admin.js</strong></p>
-<pre><code class="language-js">db.createUser(
-{
-    user: &quot;admin&quot;, 
-    pwd: &quot;123456&quot;, 
-    roles: [
-      { role: &quot;userAdminAnyDatabase&quot;, db: &quot;admin&quot;}
-    ]
-})
+<p>运行docker ps查看容器是否运行。</p>
+<p>进入docker容器并进入mongo命令行。</p>
+<pre><code class="language-bash">docker exec -it  test bash
+mongo
 </code></pre>
-<p><strong>conf/mongod.conf</strong></p>
-<pre><code class="language-conf">maxConns = 1000000
-fork = false
-port = 27017
-pidfilepath = /var/run/mongodb_27017.pid
-dbpath = /var/lib/mongodb/
-logpath = /var/log/mongodb/mongodb.log
-logappend = true
-bind_ip  = 0.0.0.0
-auth = true
-journal = true
+<p>此时show dbs无法执行，需要认证。<br>
+切换到admin并创建root用户：</p>
+<pre><code class="language-bash">use admin
+db.createUser({ user: 'admin', pwd: 'admin', roles: [ { role: &quot;userAdminAnyDatabase&quot;, db: &quot;admin&quot; } ] })
 </code></pre>
 <h2 id="3-创建其他的账号">3. 创建其他的账号</h2>
 <blockquote>
 <p>use admin<br>
 switched to db admin<br>
-db.auth(&quot;admin&quot;, &quot;123456&quot;)<br>
+db.auth(&quot;admin&quot;, &quot;admin&quot;)<br>
 1<br>
 db.createUser(<br>
 ... {<br>
@@ -236,6 +250,43 @@ readWrite:学些数据权限<br>
 </ul>
 <h3 id="52-自定义角色">5.2 自定义角色</h3>
 <p>内置角色只能控制User在DB级别上执行的操作，管理员可以创建自定义角色，控制用户在集合级别（Collection-Level）上执行的操作，即，控制User在当前DB的特定集合上执行特定的操作</p>
+<h2 id="基本命令">基本命令</h2>
+<p><strong>查看创建的用户</strong></p>
+<pre><code class="language-bash">show users 或 db.system.users.find() 或 db.runCommand({usersInfo:&quot;userName&quot;})
+</code></pre>
+<p><strong>修改密码</strong></p>
+<pre><code class="language-bash">use admin
+db.changeUserPassword(&quot;username&quot;, &quot;xxx&quot;)
+</code></pre>
+<p><strong>修改密码和用户信息</strong></p>
+<pre><code class="language-bash">db.runCommand(
+    {
+        updateUser:&quot;username&quot;,
+        pwd:&quot;xxx&quot;,
+        customData:{title:&quot;xxx&quot;}
+    }
+)
+</code></pre>
+<p><strong>删除数据库用户</strong></p>
+<pre><code class="language-bash">use admin
+db.dropUser('user001')
+</code></pre>
+<p><strong>创建其他数据管理员</strong></p>
+<pre><code class="language-bash">// 登录管理员用户
+use admin
+db.auth('admin','admin')
+// 切换至db001数据库
+use db001
+// ... 増查改删该数据库专有用户
+</code></pre>
+<h2 id="重要的一步">重要的一步</h2>
+<p>启用权限验证(别TM的武装了大半天，大门还一直开着，还抱怨我方防御塔怎么一直被摧毁)</p>
+<pre><code class="language-bash">mongo --auth
+</code></pre>
+<p>或者修改mongo.conf，最后一行添加</p>
+<pre><code class="language-bash">#启用权限访问
+auth=true
+</code></pre>
 <p>参考自：https://www.jianshu.com/p/62736bff7e2e</p>
 
             </div>

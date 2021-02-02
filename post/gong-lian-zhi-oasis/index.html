@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1610521809848">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1612243615268">
 <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
 
 
@@ -24,18 +24,16 @@
 
 
 
-    <meta name="description" content="非验证节点
-填写绿洲P2P地址，同步公链数据
-（普通节点）
-验证节点
-需要创建实体，控制网络上的个人或组织的奖金
-需要下载oasis app ，生成账户的公私钥
-（共识节点）
-ParaTime节点
-目前还是测试版本
+    <meta name="description" content="Oasis部署文档
+节点选择
+Oasis服务节点分为： 验证节点、非验证节点、种子节点
+根据我们的需求部署了非验证节点
+非验证节点开放rpc接口需要通过网关代理，这里选择的是rosetta
+部署方式
+测试网
 
 
-要运行ParaTim..." />
+IP : 18.163.23..." />
     <meta name="keywords" content="公链" />
   </head>
   <body>
@@ -45,7 +43,7 @@ ParaTime节点
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://chriswsq.github.io">
-        <img src="https://chriswsq.github.io/images/avatar.png?v=1610521809848" class="site-logo">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1612243615268" class="site-logo">
         <h1 class="site-title">chris&#39;wang</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -111,32 +109,163 @@ ParaTime节点
             <div class="post-date">2020-11-03</div>
             
             <div class="post-content" v-pre>
-              <h2 id="非验证节点">非验证节点</h2>
-<p>填写绿洲P2P地址，同步公链数据</p>
-<p>（普通节点）</p>
-<h2 id="验证节点">验证节点</h2>
-<p>需要创建实体，控制网络上的个人或组织的奖金</p>
-<p>需要下载oasis app ，生成账户的公私钥</p>
-<p>（共识节点）</p>
-<h2 id="paratime节点">ParaTime节点</h2>
-<p>目前还是测试版本</p>
-<ol>
-<li>
-<p>要运行ParaTime节点，您必须已经是具有在网络上注册的实体ID的Oasis验证器。您可能已经在运行：</p>
+              <h1 id="oasis部署文档">Oasis部署文档</h1>
+<h2 id="节点选择">节点选择</h2>
+<p>Oasis服务节点分为： 验证节点、非验证节点、种子节点</p>
+<p>根据我们的需求部署了非验证节点</p>
+<p>非验证节点开放rpc接口需要通过网关代理，这里选择的是rosetta</p>
+<h2 id="部署方式">部署方式</h2>
+<h3 id="测试网">测试网</h3>
 <ul>
 <li>
-<p>一个或多个验证器节点</p>
-<p>也就是需要至少有一个共识节点</p>
+<p>IP : 18.163.236.142</p>
 </li>
 <li>
-<p>可选的非验证者节点</p>
+<p>server port: 8080</p>
+</li>
+<li>
+<p>Oasis 版本为: 20.12.1</p>
+</li>
+<li>
+<p>Resetta 版本为: master</p>
 </li>
 </ul>
+<p>**下载resetta **</p>
+<pre><code class="language-bash">git  clone https://github.com/oasisprotocol/oasis-core-rosetta-gateway.git
+</code></pre>
+<p><strong>打包镜像</strong></p>
+<pre><code class="language-bash">cd  oasis-core-rosetta-gateway/docker
+
+docker build -t oasis:20.12.1 .
+</code></pre>
+<p><strong>config.yml文件：</strong></p>
+<pre><code class="language-yml">datadir: /data
+
+log:
+  level:
+    default: info
+    tendermint: info
+    tendermint/context: error
+  format: JSON
+
+genesis:
+  file: /node/etc/genesis.json
+
+consensus:
+  tendermint:
+    core:
+      listen_address: tcp://0.0.0.0:8545
+    p2p:
+      # List of seed nodes to connect to.
+      # NOTE: You can add additional seed nodes to this list if you want.
+      seed:
+        - &quot;05EAC99BB37F6DAAD4B13386FF5E087ACBDDC450@34.86.165.6:26656&quot;
+</code></pre>
+<p><strong>genesis.json 文件使用：</strong></p>
+<p>https://github.com/oasisprotocol/public-testnet-artifacts/releases/download/2020-09-15/genesis.json</p>
+<p><strong>docker-compose.yml</strong></p>
+<pre><code class="language-yml">version: '2'
+services:
+  oasis: 
+    image: oasis:20.12.1
+    container_name: oasis
+    volumes:
+      - /bsn/oasis/node/data/:/data
+      - /bsn/oasis/node/etc:/node/etc
+    environment:
+      - OASIS_ROSETTA_GATEWAY_PORT=8080
+    ports:
+      - 8080:8080
+    restart: always
+
+</code></pre>
+<p><strong>启动</strong></p>
+<p>测试网同时启动节点和resetta会报错：</p>
+<pre><code class="language-bash">{“caller”:“grpc.go:202”,“err”:“failed to get consensus status: failed to load validator set: could not find validator set for height #1”,“level”:“error”,“method”:“/oasis-core.NodeController/GetStatus”,“module”:“grpc/internal”,“msg”:“request failed”,“req_seq”:117,“ts”:“2020-11-04T13:52:24.340094029Z”}
+</code></pre>
+<p>所以需要启动节点一段时间后启动rosetta ，使用<code>docker-compose up -d</code> 后进入容器执行</p>
+<p><code>nohup oasis-core-rosetta-gateway &gt;/dev/null 2&gt;&amp;1 &amp;</code></p>
+<h3 id="主网">主网</h3>
+<ul>
+<li>
+<p>IP : 18.163.224.121</p>
 </li>
-</ol>
-<h2 id="非验证节点-2">非验证节点</h2>
-<p>根据实际需求我们需要使用非验证节点，但非验证节点启动时没有rpc端口，所以要借助网关来代理出去端<br>
-口，</p>
+<li>
+<p>server port: 8080</p>
+</li>
+<li>
+<p>修改oasis版本为：20.11.3</p>
+</li>
+<li>
+<p>Resetta 版本为: master</p>
+</li>
+</ul>
+<p>**下载resetta **</p>
+<pre><code class="language-bash">git  clone https://github.com/oasisprotocol/oasis-core-rosetta-gateway.git
+</code></pre>
+<p><strong>打包镜像</strong></p>
+<pre><code class="language-bash">cd  oasis-core-rosetta-gateway/docker
+
+docker build -t oasis:20.11.3 .
+</code></pre>
+<p><strong>config.yml文件：</strong></p>
+<pre><code class="language-yml">datadir: /data
+
+log:
+ level:
+   default: info
+   tendermint: info
+   tendermint/context: error
+ format: JSON
+
+genesis:
+ file: /node/etc/genesis.json
+
+consensus:
+ tendermint:
+   p2p:
+     # List of seed nodes to connect to.
+     # NOTE: You can add additional seed nodes to this list if you want.
+     seed:
+       - &quot;E27F6B7A350B4CC2B48A6CBE94B0A02B0DCB0BF3@35.199.49.168:26656&quot;
+
+
+</code></pre>
+<p><strong>genesis.json 文件使用：</strong></p>
+<p>https://github.com/oasisprotocol/mainnet-artifacts/releases/download/2020-10-01/genesis.json</p>
+<p><strong>docker-compose.yml</strong></p>
+<pre><code class="language-yml">version: '2'
+services:
+  oasis: 
+    image: oasis:20.11.3
+    container_name: oasis
+    volumes:
+      - /bsn/oasis/node/data/:/data
+      - /bsn/oasis/node/etc:/node/etc
+    environment:
+      - OASIS_ROSETTA_GATEWAY_PORT=8080
+    ports:
+      - 8080:8080
+    restart: always
+</code></pre>
+<p><strong>启动</strong></p>
+<pre><code class="language-bash">docker-compose up -d
+</code></pre>
+<h2 id="相关地址">相关地址</h2>
+<p><strong>Oasis Gateway for Rosetta:</strong></p>
+<ul>
+<li>https://github.com/oasisprotocol/oasis-core-rosetta-gateway</li>
+</ul>
+<p><strong>mainnet  Oasis seed node address:</strong></p>
+<ul>
+<li>https://docs.oasis.dev/general/oasis-network/network-parameters</li>
+</ul>
+<p><strong>testnet  Oasis seed node address:</strong></p>
+<ul>
+<li>https://docs.oasis.dev/general/oasis-foundation-testnet/testnet</li>
+</ul>
+<p><strong>rosetta-api docs:</strong></p>
+<p>https://www.rosetta-api.org/docs/welcome.html</p>
 <p>参考<br>
 https://docs.oasis.dev/general/run-a-node/set-up-your-node/run-non-validator<br>
 https://docs.oasis.dev/oasis-core/high-level-components/oasis-node/rpc<br>

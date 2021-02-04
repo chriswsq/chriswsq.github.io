@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>部署 redis，ipfs ，ipfs-gate，mongodb， rabbitmq | chris&#39;wang</title>
+<title>跨连 | chris&#39;wang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -24,10 +24,12 @@
 
 
 
-    <meta name="description" content="登录ansible 节点 192.168.1.176
-/application/ansible-playbook/optimization/{java redis mongodb rabbitmq ipfs}
-在 /etc/ansible/..." />
-    <meta name="keywords" content="work" />
+    <meta name="description" content="cjq   调用   relayer 服务
+cjq   负责人  lyk
+relayer 负责人  yz
+目前一般报错
+" />
+    <meta name="keywords" content="" />
   </head>
   <body>
     <div id="app" class="main">
@@ -98,59 +100,23 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">部署 redis，ipfs ，ipfs-gate，mongodb， rabbitmq</h2>
-            <div class="post-date">2021-01-11</div>
+            <h2 class="post-title">跨连</h2>
+            <div class="post-date">2021-02-02</div>
             
             <div class="post-content" v-pre>
-              <p>登录ansible 节点 192.168.1.176</p>
-<p>/application/ansible-playbook/optimization/{java redis mongodb rabbitmq ipfs}</p>
-<p>在 /etc/ansible/inventory/   目录下添加 ipfs 的 hosts 文件<br>
-执行</p>
-<pre><code class="language-bash">#安装java
-cd  /application/ansible-playbook/optimization/java
-ansible-playbook -e host=ipfs install-java.yaml
-
-#安装redis
-cd /application/ansible-playbook/optimization/redis
-ansible-playbook -e host=ipfs  docker-compose-redis.yaml
-
-#安装ipfs
-cd /application/ansible-playbook/optimization/ipfs
-ansible-playbook -e host=ipfs  docker-compose-redis.yaml 
-#登录ipfs服务器修改conf文件
-
-核心属性
-&quot;GCPeriod&quot;: &quot;2h&quot;,
-    &quot;StorageGCWatermark&quot;: 100,
-&quot;StorageMax&quot;: &quot;1GB&quot;
-
-
-#安装mongodb
-cd  /application/ansible-playbook/optimization/mongodb
-ansible-playbook -e host=ipfs  install-mongodb.yaml
-
-# 安装ipfs-gate
-ipfs-gate由开发部署或者提供相关部署文档
-登录阿里云控制台添加ipfs-gate域名A记录（域名由开发提供）
-</code></pre>
-<p>找提供商开启服务器业务响应端口</p>
+              <p>cjq   调用   relayer 服务<br>
+cjq   负责人  lyk<br>
+relayer 负责人  yz</p>
+<p>目前一般报错</p>
 
             </div>
-            
-              <div class="tag-container">
-                
-                  <a href="https://chriswsq.github.io/tag/fURWwtEfo/" class="tag">
-                    work
-                  </a>
-                
-              </div>
             
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://chriswsq.github.io/post/mongodb-ji-chu-zhi-shi-yu-bu-shu/">
+                <a href="https://chriswsq.github.io/post/rabbitmq-ji-ben-zhi-shi/">
                   <h3 class="post-title">
-                    mongodb基础知识与部署
+                    rabbitmq基本知识
                   </h3>
                 </a>
               </div>

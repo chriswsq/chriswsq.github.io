@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-02-04T02:40:49.037Z</updated>
+    <updated>2021-02-07T09:24:23.532Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,150 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[CasperLabs测试网部署]]></title>
+        <id>https://chriswsq.github.io/post/casperlabs-ce-shi-wang-bu-shu/</id>
+        <link href="https://chriswsq.github.io/post/casperlabs-ce-shi-wang-bu-shu/">
+        </link>
+        <updated>2021-02-04T08:12:31.000Z</updated>
+        <content type="html"><![CDATA[<p>主网还未发布<br>
+目前只有部署测试网</p>
+<h2 id="手动部署">手动部署</h2>
+<pre><code class="language-bash">
+sudo apt remove -y casper-client casper-node
+
+curl -JLO https://bintray.com/casperlabs/casper-debian-tests/download_file?file_path=casper-node_0.7.3-4186_amd64.deb
+curl -JLO https://bintray.com/casperlabs/casper-debian-tests/download_file?file_path=casper-client_0.7.3-4186_amd64.deb
+sudo apt install -y ./casper-client_0.7.3-4186_amd64.deb ./casper-node_0.7.3-4186_amd64.deb
+
+# Download genesis files
+cd /etc/casper
+sudo curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/accounts.csv
+sudo curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/chainspec.toml
+sudo curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/validation.md5
+md5sum -c ./validation.md5 
+
+
+sudo mv /etc/casper/config.toml /etc/casper/config.toml.bak
+sudo curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/config-example.toml
+sudo ./config_from_example.sh
+
+
+# Get trusted_hash into config.toml
+curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash
+
+# Or do this automatically
+sudo sed -i &quot;/trusted_hash =/c\trusted_hash = '$(curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash | tr -d '\n')'&quot; config.toml
+
+sudo logrotate -f /etc/logrotate.d/casper-node
+sudo /etc/casper/delete_local_db.sh
+sudo systemctl start casper-node
+systemctl status casper-node
+These instructions will connect you to a small running network.
+</code></pre>
+<h2 id="docker部署">docker部署</h2>
+<p>目前casperlabs只支持ubuntu系统，这里采用docker方式部署</p>
+<p><strong>Dockerfile</strong></p>
+<pre><code class="language-dockerfile">from ubuntu:18.04
+
+RUN apt-get update \
+  &amp;&amp;  apt-get install -y --reinstall systemd \
+  &amp;&amp;  apt-get install -y curl  \
+  &amp;&amp;  apt-get install -y jq  \
+  &amp;&amp;  curl -JLO https://bintray.com/casperlabs/casper-debian-tests/download_file?file_path=casper-node_0.7.3-4186_amd64.deb  \
+  &amp;&amp;  curl -JLO https://bintray.com/casperlabs/casper-debian-tests/download_file?file_path=casper-client_0.7.3-4186_amd64.deb  \
+  &amp;&amp;  apt install -y ./casper-client_0.7.3-4186_amd64.deb ./casper-node_0.7.3-4186_amd64.deb  \
+  &amp;&amp;  cd /etc/casper \
+  &amp;&amp;  curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/accounts.csv  \
+  &amp;&amp;  curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/chainspec.toml  \
+  &amp;&amp;  curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/validation.md5  \
+  &amp;&amp;  md5sum -c ./validation.md5 \
+  &amp;&amp;  mv /etc/casper/config.toml /etc/casper/config.toml.bak \
+  &amp;&amp;  curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/config-example.toml \
+  &amp;&amp;  ./config_from_example.sh \
+  &amp;&amp;  curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash \
+  &amp;&amp;  apt install -y logrotate \
+  &amp;&amp;  logrotate -f /etc/logrotate.d/casper-node \
+  &amp;&amp;  /etc/casper/delete_local_db.sh
+EXPOSE  7777  8888  9999
+ENTRYPOINT [&quot;/usr/bin/casper-node&quot;,&quot;validator&quot;,&quot;/etc/casper/config.toml&quot;]
+</code></pre>
+<p><strong>docker-compose文件</strong></p>
+<pre><code class="language-docker-compose.yml">version: '3'
+ 
+services:
+
+   casper:
+     image: casper:0.7.3
+     container_name: casper-testnet
+     ports:
+       - 7777:7777 
+       - 8888:8888
+       - 9999:9999
+
+     volumes:
+       - /bsn/casper/validator_keys:/etc/casper/validator_keys/
+       - /bsn/casper/config.toml:/etc/casper/config.toml
+       - /bsn/casper/data:/var/lib/casper/casper-node
+     restart: always
+</code></pre>
+<p><strong>toml文件</strong></p>
+<pre><code class="language-toml">[node]
+chainspec_config_path = '/etc/casper/chainspec.toml'
+ trusted_hash = 'f344cc2c672b9b7b83a704d1ea6158c02eafac59ccc5809cfdafbda0e8eb3a4d'
+[logging]
+format = 'json'
+color = false
+abbreviate_modules = false
+[consensus]
+secret_key_path = '/etc/casper/validator_keys/secret_key.pem'
+unit_hashes_folder = 'casper-node'
+pending_vertex_timeout = '2000ms'
+[network]
+public_address = '0.0.0.0:0'
+bind_address = '0.0.0.0:35000'
+known_addresses = ['54.183.27.75:35000']
+gossip_interval = 120_000
+systemd_support = false
+[rpc_server]
+address = '0.0.0.0:7777'
+[rest_server]
+address = '0.0.0.0:8888'
+[event_stream_server]
+address = '0.0.0.0:9999'
+event_stream_buffer_length = 100
+broadcast_channel_size = 100
+[storage]
+path = '/var/lib/casper/casper-node'
+max_block_store_size = 483_183_820_800
+max_deploy_store_size = 322_122_547_200
+max_deploy_metadata_store_size = 322_122_547_200
+max_state_store_size = 10_737_418_240
+[gossip]
+infection_target = 3
+saturation_limit_percent = 80
+finished_entry_duration_secs = 60
+gossip_request_timeout_secs = 30
+get_remainder_timeout_secs = 5
+[fetcher]
+get_from_peer_timeout = 3
+[deploy_acceptor]
+verify_accounts = true
+[contract_runtime]
+</code></pre>
+<p><strong>其中配置文件中的hash值是通过执行命令获取</strong></p>
+<pre><code class="language-bash">curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash
+</code></pre>
+<p>known_addresses参数值是找官方社区人员要的</p>
+<h2 id="其他命令">其他命令</h2>
+<p><strong>获取节点信息</strong></p>
+<pre><code class="language-bash">curl http://localhost:8888/status |jq
+</code></pre>
+<p><strong>获取所有rpc节点</strong></p>
+<pre><code class="language-bash">curl -X POST -H 'Content-Type: application/json' -d '{&quot;id&quot;:1,&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;rpc.discover&quot;}' 'http://127.0.0.1:7777/rpc' | jq
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[跨连]]></title>
         <id>https://chriswsq.github.io/post/kua-lian/</id>
@@ -1253,245 +1397,6 @@ UTC--2020-12-07T03-33-12.115191344Z--93f0b48f9d921f38dabff36cb682bfb208472221
   &quot;enode://f966b9a0cb82715fff5cc4b8f96c262c415181cb907cea5660bbd838c385976fd3a5389f40ea946d3dd02db2b5ac5f31bf760666d418cf7e340a8518bcdff03d@192.168.40.6:21000?discport=0&amp;raftport=50000&quot;,
   &quot;enode://3f2fe908035fa1ddcc3d80d504d1f2358675ca5f4aa3de4f0c5457ea9a2ae7d9af57688b4ec9f5b2772aa1b5c3da1e76840d27ea35d1bc4c86578b09b8d1a19d@192.168.40.7:21000?discport=0&amp;raftport=50000&quot;
 ]
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[GoQuorum之raft共识添加添加隐私交易管理器tessera--二进制]]></title>
-        <id>https://chriswsq.github.io/post/goquorum-zhi-raft-gong-shi-tian-jia-tian-jia-yin-si-jiao-yi-guan-li-qi-tessera/</id>
-        <link href="https://chriswsq.github.io/post/goquorum-zhi-raft-gong-shi-tian-jia-tian-jia-yin-si-jiao-yi-guan-li-qi-tessera/">
-        </link>
-        <updated>2020-12-07T07:37:57.000Z</updated>
-        <content type="html"><![CDATA[<p>tessera</p>
-<p>公共与私人交易处理<br>
-公共交易是以标准的以太坊方式执行的，因此，如果将公共交易发送到持有合同代码的账户，则每个参与者将执行相同的代码，并且其底层StateDB将相应地更新。</p>
-<p>但是，私有交易不会按标准的以太坊执行：在发送方的GoQuorum节点将交易传播到网络的其余部分之前，它将原始交易有效载荷替换为从Constellation / Tessera接收到的加密有效载荷的哈希值。参与交易的参与者将能够通过其Constellation / Tessera实例将哈希值替换为实际有效载荷，而未参与交易的参与者将只能看到哈希值。</p>
-<p>结果是，如果将私人交易发送到持有合同代码的帐户，则那些不参与交易的参与者将最终跳过交易，因此不执行合同代码。但是，参与交易的那些参与者将在调用EVM执行之前将哈希替换为原始有效负载，并且其StateDB将相应地更新。如果没有对geth客户进行相应的更改，那么这两组参与者最终将拥有不同的StateDB，并且无法达成共识。为了支持合同状态的这种分叉，Quorum将公共合同的状态存储在全局同步的Public State Trie中，</p>
-<h2 id="安装goquorum和tessera">安装GoQuorum和tessera</h2>
-<pre><code class="language-bash">$ git clone https://github.com/ConsenSys/quorum.git
-$ cd quorum
-$ make all
-$ export PATH=$(pwd)/build/bin:$PATH
-$ cd ..
-.... copy tessera jar to your desired destination and rename it as tessera
-$ mv tessera-app-20.10.0-app.jar tessera.jar
-</code></pre>
-<h2 id="生成新密钥">生成新密钥</h2>
-<pre><code class="language-bash">$ mkdir new-node-1t
-$ cd new-node-1t
-$ java -jar ../tessera.jar -keygen -filename new-node-1
-Enter a password if you want to lock the private key or leave blank
-
-Please re-enter the password (or lack of) to confirm
-
-10:32:51.256 [main] INFO  com.quorum.tessera.nacl.jnacl.Jnacl - Generating new keypair...
-10:32:51.279 [main] INFO  com.quorum.tessera.nacl.jnacl.Jnacl - Generated public key PublicKey[pnesVeDgs805ZPbnulzC5wokDzpdN7CeYKVUBXup/W4=] and private key REDACTED
-10:32:51.624 [main] INFO  c.q.t.k.generation.FileKeyGenerator - Saved public key to /Users/krish/fromscratch/new-node-1t/new-node-1.pub
-10:32:51.624 [main] INFO  c.q.t.k.generation.FileKeyGenerator - Saved private key to /Users/krish/fromscratch/new-node-1t/new-node-1.key
-</code></pre>
-<h2 id="创建configjson配置文件">创建config.json配置文件</h2>
-<pre><code class="language-bash">{
-   &quot;useWhiteList&quot;: false,
-   &quot;jdbc&quot;: {
-       &quot;username&quot;: &quot;sa&quot;,
-       &quot;password&quot;: &quot;&quot;,
-       &quot;url&quot;: &quot;jdbc:h2:/bsn/quorum/fromscratch/new-node-1t/db1;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0&quot;,
-       &quot;autoCreateTables&quot;: true
-   },
-   &quot;serverConfigs&quot;:[
-       {
-           &quot;app&quot;:&quot;ThirdParty&quot;,
-           &quot;enabled&quot;: true,
-           &quot;serverAddress&quot;: &quot;http://192.168.40.6:9081&quot;,
-           &quot;communicationType&quot; : &quot;REST&quot;
-       },
-       {
-           &quot;app&quot;:&quot;Q2T&quot;,
-           &quot;enabled&quot;: true,
-            &quot;serverAddress&quot;:&quot;unix:/bsn/quorum/fromscratch/new-node-1t/tm.ipc&quot;,
-           &quot;communicationType&quot; : &quot;REST&quot;
-       },
-       {
-           &quot;app&quot;:&quot;P2P&quot;,
-           &quot;enabled&quot;: true,
-           &quot;serverAddress&quot;:&quot;http://192.168.40.6:9001&quot;,
-           &quot;sslConfig&quot;: {
-               &quot;tls&quot;: &quot;OFF&quot;
-           },
-           &quot;communicationType&quot; : &quot;REST&quot;
-       }
-   ],
-   &quot;peer&quot;: [
-       {
-           &quot;url&quot;: &quot;http://192.168.40.6:9001&quot;
-       },
-       {
-           &quot;url&quot;: &quot;http://192.168.40.7:9002&quot;
-       }
-   ],
-   &quot;keys&quot;: {
-       &quot;passwords&quot;: [],
-       &quot;keyData&quot;: [
-           {
-               &quot;privateKeyPath&quot;: &quot;/bsn/quorum/fromscratch/new-node-1t/new-node-1.key&quot;,
-               &quot;publicKeyPath&quot;: &quot;/bsn/quorum/fromscratch/new-node-1t/new-node-1.pub&quot;
-           }
-       ]
-   },
-   &quot;alwaysSendTo&quot;: []
-}
-</code></pre>
-<h2 id="启动其他节点">启动其他节点</h2>
-<p>如果要启动另一个Tessera节点，请重复步骤2和步骤3</p>
-<pre><code class="language-bash">$ cd ..
-$ mkdir new-node-2t
-$ cd new-node-2t
-$ java -jar ../tessera.jar -keygen -filename new-node-2
-Enter a password if you want to lock the private key or leave blank
-
-Please re-enter the password (or lack of) to confirm
-
-10:45:02.567 [main] INFO  com.quorum.tessera.nacl.jnacl.Jnacl - Generating new keypair...
-10:45:02.585 [main] INFO  com.quorum.tessera.nacl.jnacl.Jnacl - Generated public key PublicKey[AeggpVlVsi+rxD6h9tcq/8qL/MsjyipUnkj1nvNPgTU=] and private key REDACTED
-10:45:02.926 [main] INFO  c.q.t.k.generation.FileKeyGenerator - Saved public key to /Users/krish/fromscratch/new-node-2t/new-node-2.pub
-10:45:02.926 [main] INFO  c.q.t.k.generation.FileKeyGenerator - Saved private key to /Users/krish/fromscratch/new-node-2t/new-node-2.key
-$
-$ vim config.json
-
-{
-   &quot;useWhiteList&quot;: false,
-   &quot;jdbc&quot;: {
-       &quot;username&quot;: &quot;sa&quot;,
-       &quot;password&quot;: &quot;&quot;,
-       &quot;url&quot;: &quot;jdbc:h2:/bsn/quorum/fromscratch/new-node-2t/db1;MODE=Oracle;TRACE_LEVEL_SYSTEM_OUT=0&quot;,
-       &quot;autoCreateTables&quot;: true
-   },
-   &quot;serverConfigs&quot;:[
-       {
-           &quot;app&quot;:&quot;ThirdParty&quot;,
-           &quot;enabled&quot;: true,
-           &quot;serverAddress&quot;: &quot;http://192.168.40.7:9082&quot;,
-           &quot;communicationType&quot; : &quot;REST&quot;
-       },
-       {
-           &quot;app&quot;:&quot;Q2T&quot;,
-           &quot;enabled&quot;: true,
-            &quot;serverAddress&quot;:&quot;unix:/bsn/quorum/fromscratch/new-node-2t/tm.ipc&quot;,
-           &quot;communicationType&quot; : &quot;REST&quot;
-       },
-       {
-           &quot;app&quot;:&quot;P2P&quot;,
-           &quot;enabled&quot;: true,
-           &quot;serverAddress&quot;:&quot;http://192.168.40.7:9002&quot;,
-           &quot;sslConfig&quot;: {
-               &quot;tls&quot;: &quot;OFF&quot;
-           },
-           &quot;communicationType&quot; : &quot;REST&quot;
-       }
-   ],
-   &quot;peer&quot;: [
-       {
-           &quot;url&quot;: &quot;http://192.168.40.6:9001&quot;
-       },
-       {
-           &quot;url&quot;: &quot;http://192.168.40.7:9002&quot;
-       }
-   ],
-   &quot;keys&quot;: {
-       &quot;passwords&quot;: [],
-       &quot;keyData&quot;: [
-           {
-               &quot;privateKeyPath&quot;: &quot;/bsn/quorum/fromscratch/new-node-2t/new-node-2.key&quot;,
-               &quot;publicKeyPath&quot;: &quot;/bsn/quorum/fromscratch/new-node-2t/new-node-2.pub&quot;
-           }
-       ]
-   },
-   &quot;alwaysSendTo&quot;: []
-}
-</code></pre>
-<h2 id="启动tessera节点">启动tessera节点</h2>
-<p>启动您的Tessera节点，然后发送到后台<br>
-分别在192.168.40.6   192.168.40.7执行</p>
-<pre><code class="language-bash">java -jar ../tessera.jar -configfile config.json &gt;&gt; tessera.log 2&gt;&amp;1 &amp;
-</code></pre>
-<h2 id="修改goquorum启动脚本">修改GoQuorum启动脚本</h2>
-<p>从上方启动连接到正在运行的Tessera节点的GoQuorum节点并将其发送到后台</p>
-<p>192.168.40.6</p>
-<pre><code class="language-bash">vim startnode1.sh
-#!/bin/bash
-PRIVATE_CONFIG=/bsn/quorum/fromscratch/new-node-1t/tm.ipc nohup geth --allow-insecure-unlock  --datadir new-node-1 --nodiscover --verbosity 5 --networkid 31337 --raft --raftport 50000 --rpc --rpcaddr 0.0.0.0 --rpcport 22000 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft --emitcheckpoints --port 21000 &gt;&gt; node.log 2&gt;&amp;1 &amp;
-</code></pre>
-<p>192.168.40.7</p>
-<pre><code class="language-bash">vim startnode1.sh
-#!/bin/bash
-PRIVATE_CONFIG=/bsn/quorum/fromscratch/new-node-2t/tm.ipc nohup geth --allow-insecure-unlock --datadir new-node-2 --nodiscover --verbosity 5 --networkid 31337 --raft --raftport 50000 --rpc --rpcaddr 0.0.0.0 --rpcport 22000 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft --emitcheckpoints --port 21000 &gt;&gt; node.log 2&gt;&amp;1 &amp;
-</code></pre>
-<blockquote>
-<p>注意：<br>
-Tessera IPC桥接器将位于您定义的文件名上config.json，通常以tm.ipc前缀中的名称命名PRIVATE_CONFIG=tm.ipc。您的节点现在可以发送和接收私人交易，播发的公共节点密钥将在new-node-1.pub文件中。Tessera提供了很多配置灵活性，有关完整和最新的配置选项，请参阅Tessera下的“配置”部分。<br>
---allow-insecure-unlock  用于解锁用户</p>
-</blockquote>
-<h2 id="发送私人交易">发送私人交易</h2>
-<p>您的节点现在可以运行了，您可以附加到该节点geth attach new-node-1/geth.ipc以发送私人交易。</p>
-<pre><code class="language-bash">$ vim private-contract.js
-... create simple private contract to send transaction from new-node-1 private for new-node-2's tessera public key created in step 4
-a = eth.accounts[0]
-web3.eth.defaultAccount = a;
-
-// abi and bytecode generated from simplestorage.sol:
-// &gt; solcjs --bin --abi simplestorage.sol
-var abi = [{&quot;constant&quot;:true,&quot;inputs&quot;:[],&quot;name&quot;:&quot;storedData&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;constant&quot;:false,&quot;inputs&quot;:[{&quot;name&quot;:&quot;x&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;name&quot;:&quot;set&quot;,&quot;outputs&quot;:[],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;constant&quot;:true,&quot;inputs&quot;:[],&quot;name&quot;:&quot;get&quot;,&quot;outputs&quot;:[{&quot;name&quot;:&quot;retVal&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;function&quot;},{&quot;inputs&quot;:[{&quot;name&quot;:&quot;initVal&quot;,&quot;type&quot;:&quot;uint256&quot;}],&quot;payable&quot;:false,&quot;type&quot;:&quot;constructor&quot;}];
-
-var bytecode = &quot;0x6060604052341561000f57600080fd5b604051602080610149833981016040528080519060200190919050505b806000819055505b505b610104806100456000396000f30060606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680632a1afcd914605157806360fe47b11460775780636d4ce63c146097575b600080fd5b3415605b57600080fd5b606160bd565b6040518082815260200191505060405180910390f35b3415608157600080fd5b6095600480803590602001909190505060c3565b005b341560a157600080fd5b60a760ce565b6040518082815260200191505060405180910390f35b60005481565b806000819055505b50565b6000805490505b905600a165627a7a72305820d5851baab720bba574474de3d09dbeaabc674a15f4dd93b974908476542c23f00029&quot;;
-
-var simpleContract = web3.eth.contract(abi);
-var simple = simpleContract.new(42, {from:web3.eth.accounts[0], data: bytecode, gas: 0x47b760, privateFor: [&quot;R5qs4JXQ+aiJqh2V98qgbPZj+rR82ZodCq2CAUyIJjw=&quot;]}, function(e, contract) {
-    if (e) {
-        console.log(&quot;err creating contract&quot;, e);
-    } else {
-        if (!contract.address) {
-            console.log(&quot;Contract transaction send: TransactionHash: &quot; + contract.transactionHash + &quot; waiting to be mined...&quot;);
-        } else {
-            console.log(&quot;Contract mined! Address: &quot; + contract.address);
-            console.log(contract);
-        }
-    }
-});
-$
-$
-</code></pre>
-<blockquote>
-<p>注意： 默认情况下，在geth中打开的帐户是锁定的，因此在发送交易之前，请先解锁帐户，所以启动需要加上--allow-insecure-unlock参数，不然解锁用户时会报错Error: account unlock with HTTP access is forbidden</p>
-</blockquote>
-<pre><code class="language-bash">
-[root@test-1 fromscratch]# geth attach new-node-1/geth.ipc
-Welcome to the Geth JavaScript console!
-
-instance: Geth/v1.9.7-stable-7b726385(quorum-v20.10.0)/linux-amd64/go1.15.1
-coinbase: 0x4cccda1f9bc42a72c7a704bdc07f5f384483ff65
-at block: 0 (Thu, 01 Jan 1970 08:00:00 CST)
- datadir: /bsn/quorum/fromscratch/new-node-1
- modules: admin:1.0 debug:1.0 eth:1.0 ethash:1.0 miner:1.0 net:1.0 personal:1.0 quorumExtension:1.0 raft:1.0 rpc:1.0 txpool:1.0 web3:1.0
-
-&gt; eth.accounts
-[&quot;0x4cccda1f9bc42a72c7a704bdc07f5f384483ff65&quot;, &quot;0x93f0b48f9d921f38dabff36cb682bfb208472221&quot;]
-&gt; personal.unlockAccount(&quot;0x4cccda1f9bc42a72c7a704bdc07f5f384483ff65&quot;);
-Unlock account 0x4cccda1f9bc42a72c7a704bdc07f5f384483ff65
-Password: 
-true
-&gt; loadScript(&quot;private-contract.js&quot;)
-Contract transaction send: TransactionHash: 0xfaf11707339302bc62bfbfe6968ea20e5b511fc1450f799a5ac95a91a512c8fa waiting to be mined...
-true
-&gt; Contract mined! Address: 0xb85f26e18472df8c33633990b8ba8eb7d012966c
-[object Object]
-
-</code></pre>
-<p>您已成功将私有事务从节点1发送到节点2！</p>
-<blockquote>
-<p>注意：如果private-contract.js中的数组中没有有效的公共密钥，则在加载脚本时会看到以下错误。</p>
-</blockquote>
-<pre><code class="language-bash">&gt; loadScript(&quot;private-contract.js&quot;)
-err creating contract Error: Non-200 status code: &amp;{Status:400 Bad Request StatusCode:400 Proto:HTTP/1.1 ProtoMajor:1      ProtoMinor:1 Header:map[Date:[Mon, 17 Jun 2019 15:23:53 GMT] Content-Type:[text/plain] Content-Length:[73] Server:[Jetty(9.4.z-SNAPSHOT)]] Body:0xc01997a580 ContentLength:73 TransferEncoding:[] Close:false Uncompressed:false Trailer:map[] Request:0xc019788200 TLS:&lt;nil&gt;}
 </code></pre>
 ]]></content>
     </entry>

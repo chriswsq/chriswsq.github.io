@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1612689921340">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1612690302037">
 <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
 
 
@@ -40,7 +40,7 @@ curl -JLO https://bintray.com/casperlabs/casper-deb..." />
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://chriswsq.github.io">
-        <img src="https://chriswsq.github.io/images/avatar.png?v=1612689921340" class="site-logo">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1612690302037" class="site-logo">
         <h1 class="site-title">chris&#39;wang</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -237,8 +237,48 @@ verify_accounts = true
 <p>known_addresses参数值是找官方社区人员要的</p>
 <h2 id="其他命令">其他命令</h2>
 <p><strong>获取节点信息</strong></p>
-<pre><code class="language-bash">curl http://localhost:8888/status |jq
+<pre><code class="language-bash">[root@casper]# curl http://localhost:8888/status |jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   849  100   849    0     0   137k      0 --:--:-- --:--:-- --:--:--  165k
+{
+  &quot;api_version&quot;: &quot;1.0.0&quot;,
+  &quot;chainspec_name&quot;: &quot;release-test-16&quot;,
+  &quot;genesis_root_hash&quot;: &quot;1a6f..9fa2&quot;,
+  &quot;peers&quot;: [
+    {
+      &quot;node_id&quot;: &quot;NodeId::P2p(Exc3..we6T)&quot;,
+      &quot;address&quot;: &quot;/ip4/54.209.219.135/tcp/35000&quot;
+    },
+    {
+      &quot;node_id&quot;: &quot;NodeId::P2p(G2Xq..4nuP)&quot;,
+      &quot;address&quot;: &quot;/ip4/3.101.67.146/tcp/35000&quot;
+    },
+    {
+      &quot;node_id&quot;: &quot;NodeId::P2p(JJV2..uD5e)&quot;,
+      &quot;address&quot;: &quot;/ip4/54.183.27.75/tcp/35000&quot;
+    },
+    {
+      &quot;node_id&quot;: &quot;NodeId::P2p(JJey..ygLw)&quot;,
+      &quot;address&quot;: &quot;/ip4/62.171.172.72/tcp/35000&quot;
+    },
+    {
+      &quot;node_id&quot;: &quot;NodeId::P2p(SmNF..W5gS)&quot;,
+      &quot;address&quot;: &quot;/ip4/3.133.139.143/tcp/35000&quot;
+    }
+  ],
+  &quot;last_added_block_info&quot;: {
+    &quot;hash&quot;: &quot;46efcb832547bcba03f39529b8d752b562b05ac8127571f268495aefd574ac08&quot;,
+    &quot;timestamp&quot;: &quot;2021-02-07T09:29:21.664Z&quot;,
+    &quot;era_id&quot;: 293,
+    &quot;height&quot;: 8220,
+    &quot;state_root_hash&quot;: &quot;1a891bb13571c14fe6d477128022ca130014e92ed3962a123a9ea5912f3b4e36&quot;,
+    &quot;creator&quot;: &quot;018b15761be0c527117c79b87ca013b014a4628f01e382902a139529406723d86b&quot;
+  },
+  &quot;build_version&quot;: &quot;0.7.3&quot;
+}
 </code></pre>
+<p>8000的快高同步了两个小时左右，同步过程中7777端口不能使用。</p>
 <p><strong>获取所有rpc节点</strong></p>
 <pre><code class="language-bash">curl -X POST -H 'Content-Type: application/json' -d '{&quot;id&quot;:1,&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;rpc.discover&quot;}' 'http://127.0.0.1:7777/rpc' | jq
 </code></pre>

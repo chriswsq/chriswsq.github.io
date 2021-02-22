@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-02-07T09:31:43.358Z</updated>
+    <updated>2021-02-22T09:27:17.540Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -11,45 +11,41 @@
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
     <entry>
-        <title type="html"><![CDATA[CasperLabs测试网部署]]></title>
+        <title type="html"><![CDATA[Casper测试网部署]]></title>
         <id>https://chriswsq.github.io/post/casperlabs-ce-shi-wang-bu-shu/</id>
         <link href="https://chriswsq.github.io/post/casperlabs-ce-shi-wang-bu-shu/">
         </link>
         <updated>2021-02-04T08:12:31.000Z</updated>
         <content type="html"><![CDATA[<p>主网还未发布<br>
-目前只有部署测试网</p>
+目前只有部署测试网<br>
+主网预计2021年第二季度上线</p>
+<p><strong>版本：0.7.6</strong></p>
 <h2 id="手动部署">手动部署</h2>
 <pre><code class="language-bash">
-sudo apt remove -y casper-client casper-node
+# Clean up old genesis file location
+sudo rm /etc/casper/config.*
+sudo rm /etc/casper/accounts.csv 
+sudo rm /etc/casper/chainspec.toml 
+sudo rm /etc/casper/validation.md5
 
-curl -JLO https://bintray.com/casperlabs/casper-debian-tests/download_file?file_path=casper-node_0.7.3-4186_amd64.deb
-curl -JLO https://bintray.com/casperlabs/casper-debian-tests/download_file?file_path=casper-client_0.7.3-4186_amd64.deb
-sudo apt install -y ./casper-client_0.7.3-4186_amd64.deb ./casper-node_0.7.3-4186_amd64.deb
+# Install new software
+curl -JLO https://bintray.com/casperlabs/debian/download_file?file_path=casper-node-launcher_0.2.0-0_amd64.deb
+curl -JLO https://bintray.com/casperlabs/debian/download_file?file_path=casper-client_0.7.6-0_amd64.deb
+sudo apt install -y ./casper-client_0.7.6-0_amd64.deb ./casper-node-launcher_0.2.0-0_amd64.deb
 
-# Download genesis files
 cd /etc/casper
-sudo curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/accounts.csv
-sudo curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/chainspec.toml
-sudo curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/validation.md5
-md5sum -c ./validation.md5 
-
-
-sudo mv /etc/casper/config.toml /etc/casper/config.toml.bak
-sudo curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/config-example.toml
-sudo ./config_from_example.sh
-
+sudo -u casper ./pull_casper_node_version.sh 1_0_0 release-test
 
 # Get trusted_hash into config.toml
 curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash
 
 # Or do this automatically
-sudo sed -i &quot;/trusted_hash =/c\trusted_hash = '$(curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash | tr -d '\n')'&quot; config.toml
+sudo sed -i &quot;/trusted_hash =/c\trusted_hash = '$(curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash | tr -d '\n')'&quot; /etc/casper/1_0_0/config.toml
 
 sudo logrotate -f /etc/logrotate.d/casper-node
-sudo /etc/casper/delete_local_db.sh
-sudo systemctl start casper-node
-systemctl status casper-node
-These instructions will connect you to a small running network.
+sudo /etc/casper/delete_local_db.sh; sleep 1
+sudo systemctl start casper-node-launcher
+systemctl status casper-node-launcher
 </code></pre>
 <h2 id="docker部署">docker部署</h2>
 <p>目前casperlabs只支持ubuntu系统，这里采用docker方式部署</p>
@@ -60,91 +56,41 @@ RUN apt-get update \
   &amp;&amp;  apt-get install -y --reinstall systemd \
   &amp;&amp;  apt-get install -y curl  \
   &amp;&amp;  apt-get install -y jq  \
-  &amp;&amp;  curl -JLO https://bintray.com/casperlabs/casper-debian-tests/download_file?file_path=casper-node_0.7.3-4186_amd64.deb  \
-  &amp;&amp;  curl -JLO https://bintray.com/casperlabs/casper-debian-tests/download_file?file_path=casper-client_0.7.3-4186_amd64.deb  \
-  &amp;&amp;  apt install -y ./casper-client_0.7.3-4186_amd64.deb ./casper-node_0.7.3-4186_amd64.deb  \
+  &amp;&amp;  curl -JLO https://bintray.com/casperlabs/debian/download_file?file_path=casper-node-launcher_0.2.0-0_amd64.deb  \
+  &amp;&amp;  curl -JLO https://bintray.com/casperlabs/debian/download_file?file_path=casper-client_0.7.6-0_amd64.deb  \
+  &amp;&amp;  apt install -y ./casper-client_0.7.6-0_amd64.deb ./casper-node-launcher_0.2.0-0_amd64.deb  \
   &amp;&amp;  cd /etc/casper \
-  &amp;&amp;  curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/accounts.csv  \
-  &amp;&amp;  curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/chainspec.toml  \
-  &amp;&amp;  curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/validation.md5  \
-  &amp;&amp;  md5sum -c ./validation.md5 \
-  &amp;&amp;  mv /etc/casper/config.toml /etc/casper/config.toml.bak \
-  &amp;&amp;  curl -JLO https://casper-node.s3.us-east-2.amazonaws.com/release-test/config-example.toml \
-  &amp;&amp;  ./config_from_example.sh \
+  &amp;&amp;  ./pull_casper_node_version.sh 1_0_0 release-test \
   &amp;&amp;  curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash \
+  &amp;&amp;  sed -i &quot;/trusted_hash =/c\trusted_hash = '$(curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash | tr -d '\n')'&quot; /etc/casper/1_0_0/config.toml \
   &amp;&amp;  apt install -y logrotate \
   &amp;&amp;  logrotate -f /etc/logrotate.d/casper-node \
-  &amp;&amp;  /etc/casper/delete_local_db.sh
+  &amp;&amp;  /etc/casper/delete_local_db.sh; sleep 1
+ENV   CASPER_ENABLE_LEGACY_NET  TRUE
 EXPOSE  7777  8888  9999
-ENTRYPOINT [&quot;/usr/bin/casper-node&quot;,&quot;validator&quot;,&quot;/etc/casper/config.toml&quot;]
+ENTRYPOINT [&quot;/bin/sh&quot;,&quot;-c&quot;,&quot;exec /usr/bin/casper-node-launcher 1&gt;&gt; /var/log/casper/casper-node.log 2&gt;&gt; /var/log/casper/casper-node.stderr.log&quot;]
 </code></pre>
-<p><strong>docker-compose文件</strong></p>
+<p>需预先创建keys文件<br>
+手动运行一遍服务，将相关文件挂载出来<br>
+<strong>docker-compose文件</strong></p>
 <pre><code class="language-docker-compose.yml">version: '3'
  
 services:
 
    casper:
-     image: casper:0.7.3
+     image: casper:0.7.6
      container_name: casper-testnet
      ports:
        - 7777:7777 
        - 8888:8888
        - 9999:9999
-
+       - 35000:35000
      volumes:
        - /bsn/casper/validator_keys:/etc/casper/validator_keys/
-       - /bsn/casper/config.toml:/etc/casper/config.toml
+       - /bsn/casper/1_0_0:/etc/casper/1_0_0
        - /bsn/casper/data:/var/lib/casper/casper-node
      restart: always
 </code></pre>
-<p><strong>toml文件</strong></p>
-<pre><code class="language-toml">[node]
-chainspec_config_path = '/etc/casper/chainspec.toml'
- trusted_hash = 'f344cc2c672b9b7b83a704d1ea6158c02eafac59ccc5809cfdafbda0e8eb3a4d'
-[logging]
-format = 'json'
-color = false
-abbreviate_modules = false
-[consensus]
-secret_key_path = '/etc/casper/validator_keys/secret_key.pem'
-unit_hashes_folder = 'casper-node'
-pending_vertex_timeout = '2000ms'
-[network]
-public_address = '0.0.0.0:0'
-bind_address = '0.0.0.0:35000'
-known_addresses = ['54.183.27.75:35000']
-gossip_interval = 120_000
-systemd_support = false
-[rpc_server]
-address = '0.0.0.0:7777'
-[rest_server]
-address = '0.0.0.0:8888'
-[event_stream_server]
-address = '0.0.0.0:9999'
-event_stream_buffer_length = 100
-broadcast_channel_size = 100
-[storage]
-path = '/var/lib/casper/casper-node'
-max_block_store_size = 483_183_820_800
-max_deploy_store_size = 322_122_547_200
-max_deploy_metadata_store_size = 322_122_547_200
-max_state_store_size = 10_737_418_240
-[gossip]
-infection_target = 3
-saturation_limit_percent = 80
-finished_entry_duration_secs = 60
-gossip_request_timeout_secs = 30
-get_remainder_timeout_secs = 5
-[fetcher]
-get_from_peer_timeout = 3
-[deploy_acceptor]
-verify_accounts = true
-[contract_runtime]
-</code></pre>
-<p><strong>其中配置文件中的hash值是通过执行命令获取</strong></p>
-<pre><code class="language-bash">curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash
-</code></pre>
-<p>known_addresses参数值是找官方社区人员要的</p>
 <h2 id="其他命令">其他命令</h2>
 <p><strong>获取节点信息</strong></p>
 <pre><code class="language-bash">[root@casper]# curl http://localhost:8888/status |jq

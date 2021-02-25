@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>部署 redis，ipfs ，ipfs-gate，mongodb， rabbitmq | chris&#39;wang</title>
+<title>findora公链部署 | chris&#39;wang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -24,10 +24,10 @@
 
 
 
-    <meta name="description" content="登录ansible 节点 192.168.1.176
-/application/ansible-playbook/optimization/{java redis mongodb rabbitmq ipfs}
-在 /etc/ansible/..." />
-    <meta name="keywords" content="work" />
+    <meta name="description" content="docker方式部署
+首先运行
+docker run -it --rm -v &quot;/bsn/findora/data/tendermint:/tendermint&quot; tendermint/tendermint:v0.33...." />
+    <meta name="keywords" content="" />
   </head>
   <body>
     <div id="app" class="main">
@@ -98,59 +98,84 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">部署 redis，ipfs ，ipfs-gate，mongodb， rabbitmq</h2>
-            <div class="post-date">2021-01-11</div>
+            <h2 class="post-title">findora公链部署</h2>
+            <div class="post-date">2021-02-22</div>
             
             <div class="post-content" v-pre>
-              <p>登录ansible 节点 192.168.1.176</p>
-<p>/application/ansible-playbook/optimization/{java redis mongodb rabbitmq ipfs}</p>
-<p>在 /etc/ansible/inventory/   目录下添加 ipfs 的 hosts 文件<br>
-执行</p>
-<pre><code class="language-bash">#安装java
-cd  /application/ansible-playbook/optimization/java
-ansible-playbook -e host=ipfs install-java.yaml
-
-#安装redis
-cd /application/ansible-playbook/optimization/redis
-ansible-playbook -e host=ipfs  docker-compose-redis.yaml
-
-#安装ipfs
-cd /application/ansible-playbook/optimization/ipfs
-ansible-playbook -e host=ipfs  docker-compose-redis.yaml 
-#登录ipfs服务器修改conf文件
-
-核心属性
-&quot;GCPeriod&quot;: &quot;2h&quot;,
-    &quot;StorageGCWatermark&quot;: 100,
-&quot;StorageMax&quot;: &quot;1GB&quot;
-
-
-#安装mongodb
-cd  /application/ansible-playbook/optimization/mongodb
-ansible-playbook -e host=ipfs  install-mongodb.yaml
-
-# 安装ipfs-gate
-ipfs-gate由开发部署或者提供相关部署文档
-登录阿里云控制台添加ipfs-gate域名A记录（域名由开发提供）
+              <p>docker方式部署</p>
+<p><strong>首先运行</strong></p>
+<pre><code class="language-bash">docker run -it --rm -v &quot;/bsn/findora/data/tendermint:/tendermint&quot; tendermint/tendermint:v0.33.1 testnet --v 1 --o mainnet
 </code></pre>
-<p>找提供商开启服务器业务响应端口</p>
+<p><strong>docker-compsoe文件</strong></p>
+<pre><code class="language-yml">version: '3'
+services:
+  node:
+    container_name: findora_node
+    image: &quot;public.ecr.aws/k6m5b6e2/demo/tendermint:v0.1.0&quot;
+    command:
+      [
+        'node',
+        '--proxy_app=tcp://abci:26658',
+        '--rpc.laddr=tcp://0.0.0.0:26657'
+      ]
+
+    ports:
+      - &quot;26656-26657:26656-26657&quot;
+    volumes:
+      - /bsn/findora/data/tendermint/mainnet/node0:/root/.tendermint
+    depends_on:
+      - abci
+    restart: always
+
+  
+  abci:
+    container_name: findora_abci
+    image: &quot;public.ecr.aws/k6m5b6e2/demo/abci_validator_node:v0.1.0&quot;
+
+    environment:
+      - LEDGER_DIR=/var/ledger
+      - RUST_LOG=info,tokio_reactor=warn
+      - TENDERMINT_HOST=findora_node
+      - ABCI_HOST=0.0.0.0
+      - SERVER_HOST=0.0.0.0
+      - LEDGER_HOST=0.0.0.0
+      - RUST_LOG=info
+    ports:
+      - &quot;8668:8668&quot;
+      - &quot;8669:8669&quot;
+      - &quot;26658:26658&quot;
+    volumes:
+      - /bsn/findora/data/ledger:/var/ledger
+
+    restart: always
+
+
+  query_server:
+    container_name: findora_query_server
+    image: &quot;public.ecr.aws/k6m5b6e2/demo/query_server:v0.1.0&quot;
+
+    environment:
+      - LEDGER_HOST=findora_abci
+      - LEDGER_PORT=8668
+      - LEDGER_PROTOCOL=http
+      - QUERY_PORT=8667
+      - QUERY_SERVER_HOST=0.0.0.0
+      - RUST_LOG=info,tokio_reactor=warn
+    ports:
+      - &quot;8667:8667&quot;
+    depends_on:
+      - abci
+    restart: always
+</code></pre>
 
             </div>
-            
-              <div class="tag-container">
-                
-                  <a href="https://chriswsq.github.io/tag/fURWwtEfo/" class="tag">
-                    work
-                  </a>
-                
-              </div>
             
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://chriswsq.github.io/post/mongodb-ji-chu-zhi-shi-yu-bu-shu/">
+                <a href="https://chriswsq.github.io/post/casperlabs-ce-shi-wang-bu-shu/">
                   <h3 class="post-title">
-                    mongodb基础知识与部署
+                    Casper测试网部署
                   </h3>
                 </a>
               </div>

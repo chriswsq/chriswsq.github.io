@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>shell编程交互 脚本菜单 | chris&#39;wang</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1617783366892">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="这篇文章介绍一下Bash中的环境变量PS3。
+PS3 是什么
+PS3 是Prompt String 3的缩写，它是Linux/Unix下的一个用于控制select命令创建的菜单提示信息的环境变量。
+select使用介绍
+关于select的使..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://chriswsq.github.io">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1617783366892" class="site-logo">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      当你觉得无所事事时，那你就是在虚度光阴
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">shell编程交互 脚本菜单</h2>
+            <div class="post-date">2021-04-07</div>
+            
+            <div class="post-content" v-pre>
+              <p>这篇文章介绍一下Bash中的环境变量PS3。</p>
+<h2 id="ps3-是什么">PS3 是什么</h2>
+<p>PS3 是Prompt String 3的缩写，它是Linux/Unix下的一个用于控制select命令创建的菜单提示信息的环境变量。</p>
+<h2 id="select使用介绍">select使用介绍</h2>
+<p>关于select的使用介绍可以参看：</p>
+<p>https://liumiaocn.blog.csdn.net/article/details/104112272<br>
+————————————————</p>
+<h2 id="示例代码">示例代码</h2>
+<p>本文使用如下示例代码对PS3的使用进行说明：</p>
+<pre><code class="language-bash"> cat test-ps3.sh 
+#!/bin/sh
+
+IFS_OLD=$IFS
+IFS=/
+MENU_ITEMS=(&quot;Start Kubernetes&quot;/&quot;Stop Kubernetes&quot;/&quot;Restart Kubernetes&quot;/&quot;Status Kubernetes&quot;)
+echo &quot;[PS3]: $PS3&quot;
+select MENU_ITEM in ${MENU_ITEMS[@]}
+do
+    echo &quot;Menu Item Selected: $MENU_ITEM&quot;
+    break
+done
+IFS=$IFS_OLD
+</code></pre>
+<p>代码说明：功能非常简单，模拟显示一下Kubernetes启动、停止、重启以及状态显示的菜单生成。</p>
+<h2 id="ps3未设定下的select菜单提示">PS3未设定下的select菜单提示</h2>
+<p>PS3缺省没有设定时，select菜单等待用户输入的时候会提示#?，比如本文示例代码在PS3未设定时（缺省状态）的设定下执行结果如下所示</p>
+<pre><code class="language-bash">sh test-ps3.sh 
+[PS3]: 
+1) Start Kubernetes    3) Restart Kubernetes
+2) Stop Kubernetes     4) Status Kubernetes
+#? 4
+Menu Item Selected: Status Kubernetes
+
+</code></pre>
+<p>设定PS3修改select菜单提示信息<br>
+通过修改PS3可以间接修改select菜单的提示信息，比如我们通过export修改此环境变量的值，然后执行确认结果如下：</p>
+<pre><code class="language-bash">export PS3=&quot;Please input your choice: &gt;&quot;
+ sh test-ps3.sh 
+[PS3]: Please input your choice: &gt;
+1) Start Kubernetes    3) Restart Kubernetes
+2) Stop Kubernetes     4) Status Kubernetes
+Please input your choice: &gt;3
+Menu Item Selected: Restart Kubernetes
+
+</code></pre>
+<p>也可将PS3 变量定义到脚本文件之中<br>
+可以看到PS3的内容替代了缺省的#? ，修改了默认显示的信息，这也是PS3环境变量引入的重要原因。</p>
+<p>注意：本文示例代码中使用export环境变量的方式，是为了不修改示例代码进行PS3的使用说明，在实际的使用中直接修改之后使用即可发生变化。</p>
+<p>原文链接：https://blog.csdn.net/liumiaocn/article/details/104112574</p>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://chriswsq.github.io/post/shell-jiao-ben-ifshu-zi-tiao-jian-zi-fu-chuan-tiao-jian-zi-fu-chuan-wei-kong/">
+                  <h3 class="post-title">
+                    shell脚本----if（数字条件，字符串条件，字符串为空）
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

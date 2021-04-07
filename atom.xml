@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-03-24T04:21:05.990Z</updated>
+    <updated>2021-04-07T08:16:10.002Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,63 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[shell编程交互 脚本菜单]]></title>
+        <id>https://chriswsq.github.io/post/shell-bian-cheng-jiao-hu-jiao-ben-cai-dan/</id>
+        <link href="https://chriswsq.github.io/post/shell-bian-cheng-jiao-hu-jiao-ben-cai-dan/">
+        </link>
+        <updated>2021-04-07T08:08:21.000Z</updated>
+        <content type="html"><![CDATA[<p>这篇文章介绍一下Bash中的环境变量PS3。</p>
+<h2 id="ps3-是什么">PS3 是什么</h2>
+<p>PS3 是Prompt String 3的缩写，它是Linux/Unix下的一个用于控制select命令创建的菜单提示信息的环境变量。</p>
+<h2 id="select使用介绍">select使用介绍</h2>
+<p>关于select的使用介绍可以参看：</p>
+<p>https://liumiaocn.blog.csdn.net/article/details/104112272<br>
+————————————————</p>
+<h2 id="示例代码">示例代码</h2>
+<p>本文使用如下示例代码对PS3的使用进行说明：</p>
+<pre><code class="language-bash"> cat test-ps3.sh 
+#!/bin/sh
+
+IFS_OLD=$IFS
+IFS=/
+MENU_ITEMS=(&quot;Start Kubernetes&quot;/&quot;Stop Kubernetes&quot;/&quot;Restart Kubernetes&quot;/&quot;Status Kubernetes&quot;)
+echo &quot;[PS3]: $PS3&quot;
+select MENU_ITEM in ${MENU_ITEMS[@]}
+do
+    echo &quot;Menu Item Selected: $MENU_ITEM&quot;
+    break
+done
+IFS=$IFS_OLD
+</code></pre>
+<p>代码说明：功能非常简单，模拟显示一下Kubernetes启动、停止、重启以及状态显示的菜单生成。</p>
+<h2 id="ps3未设定下的select菜单提示">PS3未设定下的select菜单提示</h2>
+<p>PS3缺省没有设定时，select菜单等待用户输入的时候会提示#?，比如本文示例代码在PS3未设定时（缺省状态）的设定下执行结果如下所示</p>
+<pre><code class="language-bash">sh test-ps3.sh 
+[PS3]: 
+1) Start Kubernetes    3) Restart Kubernetes
+2) Stop Kubernetes     4) Status Kubernetes
+#? 4
+Menu Item Selected: Status Kubernetes
+
+</code></pre>
+<p>设定PS3修改select菜单提示信息<br>
+通过修改PS3可以间接修改select菜单的提示信息，比如我们通过export修改此环境变量的值，然后执行确认结果如下：</p>
+<pre><code class="language-bash">export PS3=&quot;Please input your choice: &gt;&quot;
+ sh test-ps3.sh 
+[PS3]: Please input your choice: &gt;
+1) Start Kubernetes    3) Restart Kubernetes
+2) Stop Kubernetes     4) Status Kubernetes
+Please input your choice: &gt;3
+Menu Item Selected: Restart Kubernetes
+
+</code></pre>
+<p>也可将PS3 变量定义到脚本文件之中<br>
+可以看到PS3的内容替代了缺省的#? ，修改了默认显示的信息，这也是PS3环境变量引入的重要原因。</p>
+<p>注意：本文示例代码中使用export环境变量的方式，是为了不修改示例代码进行PS3的使用说明，在实际的使用中直接修改之后使用即可发生变化。</p>
+<p>原文链接：https://blog.csdn.net/liumiaocn/article/details/104112574</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[shell脚本----if（数字条件，字符串条件，字符串为空）]]></title>
         <id>https://chriswsq.github.io/post/shell-jiao-ben-ifshu-zi-tiao-jian-zi-fu-chuan-tiao-jian-zi-fu-chuan-wei-kong/</id>
@@ -1159,45 +1216,6 @@ make start
 <li>运行数据库脚本：  update tb_cita_nodeinfo set status=1;   先执行ddl  再执行dml</li>
 <li>重新部署war包</li>
 </ol>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[aws-- Amazon  API  Gateway功能]]></title>
-        <id>https://chriswsq.github.io/post/aws-amazon-api-gateway-gong-neng/</id>
-        <link href="https://chriswsq.github.io/post/aws-amazon-api-gateway-gong-neng/">
-        </link>
-        <updated>2020-12-24T08:51:43.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="支持的api">支持的API</h2>
-<p>RESTful API、WebSocket API、HTTP API 和 REST API 私有 （只能从vpc访问的REST API）</p>
-<h2 id="特点">特点</h2>
-<p><strong>规则限流</strong><br>
-为API中每个HTTP方法设置限制规则，管理指向后端系统的流量</p>
-<p><strong>监控</strong><br>
-API调用次数，延迟和错误率，设置自定义报警</p>
-<p><strong>授权</strong><br>
-身份认证，连接管理，访问策略，lambda函数验证持有者令牌，（jwt令牌或saml断言）</p>
-<p><strong>秘钥</strong><br>
-REST API 可在gateway上创建API 秘钥，并设置权限，将其分发给第三方开发人员以访问API</p>
-<p><strong>生成开发工具包</strong><br>
-REST API 可以为大量平台生成客户端开发工具包，测试新API，分发给第三方开发人员。API Gateway 可以生成适用于 Java、JavaScript、Java for Android、Objective-C 或 Swift for iOS 和 Ruby 的客户端开发工具包。可以使用 AWS CLI，通过调用 get-sdk 命令为支持的平台生成 API 的开发工具包并下载。</p>
-<p><strong>API 生命周期管理</strong><br>
-REST API，API Gateway 使您可以同时运行同一 API 的多个版本，管理每个 API 版本的多个发布阶段</p>
-<p><strong>功能</strong><br>
-<strong>REST API</strong><br>
-API网关提供了REST API管理功能，例如：<br>
-支持使用OpenAPI的API网关扩展来生成SDK和创建API文档<br>
-限制HTTP请求<br>
-<strong>WebSocket API</strong><br>
-API网关提供WebSocket API管理功能，例如：<br>
-监视和限制连接和消息<br>
-使用AWS X-Ray跟踪通过API传递到后端服务的消息<br>
-轻松与HTTP / HTTPS端点集成</p>
-<p>rest api<br>
-客户端证书，秘钥</p>
-<p>websocke  api<br>
-客户端证书</p>
-<p>http  api<br>
-限制（路由限制和突增限制）   能监控  日志</p>
 ]]></content>
     </entry>
 </feed>

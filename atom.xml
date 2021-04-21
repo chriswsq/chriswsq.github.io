@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-04-07T08:19:46.507Z</updated>
+    <updated>2021-04-21T03:28:20.817Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,24 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[Docker中iptables规则在iptables重启后丢失的完整过程]]></title>
+        <id>https://chriswsq.github.io/post/docker-zhong-iptables-gui-ze-zai-iptables-chong-qi-hou-diu-shi-de-wan-zheng-guo-cheng/</id>
+        <link href="https://chriswsq.github.io/post/docker-zhong-iptables-gui-ze-zai-iptables-chong-qi-hou-diu-shi-de-wan-zheng-guo-cheng/">
+        </link>
+        <updated>2021-04-21T03:26:44.000Z</updated>
+        <content type="html"><![CDATA[<p>知识点</p>
+<p>1、netfilter与iptables的关系</p>
+<p>Netfilter是在Linux内核中的一个防火墙框架，用于管理网络数据包，不仅具有网络地址转换（NAT）的功能，也具有数据包内容修改，以及数据包过滤等防火墙功能。利用在用户空间的应用软件iptables等来控制Netfilter（iptables只是应用软件，工具）。<br>
+<img src="https://chriswsq.github.io/post-images/1618975661208.png" alt="" loading="lazy"></p>
+<p>2、iptables与firewalld的关系</p>
+<p>firewalld和iptables一样都是应用软件，是工具，但是他的底层还是先通过iptables。<br>
+<img src="https://chriswsq.github.io/post-images/1618975680713.png" alt="" loading="lazy"></p>
+<p>3、docker与firewalld、iptables的关系</p>
+<p>1）docker安装完成后，会自动接管iptables或者firewalld，在docker run的时候，会自动往iptables里加入规则；所以当iptables重启后会丢失，只有再重启docker就好了的原因。</p>
+<p>2）当使用Systemd 的时候， firewalld 会在 Docker 之前启动，但是如果你在 Docker 启动之后再启动 或者重启 firewalld ，就需要重启 Docker 进程了。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[shell编程交互 脚本菜单]]></title>
         <id>https://chriswsq.github.io/post/shell-bian-cheng-jiao-hu-jiao-ben-cai-dan/</id>
@@ -1144,78 +1162,6 @@ echo -e &quot;\033[K 清除光标到行尾的内容 \033[0m&quot;<br>
 #\033[?25h 显示光标<br>
 echo -e &quot;\033[?25l 隐藏光标 \033[0m&quot;<br>
 echo -e &quot;\033[?25h 显示光标 \033[0m&quot;</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[cita链管理升级步骤]]></title>
-        <id>https://chriswsq.github.io/post/cita-lian-guan-li-sheng-ji-bu-zou/</id>
-        <link href="https://chriswsq.github.io/post/cita-lian-guan-li-sheng-ji-bu-zou/">
-        </link>
-        <updated>2020-12-30T09:21:24.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="链管理升级步骤">链管理升级步骤：</h1>
-<ol>
-<li>
-<h3 id="停止链管理服务">停⽌链管理服务</h3>
-</li>
-</ol>
-<pre><code>kill $(cat /bsn/cita-manager/bsn-cita-chain-manager-v0.1/gunicorn.pid) 
-</code></pre>
-<ol start="2">
-<li>
-<h3 id="备份程序文件">备份程序文件</h3>
-</li>
-</ol>
-<pre><code class="language-bash">cp -rf /bsn/cita-manager/bsn-cita-chain-manager-v0.1 /bsn/cita-manager/bsn-cita-chain-manager-v0.1.20201229
-</code></pre>
-<ol start="3">
-<li>
-<h3 id="解压新代码包并将文件拷至老目录">解压新代码包并将⽂件拷⻉⾄⽼⽬录</h3>
-</li>
-</ol>
-<pre><code class="language-shell">tar xzvf bsn-cita-chain-manager-develop.tar.gz
-
-yes | cp -rf bsn-cita-chain-manager-develop/.   /bsn/cita-manager/bsn-cita-chain-manager-v0.1
-</code></pre>
-<ol start="3">
-<li>修改数据库密码</li>
-</ol>
-<pre><code class="language-bash"> cd  /bsn/cita-manager/bsn-cita-chain-manager-v0.1
- 修改cita.db中的表node  字段pwd
- 
-xxxxxxxx
-
-加密后的字符串为:
-
-xxxxxxxxxxxxxxxxxxx
-</code></pre>
-<ol start="3">
-<li>
-<h3 id="进入原链管理服务目录执行升级命令">进⼊原链管理服务⽬录，执⾏升级命令</h3>
-</li>
-</ol>
-<pre><code class="language-shell"> cd /bsn/cita-manager/bsn-cita-chain-manager-v0.1
-
- rm -rf logs 
-
- make update 
-</code></pre>
-<ol start="4">
-<li>
-<h3 id="将原来产生的链配置复制到链管理服务目录">将原来产⽣的链配置复制到链管理服务⽬录</h3>
-</li>
-</ol>
-<pre><code class="language-shell">mkdir chain-config 
-
-cp -rf /opt/all-chain-config/. /bsn/cita-manager/bsn-cita-chain-manager-v0.1/chain-config/ 
-
-make start 
-</code></pre>
-<p>节点管理升级步骤：</p>
-<ol>
-<li>运行数据库脚本：   dml20201118/ddl.sql    dml20201118/dml.sql</li>
-<li>运行数据库脚本：  update tb_cita_nodeinfo set status=1;   先执行ddl  再执行dml</li>
-<li>重新部署war包</li>
-</ol>
 ]]></content>
     </entry>
 </feed>

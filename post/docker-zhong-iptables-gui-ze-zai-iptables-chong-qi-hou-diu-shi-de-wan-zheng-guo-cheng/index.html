@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>cita链管理服务部署 | chris&#39;wang</title>
+<title>Docker中iptables规则在iptables重启后丢失的完整过程 | chris&#39;wang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -18,12 +18,9 @@
 
 
 
-    <meta name="description" content="1.链管理服务依赖环境
-•	python &gt;= 3.7.9
-•	docker &gt;= 19.0
-
-安装3.7.9版本参考：
-https://blog.csdn.net/lkgCSDN/article/details/8440332..." />
+    <meta name="description" content="知识点
+1、netfilter与iptables的关系
+Netfilter是在Linux内核中的一个防火墙框架，用于管理网络数据包，不仅具有网络地址转换（NAT）的功能，也具有数据包内容修改，以及数据包过滤等防火墙功能。利用在用户空间的应用..." />
     <meta name="keywords" content="" />
   </head>
   <body>
@@ -95,70 +92,29 @@ https://blog.csdn.net/lkgCSDN/article/details/8440332..." />
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">cita链管理服务部署</h2>
-            <div class="post-date">2020-10-29</div>
+            <h2 class="post-title">Docker中iptables规则在iptables重启后丢失的完整过程</h2>
+            <div class="post-date">2021-04-21</div>
             
             <div class="post-content" v-pre>
-              <h2 id="1链管理服务依赖环境">1.链管理服务依赖环境</h2>
-<p>•	python &gt;= 3.7.9<br>
-•	docker &gt;= 19.0</p>
-<ol>
-<li>安装3.7.9版本参考：<br>
-https://blog.csdn.net/lkgCSDN/article/details/84403329<br>
-https://chriswsq.github.io/post/elk-gao-jing-zhi-elastalert-bu-shu-ji-pei-zhi/</li>
-</ol>
-<p>ln -s  /usr/local/python3/bin/pip3  /usr/bin/pip3<br>
-ln -s  /usr/local/python3  /usr/bin/python3<br>
-ln -s /usr/local/python3/bin/gunicorn /usr/bin/gunicorn</p>
-<h2 id="2链管理服务部署步骤">2.链管理服务部署步骤</h2>
-<ul>
-<li>解压源码包并进入目录</li>
-</ul>
-<pre><code class="language-bash">tar xzvf bsn-cita-chain-manager.tar.gz
-cd bsn-cita-chain-manager
-</code></pre>
-<ul>
-<li>
-<p>安装依赖包<br>
-<code>pip3 install -r requirements.txt -i https://pypi.douban.com/simple</code></p>
-</li>
-<li>
-<p>生成pub_key、pri_key</p>
-</li>
-</ul>
-<p>通过cita-cli工具，执行 ./cita-cli key create --algorithm sm2，将 address 字段写入pub_key，将 private 字段写入pri_key</p>
-<ul>
-<li>修改配置文件</li>
-</ul>
-<pre><code class="language-bash">vim conf/config.py
-
-# 链节点密钥对的路径及文件名称
-PUBKEY_PATH = '/opt/pub_key'
-PRIKEY_PATH = '/opt/pri_key'
-
-# cita 镜像名称，rebirth 镜像名称以及 rebirth 依赖 mysql 的镜像名称（下文详细说明）
-CITA_IMAGE_VERSION = 'cita/cita-ee:1.3.1-sm2-sm3'
-MYSQL_IMAGE_VERSION = 'cita-for-bsn-mysql:5.7'
-REBIRTH_IMAGE_VERSION = 'cita-for-bsn-rebirth:0.1'
-
-# 链管理服务产生链配置的目录
-CHAIN_CONFIG_PATH = '/opt/all-chain-config'
-
-# 链节点 TLS 证书所在目录
-TLS_PATH = '/opt'
-
-# solc 编译器镜像名称
-SOLC_IMAGE_VERSION = 'ethereum/solc:0.4.24'
-</code></pre>
+              <p>知识点</p>
+<p>1、netfilter与iptables的关系</p>
+<p>Netfilter是在Linux内核中的一个防火墙框架，用于管理网络数据包，不仅具有网络地址转换（NAT）的功能，也具有数据包内容修改，以及数据包过滤等防火墙功能。利用在用户空间的应用软件iptables等来控制Netfilter（iptables只是应用软件，工具）。<br>
+<img src="https://chriswsq.github.io/post-images/1618975661208.png" alt="" loading="lazy"></p>
+<p>2、iptables与firewalld的关系</p>
+<p>firewalld和iptables一样都是应用软件，是工具，但是他的底层还是先通过iptables。<br>
+<img src="https://chriswsq.github.io/post-images/1618975680713.png" alt="" loading="lazy"></p>
+<p>3、docker与firewalld、iptables的关系</p>
+<p>1）docker安装完成后，会自动接管iptables或者firewalld，在docker run的时候，会自动往iptables里加入规则；所以当iptables重启后会丢失，只有再重启docker就好了的原因。</p>
+<p>2）当使用Systemd 的时候， firewalld 会在 Docker 之前启动，但是如果你在 Docker 启动之后再启动 或者重启 firewalld ，就需要重启 Docker 进程了。</p>
 
             </div>
             
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://chriswsq.github.io/post/docker-compsoe-bu-shu-kafka-ji-qun/">
+                <a href="https://chriswsq.github.io/post/shell-bian-cheng-jiao-hu-jiao-ben-cai-dan/">
                   <h3 class="post-title">
-                    docker-compsoe部署kafka集群
+                    shell编程交互 脚本菜单
                   </h3>
                 </a>
               </div>

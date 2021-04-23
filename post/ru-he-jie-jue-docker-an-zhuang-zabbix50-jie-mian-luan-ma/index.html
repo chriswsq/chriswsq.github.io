@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>databases | chris&#39;wang</title>
+<title>如何解决docker安装zabbix5.0界面乱码？ | chris&#39;wang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -18,7 +18,12 @@
 
 
 
-    <meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+    <meta name="description" content="zabbix图形界面乱码如下：
+
+解决：
+docker部署zabbix-web和源码安装zabbix-web一样，字体都是存储在/usr/share/zabbix/assets/fonts/
+1、从windown拷贝simkai.ttf(楷..." />
+    <meta name="keywords" content="monitor" />
   </head>
   <body>
     <div id="app" class="main">
@@ -88,28 +93,50 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          <h2 class="current-tag">标签: databases</h2>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://chriswsq.github.io/post/mongodb-ji-chu-zhi-shi-yu-bu-shu/">
-                  <h2 class="post-title">mongodb基础知识与部署</h2>
-                </a>
-                <div class="post-date">
-                  2021-01-11
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-            </article>
-          
+          <div class="post-detail">
+            <h2 class="post-title">如何解决docker安装zabbix5.0界面乱码？</h2>
+            <div class="post-date">2021-04-23</div>
+            
+            <div class="post-content" v-pre>
+              <p>zabbix图形界面乱码如下：<br>
+<img src="https://chriswsq.github.io/post-images/1619143542413.png" alt="" loading="lazy"></p>
+<p>解决：</p>
+<p>docker部署zabbix-web和源码安装zabbix-web一样，字体都是存储在/usr/share/zabbix/assets/fonts/</p>
+<p>1、从windown拷贝simkai.ttf(楷体)文件到docker的zabbix-web里面</p>
+<pre><code class="language-bash">1、字体存在于Windows的路径C:\Windows\Fonts
+2、拷贝到服务器
+3、拷贝字体到docker 容器内部# docker cp ./simkai.ttf zabbix-web:/usr/share/zabbix/assets/fonts/
+4、进入容器#docker exec -it zabbix-web bash
+5、备份以前的字体文件# mv /usr/share/zabbix/assets/fonts/DejaVuSans.ttf /usr/share/zabbix/assets/fonts/DejaVuSans.ttf_bak
+6、链接# ln -s /usr/share/zabbix/assets/fonts/simkai.ttf /usr/share/zabbix/assets/fonts/DejaVuSans.ttf
+</code></pre>
+<p>然后刷新界面，就可以正常显示了。</p>
+<p>如果是使用的 镜像 zabbix-web-apache-mysql ，和 镜像 zabbix-web-nginx-mysql 的操作一致。</p>
 
-          <div class="pagination-container">
-  
-  
-</div>
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://chriswsq.github.io/tag/GF9B9x5r8/" class="tag">
+                    monitor
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://chriswsq.github.io/post/docker-zhong-iptables-gui-ze-zai-iptables-chong-qi-hou-diu-shi-de-wan-zheng-guo-cheng/">
+                  <h3 class="post-title">
+                    Docker中iptables规则在iptables重启后丢失的完整过程
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
 
         </div>
       </div>

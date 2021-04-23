@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-04-21T06:55:18.497Z</updated>
+    <updated>2021-04-23T07:29:14.311Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,28 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[如何解决docker安装zabbix5.0界面乱码？]]></title>
+        <id>https://chriswsq.github.io/post/ru-he-jie-jue-docker-an-zhuang-zabbix50-jie-mian-luan-ma/</id>
+        <link href="https://chriswsq.github.io/post/ru-he-jie-jue-docker-an-zhuang-zabbix50-jie-mian-luan-ma/">
+        </link>
+        <updated>2021-04-23T02:04:18.000Z</updated>
+        <content type="html"><![CDATA[<p>zabbix图形界面乱码如下：<br>
+<img src="https://chriswsq.github.io/post-images/1619143542413.png" alt="" loading="lazy"></p>
+<p>解决：</p>
+<p>docker部署zabbix-web和源码安装zabbix-web一样，字体都是存储在/usr/share/zabbix/assets/fonts/</p>
+<p>1、从windown拷贝simkai.ttf(楷体)文件到docker的zabbix-web里面</p>
+<pre><code class="language-bash">1、字体存在于Windows的路径C:\Windows\Fonts
+2、拷贝到服务器
+3、拷贝字体到docker 容器内部# docker cp ./simkai.ttf zabbix-web:/usr/share/zabbix/assets/fonts/
+4、进入容器#docker exec -it zabbix-web bash
+5、备份以前的字体文件# mv /usr/share/zabbix/assets/fonts/DejaVuSans.ttf /usr/share/zabbix/assets/fonts/DejaVuSans.ttf_bak
+6、链接# ln -s /usr/share/zabbix/assets/fonts/simkai.ttf /usr/share/zabbix/assets/fonts/DejaVuSans.ttf
+</code></pre>
+<p>然后刷新界面，就可以正常显示了。</p>
+<p>如果是使用的 镜像 zabbix-web-apache-mysql ，和 镜像 zabbix-web-nginx-mysql 的操作一致。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Docker中iptables规则在iptables重启后丢失的完整过程]]></title>
         <id>https://chriswsq.github.io/post/docker-zhong-iptables-gui-ze-zai-iptables-chong-qi-hou-diu-shi-de-wan-zheng-guo-cheng/</id>
@@ -1052,116 +1074,6 @@ use db001
 auth=true
 </code></pre>
 <p>参考自：https://www.jianshu.com/p/62736bff7e2e</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[shell脚本输出带颜色字体]]></title>
-        <id>https://chriswsq.github.io/post/shell-jiao-ben-shu-chu-dai-yan-se-zi-ti/</id>
-        <link href="https://chriswsq.github.io/post/shell-jiao-ben-shu-chu-dai-yan-se-zi-ti/">
-        </link>
-        <updated>2020-12-30T09:45:10.000Z</updated>
-        <content type="html"><![CDATA[<p>输出特效格式控制：<br>
-\033[0m  关闭所有属性<br>
-\033[1m   设置高亮度<br>
-\03[4m   下划线<br>
-\033[5m   闪烁<br>
-\033[7m   反显<br>
-\033[8m   消隐<br>
-\033[30m   --   \033[37m   设置前景色<br>
-\033[40m   --   \033[47m   设置背景色</p>
-<p>光标位置等的格式控制：<br>
-\033[nA  光标上移n行<br>
-\03[nB   光标下移n行<br>
-\033[nC   光标右移n行<br>
-\033[nD   光标左移n行<br>
-\033[y;xH设置光标位置<br>
-\033[2J   清屏<br>
-\033[K   清除从光标到行尾的内容<br>
-\033[s   保存光标位置<br>
-\033[u   恢复光标位置<br>
-\033[?25l   隐藏光标</p>
-<p>\33[?25h   显示光标</p>
-<p>整理：<br>
-编码 颜色/动作<br>
-　　0   重新设置属性到缺省设置<br>
-　　1   设置粗体<br>
-　　2   设置一半亮度(模拟彩色显示器的颜色)<br>
-　　4   设置下划线(模拟彩色显示器的颜色)<br>
-　　5   设置闪烁<br>
-　　7   设置反向图象<br>
-　　22 设置一般密度<br>
-　　24 关闭下划线<br>
-　　25 关闭闪烁<br>
-　　27 关闭反向图象<br>
-　　30 设置黑色前景<br>
-　　31 设置红色前景<br>
-　　32 设置绿色前景<br>
-　　33 设置棕色前景<br>
-　　34 设置蓝色前景<br>
-　　35 设置紫色前景<br>
-　　36 设置青色前景<br>
-　　37 设置白色前景<br>
-　　38 在缺省的前景颜色上设置下划线<br>
-　　39 在缺省的前景颜色上关闭下划线<br>
-　　40 设置黑色背景<br>
-　　41 设置红色背景<br>
-　　42 设置绿色背景<br>
-　　43 设置棕色背景<br>
-　　44 设置蓝色背景<br>
-　　45 设置紫色背景<br>
-　　46 设置青色背景<br>
-　　47 设置白色背景<br>
-　　49 设置缺省黑色背景<br>
-特效可以叠加，需要使用“;”隔开，例如：闪烁+下划线+白底色+黑字为   \033[5;4;47;30m闪烁+下划线+白底色+黑字为\033[0m<br>
-下面是一段小例子</p>
-<p>[plain] view plain copy<br>
-#!/bin/bash</p>
-<h1 id=""></h1>
-<p>#下面是字体输出颜色及终端格式控制<br>
-#字体色范围：30-37<br>
-echo -e &quot;\033[30m 黑色字 \033[0m&quot;<br>
-echo -e &quot;\033[31m 红色字 \033[0m&quot;<br>
-echo -e &quot;\033[32m 绿色字 \033[0m&quot;<br>
-echo -e &quot;\033[33m 黄色字 \033[0m&quot;<br>
-echo -e &quot;\033[34m 蓝色字 \033[0m&quot;<br>
-echo -e &quot;\033[35m 紫色字 \033[0m&quot;<br>
-echo -e &quot;\033[36m 天蓝字 \033[0m&quot;<br>
-echo -e &quot;\033[37m 白色字 \033[0m&quot;<br>
-#字背景颜色范围：40-47<br>
-echo -e &quot;\033[40;37m 黑底白字 \033[0m&quot;<br>
-echo -e &quot;\033[41;30m 红底黑字 \033[0m&quot;<br>
-echo -e &quot;\033[42;34m 绿底蓝字 \033[0m&quot;<br>
-echo -e &quot;\033[43;34m 黄底蓝字 \033[0m&quot;<br>
-echo -e &quot;\033[44;30m 蓝底黑字 \033[0m&quot;<br>
-echo -e &quot;\033[45;30m 紫底黑字 \033[0m&quot;<br>
-echo -e &quot;\033[46;30m 天蓝底黑字 \033[0m&quot;<br>
-echo -e &quot;\033[47;34m 白底蓝字 \033[0m&quot;</p>
-<p>#控制选项说明<br>
-#\033[0m 关闭所有属性<br>
-#\033[1m 设置高亮度<br>
-#\033[4m 下划线<br>
-echo -e &quot;\033[4;31m 下划线红字 \033[0m&quot;<br>
-#闪烁<br>
-echo -e &quot;\033[5;34m 红字在闪烁 \033[0m&quot;<br>
-#反影<br>
-echo -e &quot;\033[8m 消隐 \033[0m &quot;</p>
-<p>#\033[30m-\033[37m 设置前景色<br>
-#\033[40m-\033[47m 设置背景色<br>
-#\033[nA光标上移n行<br>
-#\033[nB光标下移n行<br>
-echo -e &quot;\033[4A 光标上移4行 \033[0m&quot;<br>
-#\033[nC光标右移n行<br>
-#\033[nD光标左移n行<br>
-#\033[y;xH设置光标位置<br>
-#\033[2J清屏<br>
-#\033[K清除从光标到行尾的内容<br>
-echo -e &quot;\033[K 清除光标到行尾的内容 \033[0m&quot;<br>
-#\033[s 保存光标位置<br>
-#\033[u 恢复光标位置<br>
-#\033[?25| 隐藏光标<br>
-#\033[?25h 显示光标<br>
-echo -e &quot;\033[?25l 隐藏光标 \033[0m&quot;<br>
-echo -e &quot;\033[?25h 显示光标 \033[0m&quot;</p>
 ]]></content>
     </entry>
 </feed>

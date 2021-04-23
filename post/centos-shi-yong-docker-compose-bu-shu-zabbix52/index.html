@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>findora公链部署 | chris&#39;wang</title>
+<title>centos使用docker-compose部署zabbix5.2 | chris&#39;wang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -18,9 +18,13 @@
 
 
 
-    <meta name="description" content="docker方式部署
-首先运行
-docker run -it --rm -v &quot;/bsn/findora/data/tendermint:/tendermint&quot; tendermint/tendermint:v0.33...." />
+    <meta name="description" content="version: '3'
+services:
+ zabbix_mysql:
+    image: mysql:5.7
+    container_name: zabbix_mysql
+    environment:
+      - &qu..." />
     <meta name="keywords" content="" />
   </head>
   <body>
@@ -92,74 +96,96 @@ docker run -it --rm -v &quot;/bsn/findora/data/tendermint:/tendermint&quot; tend
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">findora公链部署</h2>
-            <div class="post-date">2021-02-22</div>
+            <h2 class="post-title">centos使用docker-compose部署zabbix5.2</h2>
+            <div class="post-date">2021-04-23</div>
             
             <div class="post-content" v-pre>
-              <p>docker方式部署</p>
-<p><strong>首先运行</strong></p>
-<pre><code class="language-bash">docker run -it --rm -v &quot;/bsn/findora/data/tendermint:/tendermint&quot; tendermint/tendermint:v0.33.1 testnet --v 1 --o mainnet
-</code></pre>
-<p><strong>docker-compsoe文件</strong></p>
-<pre><code class="language-yml">version: '3'
+              <pre><code class="language-yaml">version: '3'
 services:
-  node:
-    container_name: findora_node
-    image: &quot;public.ecr.aws/k6m5b6e2/demo/tendermint:v0.1.0&quot;
-    command:
-      [
-        'node',
-        '--proxy_app=tcp://abci:26658',
-        '--rpc.laddr=tcp://0.0.0.0:26657'
-      ]
-
-    ports:
-      - &quot;26656-26657:26656-26657&quot;
-    volumes:
-      - /bsn/findora/data/tendermint/mainnet/node0:/root/.tendermint
-    depends_on:
-      - abci
-    restart: always
-
-  
-  abci:
-    container_name: findora_abci
-    image: &quot;public.ecr.aws/k6m5b6e2/demo/abci_validator_node:v0.1.0&quot;
-
+ zabbix_mysql:
+    image: mysql:5.7
+    container_name: zabbix_mysql
     environment:
-      - LEDGER_DIR=/var/ledger
-      - RUST_LOG=info,tokio_reactor=warn
-      - TENDERMINT_HOST=findora_node
-      - ABCI_HOST=0.0.0.0
-      - SERVER_HOST=0.0.0.0
-      - LEDGER_HOST=0.0.0.0
-      - RUST_LOG=info
-    ports:
-      - &quot;8668:8668&quot;
-      - &quot;8669:8669&quot;
-      - &quot;26658:26658&quot;
+      - &quot;MYSQL_USER=zabbix&quot;
+      - &quot;MYSQL_ROOT_PASSWORD=zabbix_test&quot;
+      - &quot;MYSQL_DATABASE=zabbix_test&quot;
+    command: --character-set-server=utf8 --collation-server=utf8_bin
     volumes:
-      - /bsn/findora/data/ledger:/var/ledger
-
-    restart: always
-
-
-  query_server:
-    container_name: findora_query_server
-    image: &quot;public.ecr.aws/k6m5b6e2/demo/query_server:v0.1.0&quot;
-
-    environment:
-      - LEDGER_HOST=findora_abci
-      - LEDGER_PORT=8668
-      - LEDGER_PROTOCOL=http
-      - QUERY_PORT=8667
-      - QUERY_SERVER_HOST=0.0.0.0
-      - RUST_LOG=info,tokio_reactor=warn
+      - /bsn/zabbix/mysql:/var/lib/mysql
+    networks:
+      zabbix:
+        ipv4_address: 172.16.0.3
     ports:
-      - &quot;8667:8667&quot;
-    depends_on:
-      - abci
+      - &quot;3306:3306&quot;
     restart: always
+
+ zabbix-java-gateway:
+    image: zabbix/zabbix-java-gateway:centos-5.2-latest
+    container_name: zabbix-java-gateway
+    networks:
+      zabbix:
+        ipv4_address: 172.16.0.4
+    restart: always
+
+ zabbix-server:
+    image: zabbix/zabbix-server-mysql:centos-5.2-latest
+    container_name: zabbix_server
+    links:
+      - zabbix_mysql:mysql
+      - zabbix-java-gateway:zabbix-java-gateway
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+      - /bsn/zabbix/alertscripts:/usr/lib/zabbix/alertscripts
+      - /bsn/zabbix/externalscripts:/usr/lib/zabbix/externalscripts
+    networks:
+      zabbix:
+        ipv4_address: 172.16.0.5
+    environment:
+      - &quot;DB_SERVER_HOST=zabbix_mysql&quot;
+      - &quot;MYSQL_DATABASE=zabbix&quot;
+      - &quot;MYSQL_USER=zabbix&quot;
+      - &quot;MYSQL_PASSWORD=zabbix_test&quot;
+      - &quot;MYSQL_ROOT_PASSWORD=zabbix_test&quot;
+      - &quot;ZBX_JAVAGATEWAY=zabbix-java-gateway&quot;
+    ports:
+      - 10051:10051
+    restart: always
+
+ zabbix-web:
+    container_name: zabbix-web
+    image: zabbix/zabbix-web-nginx-mysql:centos-5.2-latest
+    networks:
+      zabbix:
+        ipv4_address: 172.16.0.6
+    links:
+      - zabbix_mysql:mysql
+      - zabbix-java-gateway:zabbix-java-gateway
+    environment:
+      - &quot;DB_SERVER_HOST=zabbix_mysql&quot;
+      - &quot;MYSQL_DATABASE=zabbix&quot;
+      - &quot;MYSQL_USER=zabbix&quot;
+      - &quot;MYSQL_PASSWORD=zabbix_test&quot;
+      - &quot;MYSQL_ROOT_PASSWORD=zabbix_test&quot;
+      - &quot;PHP_TZ=Asia/Shanghai&quot;
+    ports:
+      - 8088:8080
+    restart: always
+networks:
+  zabbix:
+    ipam:
+      config:
+      - subnet: 172.16.0.0/24
+</code></pre>
+<p>#调整zabbix-web乱码</p>
+<pre><code class="language-bash">将SIMKAI.ttf 拷贝至 zaabix-web容器 /usr/share/zabbix/assets/fonts/
+docker cp ./fonts/SIMKAI.ttf zabbix-web:/usr/share/zabbix/assets/fonts/
+docker exec -it zabbix-web bash
+vi /usr/share/zabbix/include/defines.inc.php
+# 更改前
+define('ZBX_GRAPH_FONT_NAME',           'DejaVuSans'); // font file name
+# 更改后
+define('ZBX_GRAPH_FONT_NAME',           'SIMKAI'); // font file name
 </code></pre>
 
             </div>
@@ -167,9 +193,9 @@ services:
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://chriswsq.github.io/post/casperlabs-ce-shi-wang-bu-shu/">
+                <a href="https://chriswsq.github.io/post/ru-he-jie-jue-docker-an-zhuang-zabbix50-jie-mian-luan-ma/">
                   <h3 class="post-title">
-                    Casper测试网部署
+                    如何解决docker安装zabbix5.0界面乱码？
                   </h3>
                 </a>
               </div>

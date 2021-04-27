@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-04-23T07:33:06.162Z</updated>
+    <updated>2021-04-27T03:21:52.043Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,65 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[docker-compose 安装7.5.4 grafana 连接zabbix]]></title>
+        <id>https://chriswsq.github.io/post/docker-compose-an-zhuang-754-grafana-lian-jie-zabbix/</id>
+        <link href="https://chriswsq.github.io/post/docker-compose-an-zhuang-754-grafana-lian-jie-zabbix/">
+        </link>
+        <updated>2021-04-23T08:44:24.000Z</updated>
+        <content type="html"><![CDATA[<p>先docker run将grafana的配置文件拷贝出来</p>
+<pre><code class="language-bash">docker run -d --name grafana -p 3000:3000 grafana/grafana:7.5.4
+docker cp  grafana:/etc/grafana/grafana.ini  ./grafana
+docker cp grafana:/var/lib/grafana/ ./grafana/
+</code></pre>
+<p>然后删除该容器<br>
+<code>docker rm -f grafana</code></p>
+<pre><code class="language-yaml">version: '3.3'
+services:
+  grafana:
+    image: grafana/grafana:7.5.4
+    container_name: grafana
+    restart: always
+    privileged: true
+    user: root
+    ports:
+      - 3000:3000
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana:/var/lib/grafana
+      - /etc/localtime:/etc/localtime
+      #log目录，后期会写入log文件
+      - ./log:/var/log/grafana
+</code></pre>
+<p>运行服务<br>
+<code>docker-compose up -d</code></p>
+<p>根据需求到这里去安装插件<br>
+https://grafana.com/grafana/plugins/</p>
+<p>例如zabbix<br>
+<img src="https://chriswsq.github.io/post-images/1619167841395.png" alt="" loading="lazy"></p>
+<p>点击如下图标，进入zabbix插件页面</p>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1619167891670.png" alt="" loading="lazy"></figure>
+<p>执行安装zabbix插件命令 grafana-cli plugins install alexanderzobnin-zabbix-app<br>
+安装完毕后重启下grafana</p>
+<p>需要登录grafana页面进行开启插件<br>
+<img src="https://chriswsq.github.io/post-images/1619168020331.png" alt="" loading="lazy"></p>
+<p>在zabbix添加用于grafana的只读用户名<br>
+添加用户组 名称grafana<br>
+<img src="https://chriswsq.github.io/post-images/1619168928828.png" alt="" loading="lazy"></p>
+<p>添加用户，归到grafana组中<br>
+<img src="https://chriswsq.github.io/post-images/1619169057554.png" alt="" loading="lazy"><br>
+权限类型为用户</p>
+<p>下面在grafana上编辑zabbix数据源，填写相关信息，保存<br>
+<img src="https://chriswsq.github.io/post-images/1619317154506.png" alt="" loading="lazy"><br>
+因为这里使用docker部署的zabbix和grafana所以url为<br>
+http://{{ IP }}:8088/api_jsonrpc.php<br>
+如果是宿主机部署的话，则是<br>
+http://{{ IP }}:8088/zabbix/api_jsonrpc.php<br>
+负责会报404</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[centos使用docker-compose部署zabbix5.2]]></title>
         <id>https://chriswsq.github.io/post/centos-shi-yong-docker-compose-bu-shu-zabbix52/</id>
@@ -27,6 +86,7 @@ services:
       - &quot;MYSQL_DATABASE=zabbix_test&quot;
     command: --character-set-server=utf8 --collation-server=utf8_bin
     volumes:
+      - /etc/localtime:/etc/localtime
       - /bsn/zabbix/mysql:/var/lib/mysql
     networks:
       zabbix:
@@ -939,46 +999,6 @@ Message published
 </tr>
 </tbody>
 </table>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[部署 redis，ipfs ，ipfs-gate，mongodb， rabbitmq]]></title>
-        <id>https://chriswsq.github.io/post/bu-shu-redisipfs-ipfs-gatemongodb-rabbitmq/</id>
-        <link href="https://chriswsq.github.io/post/bu-shu-redisipfs-ipfs-gatemongodb-rabbitmq/">
-        </link>
-        <updated>2021-01-11T08:07:48.000Z</updated>
-        <content type="html"><![CDATA[<p>登录ansible 节点 192.168.1.176</p>
-<p>/application/ansible-playbook/optimization/{java redis mongodb rabbitmq ipfs}</p>
-<p>在 /etc/ansible/inventory/   目录下添加 ipfs 的 hosts 文件<br>
-执行</p>
-<pre><code class="language-bash">#安装java
-cd  /application/ansible-playbook/optimization/java
-ansible-playbook -e host=ipfs install-java.yaml
-
-#安装redis
-cd /application/ansible-playbook/optimization/redis
-ansible-playbook -e host=ipfs  docker-compose-redis.yaml
-
-#安装ipfs
-cd /application/ansible-playbook/optimization/ipfs
-ansible-playbook -e host=ipfs  docker-compose-redis.yaml 
-#登录ipfs服务器修改conf文件
-
-核心属性
-&quot;GCPeriod&quot;: &quot;2h&quot;,
-    &quot;StorageGCWatermark&quot;: 100,
-&quot;StorageMax&quot;: &quot;1GB&quot;
-
-
-#安装mongodb
-cd  /application/ansible-playbook/optimization/mongodb
-ansible-playbook -e host=ipfs  install-mongodb.yaml
-
-# 安装ipfs-gate
-ipfs-gate由开发部署或者提供相关部署文档
-登录阿里云控制台添加ipfs-gate域名A记录（域名由开发提供）
-</code></pre>
-<p>找提供商开启服务器业务响应端口</p>
 ]]></content>
     </entry>
 </feed>

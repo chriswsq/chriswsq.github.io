@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>docker-compose 安装7.5.4 grafana 连接zabbix | chris&#39;wang</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1619493708476">
+<link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="先docker run将grafana的配置文件拷贝出来
+docker run -d --name grafana -p 3000:3000 grafana/grafana:7.5.4
+docker cp  grafana:/etc/gra..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://chriswsq.github.io">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1619493708476" class="site-logo">
+        <h1 class="site-title">chris&#39;wang</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      当你觉得无所事事时，那你就是在虚度光阴
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chriswsq.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">docker-compose 安装7.5.4 grafana 连接zabbix</h2>
+            <div class="post-date">2021-04-23</div>
+            
+            <div class="post-content" v-pre>
+              <p>先docker run将grafana的配置文件拷贝出来</p>
+<pre><code class="language-bash">docker run -d --name grafana -p 3000:3000 grafana/grafana:7.5.4
+docker cp  grafana:/etc/grafana/grafana.ini  ./grafana
+docker cp grafana:/var/lib/grafana/ ./grafana/
+</code></pre>
+<p>然后删除该容器<br>
+<code>docker rm -f grafana</code></p>
+<pre><code class="language-yaml">version: '3.3'
+services:
+  grafana:
+    image: grafana/grafana:7.5.4
+    container_name: grafana
+    restart: always
+    privileged: true
+    user: root
+    ports:
+      - 3000:3000
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana:/var/lib/grafana
+      - /etc/localtime:/etc/localtime
+      #log目录，后期会写入log文件
+      - ./log:/var/log/grafana
+</code></pre>
+<p>运行服务<br>
+<code>docker-compose up -d</code></p>
+<p>根据需求到这里去安装插件<br>
+https://grafana.com/grafana/plugins/</p>
+<p>例如zabbix<br>
+<img src="https://chriswsq.github.io/post-images/1619167841395.png" alt="" loading="lazy"></p>
+<p>点击如下图标，进入zabbix插件页面</p>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1619167891670.png" alt="" loading="lazy"></figure>
+<p>执行安装zabbix插件命令 grafana-cli plugins install alexanderzobnin-zabbix-app<br>
+安装完毕后重启下grafana</p>
+<p>需要登录grafana页面进行开启插件<br>
+<img src="https://chriswsq.github.io/post-images/1619168020331.png" alt="" loading="lazy"></p>
+<p>在zabbix添加用于grafana的只读用户名<br>
+添加用户组 名称grafana<br>
+<img src="https://chriswsq.github.io/post-images/1619168928828.png" alt="" loading="lazy"></p>
+<p>添加用户，归到grafana组中<br>
+<img src="https://chriswsq.github.io/post-images/1619169057554.png" alt="" loading="lazy"><br>
+权限类型为用户</p>
+<p>下面在grafana上编辑zabbix数据源，填写相关信息，保存<br>
+<img src="https://chriswsq.github.io/post-images/1619317154506.png" alt="" loading="lazy"><br>
+因为这里使用docker部署的zabbix和grafana所以url为<br>
+http://{{ IP }}:8088/api_jsonrpc.php<br>
+如果是宿主机部署的话，则是<br>
+http://{{ IP }}:8088/zabbix/api_jsonrpc.php<br>
+负责会报404</p>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://chriswsq.github.io/post/centos-shi-yong-docker-compose-bu-shu-zabbix52/">
+                  <h3 class="post-title">
+                    centos使用docker-compose部署zabbix5.2
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>xuperchain | chris&#39;wang</title>
+<title>安装jenkins | chris&#39;wang</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -18,7 +18,12 @@
 
 
 
-    <meta name="description" content="当你觉得无所事事时，那你就是在虚度光阴">
+    <meta name="description" content="1、先安装jdk
+首先执行以下命令查看可安装的jdk版本：yum -y list java*
+选择一个版本安装 yum install -y java-1.8.0-openjdk-devel.x86_64
+等待安装即可
+安装完成之后，查看安..." />
+    <meta name="keywords" content="" />
   </head>
   <body>
     <div id="app" class="main">
@@ -88,75 +93,44 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          <h2 class="current-tag">标签: xuperchain</h2>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://chriswsq.github.io/post/xuperchian change Common node/">
-                  <h2 class="post-title">xuperchian  建链未成功手动修复</h2>
-                </a>
-                <div class="post-date">
-                  2020-09-18
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://chriswsq.github.io/post/xuperchian-change-Common-node/">
-                  <h2 class="post-title">xuperchian 增减共识节点、添加群组操作步骤</h2>
-                </a>
-                <div class="post-date">
-                  2020-09-15
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://chriswsq.github.io/post/xuperchain-tian-jia-kuang-gong-jie-dian/">
-                  <h2 class="post-title">xuperchain添加旷工节点</h2>
-                </a>
-                <div class="post-date">
-                  2020-08-20
-                </div>
-                <div class="post-abstract">
-                  <p>xuperchain通过提案动态添加旷工节点</p>
+          <div class="post-detail">
+            <h2 class="post-title">安装jenkins</h2>
+            <div class="post-date">2021-04-27</div>
+            
+            <div class="post-content" v-pre>
+              <p>1、先安装jdk</p>
+<p>首先执行以下命令查看可安装的jdk版本：yum -y list java*</p>
+<p>选择一个版本安装 yum install -y java-1.8.0-openjdk-devel.x86_64</p>
+<p>等待安装即可</p>
+<p>安装完成之后，查看安装的jdk版本，输入以下指令：java -version</p>
+<p>2、安装jenkins</p>
+<p>wget -O ：下载并以不同的文件名保存</p>
+<p>yum的repo中默认没有Jenkins，需要先将Jenkins存储库添加到yum repos，执行下面的命令：<br>
+<code>wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo</code><br>
+然后执行下面的命令：<br>
+<code>rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key</code><br>
+然后 安装Jenkins<br>
+<code>yum install -y jenkins 默认安装最新的</code><br>
+启动jenkins：service jenkins start</p>
+<p>默认端口是8080</p>
+<p>访问 ip:8080/jenkins   完成配置即可</p>
 
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://chriswsq.github.io/post/sheng-chan-xuperchain-bu-shu-wen-dang/">
-                  <h2 class="post-title">生产xuperchain部署文档</h2>
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://chriswsq.github.io/post/docker-compose-an-zhuang-754-grafana-lian-jie-zabbix/">
+                  <h3 class="post-title">
+                    docker-compose 安装7.5.4 grafana 连接zabbix
+                  </h3>
                 </a>
-                <div class="post-date">
-                  2020-08-20
-                </div>
-                <div class="post-abstract">
-                  <p>百度区块链部署xuperchain</p>
-
-                </div>
               </div>
-              
-            </article>
-          
+            
 
-          <div class="pagination-container">
-  
-  
-</div>
+            
+
+          </div>
 
         </div>
       </div>

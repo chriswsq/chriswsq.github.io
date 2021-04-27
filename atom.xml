@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-04-27T03:21:52.043Z</updated>
+    <updated>2021-04-27T05:37:55.146Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,30 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[安装jenkins]]></title>
+        <id>https://chriswsq.github.io/post/an-zhuang-jenkins/</id>
+        <link href="https://chriswsq.github.io/post/an-zhuang-jenkins/">
+        </link>
+        <updated>2021-04-27T05:36:31.000Z</updated>
+        <content type="html"><![CDATA[<p>1、先安装jdk</p>
+<p>首先执行以下命令查看可安装的jdk版本：yum -y list java*</p>
+<p>选择一个版本安装 yum install -y java-1.8.0-openjdk-devel.x86_64</p>
+<p>等待安装即可</p>
+<p>安装完成之后，查看安装的jdk版本，输入以下指令：java -version</p>
+<p>2、安装jenkins</p>
+<p>wget -O ：下载并以不同的文件名保存</p>
+<p>yum的repo中默认没有Jenkins，需要先将Jenkins存储库添加到yum repos，执行下面的命令：<br>
+<code>wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo</code><br>
+然后执行下面的命令：<br>
+<code>rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key</code><br>
+然后 安装Jenkins<br>
+<code>yum install -y jenkins 默认安装最新的</code><br>
+启动jenkins：service jenkins start</p>
+<p>默认端口是8080</p>
+<p>访问 ip:8080/jenkins   完成配置即可</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[docker-compose 安装7.5.4 grafana 连接zabbix]]></title>
         <id>https://chriswsq.github.io/post/docker-compose-an-zhuang-754-grafana-lian-jie-zabbix/</id>
@@ -640,365 +664,6 @@ services:
 cjq   负责人  lyk<br>
 relayer 负责人  yz</p>
 <p>目前一般报错</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[rabbitmq基本知识]]></title>
-        <id>https://chriswsq.github.io/post/rabbitmq-ji-ben-zhi-shi/</id>
-        <link href="https://chriswsq.github.io/post/rabbitmq-ji-ben-zhi-shi/">
-        </link>
-        <updated>2021-01-12T07:04:38.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="功能介绍">功能介绍</h2>
-<p>一般情况下，我们会使用 rabbitmq_management 插件，通过 Web UI 的方式来监控和操作 RabbitMQ（端口 15672），但有时候命令的方式会更加方便一些，RabbitMQ 提供了 CLI 管理工具 rabbitmqadmin ，其实就是基于 RabbitMQ 的 HTTP API，用 Python 写的一个脚本。</p>
-<p><strong>rabbitmqadmin 提供了下面功能：</strong></p>
-<ul>
-<li>列出 exchanges, queues, bindings, vhosts, users, permissions, connections<br>
-and channels。</li>
-<li>创建和删除 exchanges, queues, bindings, vhosts, users and permissions。</li>
-<li>发布和获取消息，以及消息详情。</li>
-<li>关闭连接和清空队列。</li>
-<li>导入导出配置。</li>
-</ul>
-<p>使用 rabbitmqadmin 的时候，我们需要理解 RabbitMQ 的基本概念，先回顾一下：</p>
-<h2 id="rabbitmq-概念">RabbitMQ 概念：</h2>
-<table>
-<thead>
-<tr>
-<th>概念</th>
-<th>详解</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Exchange</td>
-<td>消息交换机，它指定消息按什么规则，路由到哪个队列</td>
-</tr>
-<tr>
-<td>Queue</td>
-<td>消息队列，每个消息都会被投入到一个或多个队列</td>
-</tr>
-<tr>
-<td>Binding</td>
-<td>绑定，它的作用就是把 exchange 和 queue 按照路由规则绑定起来</td>
-</tr>
-<tr>
-<td>Routing Key</td>
-<td>路由关键字，exchange 根据这个关键字进行消息投递</td>
-</tr>
-<tr>
-<td>Vhost</td>
-<td>虚拟主机，可以开设多个 vhost，用作不同用户的权限分离</td>
-</tr>
-<tr>
-<td>Producer</td>
-<td>消息生产者，就是投递消息的程序</td>
-</tr>
-<tr>
-<td>Consumer</td>
-<td>消息消费者，就是接受消息的程序</td>
-</tr>
-<tr>
-<td>Channel</td>
-<td>消息通道，在客户端的每个连接里，可建立多个 channel，每个 channel 代表一个会话任务</td>
-</tr>
-</tbody>
-</table>
-<h2 id="rabbitmq-投递过程">RabbitMQ 投递过程：</h2>
-<ol>
-<li>客户端连接到消息队列服务器，打开一个 channel。</li>
-<li>客户端声明一个 exchange，并设置相关属性。</li>
-<li>客户端声明一个 queue，并设置相关属性。</li>
-<li>客户端使用 routing key，在 exchange 和 queue 之间建立好绑定关系。</li>
-<li>客户端投递消息到 exchange。</li>
-<li>客户端从指定的 queue 中消费信息。</li>
-</ol>
-<h2 id="基本命令">基本命令</h2>
-<p>创建一个test队列：</p>
-<pre><code class="language-bash">[root@node1 ~]# rabbitmqadmin declare queue name=test durable=true
-queue declared
-[root@node1 ~]# rabbitmqadmin list queues
-+------+----------+
-| name | messages |
-+------+----------+
-| test | 0        |
-+------+----------+
-</code></pre>
-<p>需要注意：durable=true表示持久化，如果没有创建 Exchange，RabbitMQ 会使用默认的 Exchange，以及创建一个 Binding，这也就是为什么下面发布消息，可以成功的原因。</p>
-<p>发布一条消息：</p>
-<pre><code class="language-bash">[root@node1 ~]# rabbitmqadmin publish routing_key=test payload=&quot;hello world&quot;
-Message published
-[root@node1 ~]# rabbitmqadmin list queues
-+------+----------+
-| name | messages |
-+------+----------+
-| test | 1        |
-+------+----------+
-</code></pre>
-<p>消费一条消息（查看消息内容）：</p>
-<pre><code class="language-bash">[root@node1 ~]# rabbitmqadmin get queue=test requeue=true
-+-------------+----------+---------------+-------------+---------------+------------------+------------+-------------+
-| routing_key | exchange | message_count |   payload   | payload_bytes | payload_encoding | properties | redelivered |
-+-------------+----------+---------------+-------------+---------------+------------------+------------+-------------+
-| test        |          | 0             | hello world | 11            | string           |            | False       |
-+-------------+----------+---------------+-------------+---------------+------------------+------------+-------------+
-[root@node1 ~]# rabbitmqadmin list queues
-+------+----------+
-| name | messages |
-+------+----------+
-| test | 1        |
-+------+----------+
-[root@node1 ~]# rabbitmqadmin get queue=test requeue=false
-+-------------+----------+---------------+-------------+---------------+------------------+------------+-------------+
-| routing_key | exchange | message_count |   payload   | payload_bytes | payload_encoding | properties | redelivered |
-+-------------+----------+---------------+-------------+---------------+------------------+------------+-------------+
-| test        |          | 0             | hello world | 11            | string           |            | True        |
-+-------------+----------+---------------+-------------+---------------+------------------+------------+-------------+
-[root@node1 ~]# rabbitmqadmin list queues
-+------+----------+
-| name | messages |
-+------+----------+
-| test | 0        |
-+------+----------+
-</code></pre>
-<p>需要注意：requeue=true表示查看队列，不消费；requeue=false表示查看队列，进行消费。</p>
-<p>我们查看下上面创建队列后，默认创建的 Binding：</p>
-<pre><code class="language-bash">[root@node1 ~]# rabbitmqadmin list bindings
-+--------+-------------+-------------+
-| source | destination | routing_key |
-+--------+-------------+-------------+
-|        | test        | test        |
-+--------+-------------+-------------+
-</code></pre>
-<p>可以看到，使用的默认 Exchange 是空字符串（系统中的第一个 Exchange，Binding 中的 source 部分），并且这个默认的 Exchange 是direct类型（也就是一对一模式），这种隐式调用确保了消息准确投递。</p>
-<p>另外，再说一下 Binding 中的三个概念：</p>
-<ul>
-<li>Source：源头的意思，其实就是 Exchange。</li>
-<li>destination：目的地的意思，其实就是 Queue。</li>
-<li>routing_key：路由键的规则，用于 Queue 匹配（比如test.#）。<br>
-那下面我们就手动创建一下 Exchange：</li>
-</ul>
-<pre><code class="language-bash">[root@node1 ~]# rabbitmqadmin declare exchange name=my.topic type=topic
-exchange declared
-[root@node1 ~]# rabbitmqadmin list exchanges
-+--------------------+---------+
-|        name        |  type   |
-+--------------------+---------+
-|                    | direct  |
-| amq.direct         | direct  |
-| amq.fanout         | fanout  |
-| amq.headers        | headers |
-| amq.match          | headers |
-| amq.rabbitmq.log   | topic   |
-| amq.rabbitmq.trace | topic   |
-| amq.topic          | topic   |
-| my.topic           | topic   |
-+--------------------+---------+
-</code></pre>
-<p>需要注意：这边我们只创建了一个 Exchange，类型为 Topic，和之前创建的test队列，目前没有任何关系。</p>
-<p>然后再创建一个 Binding：</p>
-<pre><code class="language-bash">[root@node1 ~]# rabbitmqadmin declare binding source=my.topic destination=test routing_key=my.#
-binding declared
-[root@node1 ~]# rabbitmqadmin list bindings
-+----------+-------------+-------------+
-|  source  | destination | routing_key |
-+----------+-------------+-------------+
-|          | test        | test        |
-| my.topic | test        | my.#        |
-+----------+-------------+-------------+
-</code></pre>
-<p>需要注意：我们上面创建的 Binding（最后那个），就是将名称为my.topic的 Exchange 和名称为test的 Queue 关联起来，并且设置的routing_key规则为my.#。</p>
-<p>下面我们发布两条消息：</p>
-<pre><code class="language-bash">[root@node1 ~]# rabbitmqadmin publish routing_key=my.test exchange=my.topic  payload=&quot;hello world by my.test&quot;
-Message published
-[root@node1 ~]# rabbitmqadmin publish routing_key=my.test.test exchange=my.topic  payload=&quot;hello world by my.test.test&quot;
-Message published
-[root@node1 ~]# rabbitmqadmin list queues
-+------+----------+
-| name | messages |
-+------+----------+
-| test | 2        |
-+------+----------+
-</code></pre>
-<p>需要注意，发布的两条消息都指定了my.topic的 Exchange，但消息的routing_key不同，但都成功发布到test队列了，原因是my.test和my.test.test都符合my.#路由规则。</p>
-<p>下面，我们对两条消息进行消费：</p>
-<pre><code class="language-bash">[root@node1 ~]# rabbitmqadmin get queue=test requeue=false
-+-------------+----------+---------------+------------------------+---------------+------------------+------------+-------------+
-| routing_key | exchange | message_count |        payload         | payload_bytes | payload_encoding | properties | redelivered |
-+-------------+----------+---------------+------------------------+---------------+------------------+------------+-------------+
-| my.test     | my.topic | 1             | hello world by my.test | 22            | string           |            | False       |
-+-------------+----------+---------------+------------------------+---------------+------------------+------------+-------------+
-[root@node1 ~]# rabbitmqadmin get queue=test requeue=false
-+--------------+----------+---------------+-----------------------------+---------------+------------------+------------+-------------+
-| routing_key  | exchange | message_count |           payload           | payload_bytes | payload_encoding | properties | redelivered |
-+--------------+----------+---------------+-----------------------------+---------------+------------------+------------+-------------+
-| my.test.test | my.topic | 0             | hello world by my.test.test | 27            | string           |            | False       |
-+--------------+----------+---------------+-----------------------------+---------------+------------------+------------+-------------+
-[root@node1 ~]# rabbitmqadmin list queues
-+------+----------+
-| name | messages |
-+------+----------+
-| test | 0        |
-+------+----------+
-</code></pre>
-<p>rabbitmqadmin 测试到这边，你应该就体会到了 RabbitMQ 的投递过程了吧，我们再对之前的投递过程完善下：</p>
-<ol>
-<li>声明一个 Queue，和谁都没有关系（只有名称和持久化配置）。</li>
-<li>声明一个 Exchange，和谁都没有关系（只有名称和 Exchange Type 配置）。</li>
-<li>声明一个 Binding，通过 source 和 destination，将 Queue 和 Exchange 关联起来，并通过 routing_key，设置发布消息的路由规则。</li>
-<li>发布一个消息，需要指定一个 Exchange，以及本身的路由名称。</li>
-<li>消费队列中的消息，需要指定一个 Queue。</li>
-</ol>
-<p>rabbitmqadmin 命令汇总：</p>
-<table>
-<thead>
-<tr>
-<th>命令</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>rabbitmqadmin list users</td>
-<td>查看所有用户 User</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list users name</td>
-<td>查看所有用户名 Username</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list users tags</td>
-<td>查看所有用户角色</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list vhosts</td>
-<td>查看所有虚拟主机</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list connections</td>
-<td>查看所有连接</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list exchanges</td>
-<td>查看所有路由 Exchange</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list bindings</td>
-<td>查看所有路由与队列的关系绑定 Binding</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list permissions</td>
-<td>查看所有角色的权限 Permission</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list channels</td>
-<td>查看所有通道 Channel</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list consumers</td>
-<td>查看所有消费者 Consumer</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list queues</td>
-<td>查看所有消息队列 Queue</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list nodes</td>
-<td>查看所有节点 Node</td>
-</tr>
-<tr>
-<td>rabbitmqadmin show overview</td>
-<td>概览 Overview</td>
-</tr>
-<tr>
-<td>rabbitmqadmin list bindings source destination_type destination properties_key</td>
-<td>查看所有路由与队列的关系绑定的详细信息 Binding</td>
-</tr>
-<tr>
-<td>rabbitmqadmin declare queue name=test durable=true</td>
-<td>定义一个队列queue，durable=true代表持久化打开。</td>
-</tr>
-<tr>
-<td>rabbitmqadmin declare exchange name=my.fanout type=fanout</td>
-<td>定义一个Fanout路由</td>
-</tr>
-<tr>
-<td>rabbitmqadmin declare exchange name=my.direct type=direct</td>
-<td>定义一个Direct路由</td>
-</tr>
-<tr>
-<td>rabbitmqadmin declare exchange name=my.topic type=topic</td>
-<td>定义一个Topic路由</td>
-</tr>
-<tr>
-<td>rabbitmqadmin declare binding source=my.fanout destination=test routing_key=first</td>
-<td>定义 binding</td>
-</tr>
-<tr>
-<td>rabbitmqadmin publish routing_key=test payload=&quot;hello world&quot;</td>
-<td>发布一条消息</td>
-</tr>
-<tr>
-<td>rabbitmqadmin publish routing_key=my.test exchange=my.topic payload=&quot;hello world&quot;</td>
-<td>使用路由转发消息</td>
-</tr>
-<tr>
-<td>rabbitmqadmin get queue=test requeue=true</td>
-<td>查看消息，不消费</td>
-</tr>
-<tr>
-<td>rabbitmqadmin get queue=test requeue=false</td>
-<td>查看消息，并消费</td>
-</tr>
-<tr>
-<td>rabbitmqadmin purge queue name=test</td>
-<td>删除队列中的所有消息</td>
-</tr>
-<tr>
-<td>rabbitmqadmin delete queue name=hello</td>
-<td>删除消息队列 Queue</td>
-</tr>
-<tr>
-<td>rabbitmqadmin delete user name=test</td>
-<td>删除用户 User</td>
-</tr>
-<tr>
-<td>rabbitmqadmin delete exchange name=test</td>
-<td>删除路由器 Exchange</td>
-</tr>
-<tr>
-<td>rabbitmqadmin delete binding source='kk' destination_type=queue destination=test properties_key=test</td>
-<td>删除路由器与消息队列的关系绑定 Binding</td>
-</tr>
-<tr>
-<td>rabbitmqadmin -f raw_json list users	raw_json</td>
-<td>格式化输出</td>
-</tr>
-<tr>
-<td>rabbitmqadmin -f long list users</td>
-<td>格式化输出</td>
-</tr>
-<tr>
-<td>rabbitmqadmin -f pretty_json list users	pretty_json</td>
-<td>格式化输出</td>
-</tr>
-<tr>
-<td>rabbitmqadmin -f kvp list users</td>
-<td>格式化输出</td>
-</tr>
-<tr>
-<td>rabbitmqadmin -f tsv list users</td>
-<td>格式化输出</td>
-</tr>
-<tr>
-<td>rabbitmqadmin -f table list users</td>
-<td>table 格式化输出</td>
-</tr>
-<tr>
-<td>rabbitmqadmin -f bash list users</td>
-<td>bash 格式化输出</td>
-</tr>
-</tbody>
-</table>
 ]]></content>
     </entry>
 </feed>

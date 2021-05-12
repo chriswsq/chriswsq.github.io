@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1619501868033">
+<link rel="shortcut icon" href="https://chriswsq.github.io/favicon.ico?v=1620785327902">
 <link rel="stylesheet" href="https://chriswsq.github.io/styles/main.css">
 
 
@@ -37,7 +37,7 @@ IP : 18.163.23..." />
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://chriswsq.github.io">
-        <img src="https://chriswsq.github.io/images/avatar.png?v=1619501868033" class="site-logo">
+        <img src="https://chriswsq.github.io/images/avatar.png?v=1620785327902" class="site-logo">
         <h1 class="site-title">chris&#39;wang</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -262,6 +262,66 @@ services:
 </ul>
 <p><strong>rosetta-api docs:</strong></p>
 <p>https://www.rosetta-api.org/docs/welcome.html</p>
+<p>主网升级</p>
+<p>升级版本(当前最新版本为   21.1)<br>
+21.1</p>
+<p>删除之前的数据</p>
+<pre><code class="language-bash">#下载最新的rosetta-gateway
+git clone https://github.com/oasisprotocol/oasis-core-rosetta-gateway.git
+
+#build  镜像(可以查看Dockerfile中oasis的版本号)
+cd oasis-core-rosetta-gateway/docker 
+docker build -t oasis:21.1   .
+
+#拷贝config.yml文件且修改
+
+cp config.yml  /bsn/oasis/node/data/etc/
+vim config.yml
+#最后配置为
+</code></pre>
+<pre><code class="language-yml">##
+# Oasis Node Configuration
+##
+
+datadir: /data
+
+log:
+  level:
+    # Per-module log levels. Longest prefix match will be taken. Fallback to
+    # &quot;default&quot;, if no match.
+    default: info
+    tendermint: info
+    tendermint/context: error
+  format: JSON
+
+# Path to the genesis file for the current version of the network.
+genesis:
+  file: /data/etc/genesis.json
+
+# Tendermint backend configuration.
+consensus:
+  tendermint:
+    p2p:
+      seed:
+        - &quot;E27F6B7A350B4CC2B48A6CBE94B0A02B0DCB0BF3@35.199.49.168:26656&quot;
+</code></pre>
+<p>创世纪文件在这里下载： https://docs.oasis.dev/general/oasis-network/network-parameters</p>
+<p>放至 node/data/etc/</p>
+<p>docker-compos 文件为</p>
+<pre><code class="language-yml">version: '2'
+services:
+  oasis: 
+    image: oasis:21.1
+    container_name: oasis
+    volumes:
+      - /bsn/oasis/node/data/:/data
+    environment:
+      - OASIS_ROSETTA_GATEWAY_PORT=8080
+    ports:
+      - 8080:8080
+      - 26656:26656
+    restart: always
+</code></pre>
 <p>参考<br>
 https://docs.oasis.dev/general/run-a-node/set-up-your-node/run-non-validator<br>
 https://docs.oasis.dev/oasis-core/high-level-components/oasis-node/rpc<br>

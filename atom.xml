@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-05-12T02:10:13.580Z</updated>
+    <updated>2021-05-14T07:29:28.419Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,23 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[zabbix自动发现注册]]></title>
+        <id>https://chriswsq.github.io/post/zabbix-zi-dong-fa-xian-zhu-ce/</id>
+        <link href="https://chriswsq.github.io/post/zabbix-zi-dong-fa-xian-zhu-ce/">
+        </link>
+        <updated>2021-05-14T07:19:33.000Z</updated>
+        <content type="html"><![CDATA[<p>首先在被监控节点部署好agent 能够连接到server  ，如果有proxy，则指向proxy即可</p>
+<figure data-type="image" tabindex="1"><img src="https://chriswsq.github.io/post-images/1620976973743.png" alt="" loading="lazy"></figure>
+<p>根据情况选择，有proxy则选中响应的代理即可</p>
+<p>检查是否发现响应主机（可能需要点时间，也可重启agent加快）<br>
+<img src="https://chriswsq.github.io/post-images/1620977254185.png" alt="" loading="lazy"></p>
+<p>添加动作，自动注册<br>
+<img src="https://chriswsq.github.io/post-images/1620977067174.png" alt="" loading="lazy"></p>
+<p>过那么一会主机就添加好了<br>
+<img src="https://chriswsq.github.io/post-images/1620977361846.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[安装jenkins]]></title>
         <id>https://chriswsq.github.io/post/an-zhuang-jenkins/</id>
@@ -652,18 +669,6 @@ services:
 <p><strong>获取所有rpc节点</strong></p>
 <pre><code class="language-bash">curl -X POST -H 'Content-Type: application/json' -d '{&quot;id&quot;:1,&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;rpc.discover&quot;}' 'http://127.0.0.1:7777/rpc' | jq
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[跨连]]></title>
-        <id>https://chriswsq.github.io/post/kua-lian/</id>
-        <link href="https://chriswsq.github.io/post/kua-lian/">
-        </link>
-        <updated>2021-02-02T06:01:50.000Z</updated>
-        <content type="html"><![CDATA[<p>cjq   调用   relayer 服务<br>
-cjq   负责人  lyk<br>
-relayer 负责人  yz</p>
-<p>目前一般报错</p>
 ]]></content>
     </entry>
 </feed>

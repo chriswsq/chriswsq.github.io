@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-05-14T07:29:28.419Z</updated>
+    <updated>2021-06-02T02:31:38.864Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,15 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[docker 远程控制管理]]></title>
+        <id>https://chriswsq.github.io/post/docker-yuan-cheng-kong-zhi-guan-li/</id>
+        <link href="https://chriswsq.github.io/post/docker-yuan-cheng-kong-zhi-guan-li/">
+        </link>
+        <updated>2021-06-02T02:31:23.000Z</updated>
+        <content type="html"><![CDATA[<p>https://www.cnblogs.com/hongdada/p/11512901.html</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[zabbix自动发现注册]]></title>
         <id>https://chriswsq.github.io/post/zabbix-zi-dong-fa-xian-zhu-ce/</id>
@@ -538,136 +547,6 @@ services:
     depends_on:
       - abci
     restart: always
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Casper测试网部署]]></title>
-        <id>https://chriswsq.github.io/post/casperlabs-ce-shi-wang-bu-shu/</id>
-        <link href="https://chriswsq.github.io/post/casperlabs-ce-shi-wang-bu-shu/">
-        </link>
-        <updated>2021-02-04T08:12:31.000Z</updated>
-        <content type="html"><![CDATA[<p>主网还未发布<br>
-目前只有部署测试网<br>
-主网预计2021年第二季度上线</p>
-<p><strong>版本：0.7.6</strong></p>
-<h2 id="手动部署">手动部署</h2>
-<pre><code class="language-bash">
-# Clean up old genesis file location
-sudo rm /etc/casper/config.*
-sudo rm /etc/casper/accounts.csv 
-sudo rm /etc/casper/chainspec.toml 
-sudo rm /etc/casper/validation.md5
-
-# Install new software
-curl -JLO https://bintray.com/casperlabs/debian/download_file?file_path=casper-node-launcher_0.2.0-0_amd64.deb
-curl -JLO https://bintray.com/casperlabs/debian/download_file?file_path=casper-client_0.7.6-0_amd64.deb
-sudo apt install -y ./casper-client_0.7.6-0_amd64.deb ./casper-node-launcher_0.2.0-0_amd64.deb
-
-cd /etc/casper
-sudo -u casper ./pull_casper_node_version.sh 1_0_0 release-test
-
-# Get trusted_hash into config.toml
-curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash
-
-# Or do this automatically
-sudo sed -i &quot;/trusted_hash =/c\trusted_hash = '$(curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash | tr -d '\n')'&quot; /etc/casper/1_0_0/config.toml
-
-sudo logrotate -f /etc/logrotate.d/casper-node
-sudo /etc/casper/delete_local_db.sh; sleep 1
-sudo systemctl start casper-node-launcher
-systemctl status casper-node-launcher
-</code></pre>
-<h2 id="docker部署">docker部署</h2>
-<p>目前casperlabs只支持ubuntu系统，这里采用docker方式部署</p>
-<p><strong>Dockerfile</strong></p>
-<pre><code class="language-dockerfile">from ubuntu:18.04
-
-RUN apt-get update \
-  &amp;&amp;  apt-get install -y --reinstall systemd \
-  &amp;&amp;  apt-get install -y curl  \
-  &amp;&amp;  apt-get install -y jq  \
-  &amp;&amp;  curl -JLO https://bintray.com/casperlabs/debian/download_file?file_path=casper-node-launcher_0.2.0-0_amd64.deb  \
-  &amp;&amp;  curl -JLO https://bintray.com/casperlabs/debian/download_file?file_path=casper-client_0.7.6-0_amd64.deb  \
-  &amp;&amp;  apt install -y ./casper-client_0.7.6-0_amd64.deb ./casper-node-launcher_0.2.0-0_amd64.deb  \
-  &amp;&amp;  cd /etc/casper \
-  &amp;&amp;  ./pull_casper_node_version.sh 1_0_0 release-test \
-  &amp;&amp;  curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash \
-  &amp;&amp;  sed -i &quot;/trusted_hash =/c\trusted_hash = '$(curl -s 54.183.27.75:8888/status | jq -r .last_added_block_info.hash | tr -d '\n')'&quot; /etc/casper/1_0_0/config.toml \
-  &amp;&amp;  apt install -y logrotate \
-  &amp;&amp;  logrotate -f /etc/logrotate.d/casper-node \
-  &amp;&amp;  /etc/casper/delete_local_db.sh; sleep 1
-ENV   CASPER_ENABLE_LEGACY_NET  TRUE
-EXPOSE  7777  8888  9999
-ENTRYPOINT [&quot;/bin/sh&quot;,&quot;-c&quot;,&quot;exec /usr/bin/casper-node-launcher 1&gt;&gt; /var/log/casper/casper-node.log 2&gt;&gt; /var/log/casper/casper-node.stderr.log&quot;]
-</code></pre>
-<p>需预先创建keys文件<br>
-手动运行一遍服务，将相关文件挂载出来<br>
-<strong>docker-compose文件</strong></p>
-<pre><code class="language-docker-compose.yml">version: '3'
- 
-services:
-
-   casper:
-     image: casper:0.7.6
-     container_name: casper-testnet
-     ports:
-       - 7777:7777 
-       - 8888:8888
-       - 9999:9999
-       - 35000:35000
-     volumes:
-       - /bsn/casper/validator_keys:/etc/casper/validator_keys/
-       - /bsn/casper/1_0_0:/etc/casper/1_0_0
-       - /bsn/casper/data:/var/lib/casper/casper-node
-     restart: always
-</code></pre>
-<h2 id="其他命令">其他命令</h2>
-<p><strong>获取节点信息</strong></p>
-<pre><code class="language-bash">[root@casper]# curl http://localhost:8888/status |jq
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100   849  100   849    0     0   137k      0 --:--:-- --:--:-- --:--:--  165k
-{
-  &quot;api_version&quot;: &quot;1.0.0&quot;,
-  &quot;chainspec_name&quot;: &quot;release-test-16&quot;,
-  &quot;genesis_root_hash&quot;: &quot;1a6f..9fa2&quot;,
-  &quot;peers&quot;: [
-    {
-      &quot;node_id&quot;: &quot;NodeId::P2p(Exc3..we6T)&quot;,
-      &quot;address&quot;: &quot;/ip4/54.209.219.135/tcp/35000&quot;
-    },
-    {
-      &quot;node_id&quot;: &quot;NodeId::P2p(G2Xq..4nuP)&quot;,
-      &quot;address&quot;: &quot;/ip4/3.101.67.146/tcp/35000&quot;
-    },
-    {
-      &quot;node_id&quot;: &quot;NodeId::P2p(JJV2..uD5e)&quot;,
-      &quot;address&quot;: &quot;/ip4/54.183.27.75/tcp/35000&quot;
-    },
-    {
-      &quot;node_id&quot;: &quot;NodeId::P2p(JJey..ygLw)&quot;,
-      &quot;address&quot;: &quot;/ip4/62.171.172.72/tcp/35000&quot;
-    },
-    {
-      &quot;node_id&quot;: &quot;NodeId::P2p(SmNF..W5gS)&quot;,
-      &quot;address&quot;: &quot;/ip4/3.133.139.143/tcp/35000&quot;
-    }
-  ],
-  &quot;last_added_block_info&quot;: {
-    &quot;hash&quot;: &quot;46efcb832547bcba03f39529b8d752b562b05ac8127571f268495aefd574ac08&quot;,
-    &quot;timestamp&quot;: &quot;2021-02-07T09:29:21.664Z&quot;,
-    &quot;era_id&quot;: 293,
-    &quot;height&quot;: 8220,
-    &quot;state_root_hash&quot;: &quot;1a891bb13571c14fe6d477128022ca130014e92ed3962a123a9ea5912f3b4e36&quot;,
-    &quot;creator&quot;: &quot;018b15761be0c527117c79b87ca013b014a4628f01e382902a139529406723d86b&quot;
-  },
-  &quot;build_version&quot;: &quot;0.7.3&quot;
-}
-</code></pre>
-<p>8000的快高同步了两个小时左右，同步过程中7777端口不能使用。</p>
-<p><strong>获取所有rpc节点</strong></p>
-<pre><code class="language-bash">curl -X POST -H 'Content-Type: application/json' -d '{&quot;id&quot;:1,&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;rpc.discover&quot;}' 'http://127.0.0.1:7777/rpc' | jq
 </code></pre>
 ]]></content>
     </entry>

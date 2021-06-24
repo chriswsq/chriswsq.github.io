@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chriswsq.github.io</id>
     <title>chris&apos;wang</title>
-    <updated>2021-06-02T02:31:38.864Z</updated>
+    <updated>2021-06-24T03:31:51.753Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chriswsq.github.io"/>
     <link rel="self" href="https://chriswsq.github.io/atom.xml"/>
@@ -10,6 +10,15 @@
     <logo>https://chriswsq.github.io/images/avatar.png</logo>
     <icon>https://chriswsq.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, chris&apos;wang</rights>
+    <entry>
+        <title type="html"><![CDATA[虚拟机net上网]]></title>
+        <id>https://chriswsq.github.io/post/xu-ni-ji-net-shang-wang/</id>
+        <link href="https://chriswsq.github.io/post/xu-ni-ji-net-shang-wang/">
+        </link>
+        <updated>2021-06-24T03:31:26.000Z</updated>
+        <content type="html"><![CDATA[<p>https://www.jianshu.com/p/6fdbba039d79</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[docker 远程控制管理]]></title>
         <id>https://chriswsq.github.io/post/docker-yuan-cheng-kong-zhi-guan-li/</id>
@@ -475,79 +484,6 @@ f1 -ef f2                   文件f1和f2是否硬连接到同一个文
 ————————————————<br>
 版权声明：本文为CSDN博主「知耻而后勇的蜗牛」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/yf210yf/article/details/9207147</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[findora公链部署]]></title>
-        <id>https://chriswsq.github.io/post/findora-gong-lian-bu-shu/</id>
-        <link href="https://chriswsq.github.io/post/findora-gong-lian-bu-shu/">
-        </link>
-        <updated>2021-02-22T09:27:18.000Z</updated>
-        <content type="html"><![CDATA[<p>docker方式部署</p>
-<p><strong>首先运行</strong></p>
-<pre><code class="language-bash">docker run -it --rm -v &quot;/bsn/findora/data/tendermint:/tendermint&quot; tendermint/tendermint:v0.33.1 testnet --v 1 --o mainnet
-</code></pre>
-<p><strong>docker-compsoe文件</strong></p>
-<pre><code class="language-yml">version: '3'
-services:
-  node:
-    container_name: findora_node
-    image: &quot;public.ecr.aws/k6m5b6e2/demo/tendermint:v0.1.0&quot;
-    command:
-      [
-        'node',
-        '--proxy_app=tcp://abci:26658',
-        '--rpc.laddr=tcp://0.0.0.0:26657'
-      ]
-
-    ports:
-      - &quot;26656-26657:26656-26657&quot;
-    volumes:
-      - /bsn/findora/data/tendermint/mainnet/node0:/root/.tendermint
-    depends_on:
-      - abci
-    restart: always
-
-  
-  abci:
-    container_name: findora_abci
-    image: &quot;public.ecr.aws/k6m5b6e2/demo/abci_validator_node:v0.1.0&quot;
-
-    environment:
-      - LEDGER_DIR=/var/ledger
-      - RUST_LOG=info,tokio_reactor=warn
-      - TENDERMINT_HOST=findora_node
-      - ABCI_HOST=0.0.0.0
-      - SERVER_HOST=0.0.0.0
-      - LEDGER_HOST=0.0.0.0
-      - RUST_LOG=info
-    ports:
-      - &quot;8668:8668&quot;
-      - &quot;8669:8669&quot;
-      - &quot;26658:26658&quot;
-    volumes:
-      - /bsn/findora/data/ledger:/var/ledger
-
-    restart: always
-
-
-  query_server:
-    container_name: findora_query_server
-    image: &quot;public.ecr.aws/k6m5b6e2/demo/query_server:v0.1.0&quot;
-
-    environment:
-      - LEDGER_HOST=findora_abci
-      - LEDGER_PORT=8668
-      - LEDGER_PROTOCOL=http
-      - QUERY_PORT=8667
-      - QUERY_SERVER_HOST=0.0.0.0
-      - RUST_LOG=info,tokio_reactor=warn
-    ports:
-      - &quot;8667:8667&quot;
-    depends_on:
-      - abci
-    restart: always
-</code></pre>
 ]]></content>
     </entry>
 </feed>
